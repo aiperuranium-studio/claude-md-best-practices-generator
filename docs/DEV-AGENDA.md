@@ -57,11 +57,11 @@ This document defines the sprint-by-sprint development plan for the Claude Code 
 
 ### Acceptance Criteria
 
-- [ ] `CLAUDE.md` exists at project root and contains all four behavioral rules from `docs/CLAUDE-MD-LIFECYCLE.md`.
-- [ ] `.gitignore` correctly ignores `catalog/sources/*/` but allows `catalog/sources/local/`.
-- [ ] `.claude/settings.json` is valid JSON.
-- [ ] All directories listed in the target structure exist (may contain only `.gitkeep` placeholders).
-- [ ] `git status` shows a clean working tree after committing.
+- [x] `CLAUDE.md` exists at project root and contains all four behavioral rules from `docs/CLAUDE-MD-LIFECYCLE.md`.
+- [x] `.gitignore` correctly ignores `catalog/sources/*/` but allows `catalog/sources/local/`.
+- [x] `.claude/settings.json` is valid JSON.
+- [x] All directories listed in the target structure exist (may contain only `.gitkeep` placeholders).
+- [x] `git status` shows a clean working tree after committing.
 
 ### Dependencies
 
