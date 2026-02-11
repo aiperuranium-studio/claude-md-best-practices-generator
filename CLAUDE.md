@@ -4,9 +4,9 @@ An AI-driven tool that maintains a catalog of Claude Code entities (agents, skil
 
 ## Authoritative Documents
 
-- **Architecture & design**: [docs/PLAN.md](docs/PLAN.md)
+- **Architecture & design**: [docs/IGNITER-PLAN.md](docs/IGNITER-PLAN.md)
 - **CLAUDE.md generation rules**: [docs/CLAUDE-MD-LIFECYCLE.md](docs/CLAUDE-MD-LIFECYCLE.md)
-- **Development agenda**: [docs/DEV-AGENDA.md](docs/DEV-AGENDA.md)
+- **Development agenda**: [docs/IGNITER-DEV-AGENDA.md](docs/IGNITER-DEV-AGENDA.md)
 
 ## Behavioral Rules
 
@@ -36,9 +36,9 @@ claude-code-project-igniter/
 ├── CLAUDE.md                              # This file
 ├── .gitignore
 ├── docs/
-│   ├── PLAN.md                            # Architecture & design
+│   ├── IGNITER-PLAN.md                    # Architecture & design
 │   ├── CLAUDE-MD-LIFECYCLE.md             # Behavioral rules for generated CLAUDE.md
-│   └── DEV-AGENDA.md                      # Sprint-based development plan
+│   └── IGNITER-DEV-AGENDA.md              # Sprint-based development plan
 ├── .claude/
 │   ├── settings.json
 │   ├── skills/

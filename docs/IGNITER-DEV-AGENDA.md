@@ -2,7 +2,7 @@
 
 This document defines the sprint-by-sprint development plan for the Claude Code Project Igniter. Each sprint is self-contained, produces testable output, and builds logically on previous sprints.
 
-**Reference documents**: [PLAN.md](PLAN.md) (architecture) · [CLAUDE-MD-LIFECYCLE.md](CLAUDE-MD-LIFECYCLE.md) (behavioral rules)
+**Reference documents**: [IGNITER-PLAN.md](IGNITER-PLAN.md) (architecture) · [CLAUDE-MD-LIFECYCLE.md](CLAUDE-MD-LIFECYCLE.md) (behavioral rules)
 
 **Estimated total effort**: 12–18 Claude Code sessions across 7 sprints.
 
@@ -32,7 +32,7 @@ This document defines the sprint-by-sprint development plan for the Claude Code 
    - Instructions for working ON this project (not generated output).
    - Include core behavioral rules from `docs/CLAUDE-MD-LIFECYCLE.md` (write-first, no preemptive execution, no scope creep, clarify before acting).
    - Include project-specific conventions: Python 3.10+ for scripts, POSIX shell for `.sh` scripts, Markdown for all documentation and skill/agent definitions.
-   - Reference `docs/PLAN.md` and `docs/CLAUDE-MD-LIFECYCLE.md` as authoritative design documents.
+   - Reference `docs/IGNITER-PLAN.md` and `docs/CLAUDE-MD-LIFECYCLE.md` as authoritative design documents.
 
 2. **Update `.gitignore`**
    - Keep existing `.idea` entry.
@@ -201,7 +201,7 @@ Sprint 1 (`sources.json` must exist).
    - Determine `scope`: `universal` (no language/framework tags), `language-specific` (language tags only), `framework-specific` (has framework tags).
 
 4. **Core entity identification**
-   - Mark entities as `coreEntity: true` based on the predefined list from PLAN.md:
+   - Mark entities as `coreEntity: true` based on the predefined list from IGNITER-PLAN.md:
      - Agents: `planner`, `architect`, `code-reviewer`, `security-reviewer`, `build-error-resolver`
      - Skills: `tdd-workflow`, `coding-standards`, `verification-loop`, `security-review`
      - Commands: `plan`, `tdd`, `code-review`, `build-fix`, `verify`
@@ -390,7 +390,7 @@ Sprint 4 (`/sync-catalog` must work so the manifest exists).
    - Stale manifest: modify `generatedAt` >30 days old, verify warning.
 
 6. **Final documentation pass**
-   - Update `docs/PLAN.md` with any deviations.
+   - Update `docs/IGNITER-PLAN.md` with any deviations.
    - Update `CLAUDE.md` with final project structure.
    - Ensure all `SKILL.md` descriptions are clear and discoverable.
 
