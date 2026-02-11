@@ -224,7 +224,7 @@ Report includes: what exists, what's missing, impact assessment, and actionable 
 
 ## CLAUDE.md Lifecycle Guidelines
 
-> Full specification: [docs/CLAUDE-MD-LIFECYCLE.md](CLAUDE-MD-LIFECYCLE.md)
+> Full specification: [docs/CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md)
 
 Defines the behavioral rules and domain-specific workflow rules that `/ignite` embeds into every project's `CLAUDE.md`. Includes core rules (write-first, no preemptive execution, no scope creep, clarify before acting) and conditionally-included domain sections (General Conventions, Document Validation, Task Management, Docker/Infrastructure, Grant Proposal Documents).
 
