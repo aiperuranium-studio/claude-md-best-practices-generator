@@ -8,3 +8,7 @@ catalog/sources/*/
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/
+
+# uv
+uv.lock
