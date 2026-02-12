@@ -233,11 +233,11 @@ Sprint 0 (directory skeleton must exist).
 - [x] Enrichment report correctly classifies incoming content (novel on first run; duplicate/reinforcing on subsequent runs).
 - [x] No conflicting information merged without human review.
 - [x] CLAUDE-MD-SOTA.md stays under 300 lines.
-- [ ] `parse-insights.py` exists and produces valid `docs/insights-parsed.json` when `~/.claude/usage-data/report.html` is present.
-- [ ] `/insights` report sections (CLAUDE.md recs, friction, wins, features, patterns, horizon, usage) are correctly extracted into themed content blocks.
-- [ ] Staleness warning produced when `/insights` report is older than 7 days.
-- [ ] `parse-insights.py` handles missing report gracefully (exits 0, produces minimal JSON).
-- [ ] SKILL.md references `parse-insights.py` and `insights-parsed.json`.
+- [x] `parse-insights.py` exists and produces valid `docs/insights-parsed.json` when `~/.claude/usage-data/report.html` is present.
+- [x] `/insights` report sections (CLAUDE.md recs, friction, wins, features, patterns, horizon, usage) are correctly extracted into themed content blocks.
+- [x] Staleness warning produced when `/insights` report is older than 7 days.
+- [x] `parse-insights.py` handles missing report gracefully (exits 0, produces minimal JSON).
+- [x] SKILL.md references `parse-insights.py` and `insights-parsed.json`.
 
 ### Dependencies
 
