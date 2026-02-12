@@ -127,11 +127,11 @@ Sprint 0 was completed when `docs/CLAUDE-MD-SOTA.md` still contained hardcoded b
 
 ### Acceptance Criteria
 
-- [ ] `catalog/sources.json` is valid JSON and contains exactly two sources (`everything-claude-code` and `local`).
-- [ ] `catalog/sources/local/README.md` exists and explains the purpose of the local source.
-- [ ] `catalog/sources/local/` subdirectories exist for all entity types.
-- [ ] `docs/SOURCE-SCHEMA.md` documents all fields in the source schema.
-- [ ] Running `python3 -c "import json; json.load(open('catalog/sources.json'))"` succeeds.
+- [x] `catalog/sources.json` is valid JSON and contains exactly two sources (`everything-claude-code` and `local`).
+- [x] `catalog/sources/local/README.md` exists and explains the purpose of the local source.
+- [x] `catalog/sources/local/` subdirectories exist for all entity types.
+- [x] `docs/SOURCE-SCHEMA.md` documents all fields in the source schema.
+- [x] Running `python3 -c "import json; json.load(open('catalog/sources.json'))"` succeeds.
 
 ### Dependencies
 
