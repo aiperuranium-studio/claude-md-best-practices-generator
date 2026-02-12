@@ -1,5 +1,7 @@
 # Plan: `/refresh-guidelines` Skill & CLAUDE-MD-SOTA.md Enrichment
 
+> **Archived.** This document has been merged into the [unified plan](../IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md) together with [IGNITER-PLAN.md](IGNITER-PLAN.md). Kept for historical reference only.
+
 ## Context
 
 `docs/CLAUDE-MD-SOTA.md` currently holds only 4 behavioral rules and a few domain-specific conditional rules. But its intended role in the `/ignite` pipeline is much larger: it should be the **authoritative reference** that governs how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time.
@@ -188,9 +190,9 @@ Key principles for the restructuring:
 | `.claude/skills/refresh-guidelines/references/curated-sources.md` | **Create** |
 | `.claude/skills/refresh-guidelines/references/enrichment-procedure.md` | **Create** |
 | `.claude/skills/refresh-guidelines/scripts/fetch-guidelines.py` | **Create** |
-| `docs/CLAUDE-MD-SOTA.md` | **Restructure** (expand from ~57 lines to 7-part reference) |
-| `docs/IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md` | **Modify** (insert Sprint 1.5) |
-| `docs/IGNITER-PLAN.md` | **Modify** (add `/refresh-guidelines` skill, update CLAUDE-MD-SOTA.md role description) |
+| [`docs/CLAUDE-MD-SOTA.md`](../CLAUDE-MD-SOTA.md) | **Restructure** (expand from ~57 lines to 7-part reference) |
+| [`docs/IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`](../IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md) | **Modify** (insert Sprint 1.5) |
+| [`docs/IGNITER-PLAN.md`](IGNITER-PLAN.md) | **Modify** (add `/refresh-guidelines` skill, update CLAUDE-MD-SOTA.md role description) |
 | `CLAUDE.md` | **Modify** (add `/refresh-guidelines` to project structure) |
 
 ## Verification

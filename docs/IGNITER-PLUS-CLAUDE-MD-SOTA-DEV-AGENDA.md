@@ -31,9 +31,9 @@ This document defines the sprint-by-sprint development plan for the Claude Code 
 
 1. **Create `CLAUDE.md`** (project root)
    - Instructions for working ON this project (not generated output).
-   - Include core behavioral rules from `docs/CLAUDE-MD-SOTA.md` (write-first, no preemptive execution, no scope creep, clarify before acting).
+   - Include core behavioral rules as project-specific conventions (write-first, no preemptive execution, no scope creep, clarify before acting).
    - Include project-specific conventions: Python 3.10+ for scripts, POSIX shell for `.sh` scripts, Markdown for all documentation and skill/agent definitions.
-   - Reference `docs/IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md` and `docs/CLAUDE-MD-SOTA.md` as authoritative design documents.
+   - Reference `docs/IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md` and `docs/CLAUDE-MD-SOTA.md` as authoritative design documents. (`CLAUDE-MD-SOTA.md` starts blank and is populated via `/refresh-guidelines`.)
 
 2. **Update `.gitignore`**
    - Keep existing `.idea` entry.
@@ -58,7 +58,7 @@ This document defines the sprint-by-sprint development plan for the Claude Code 
 
 ### Acceptance Criteria
 
-- [x] `CLAUDE.md` exists at project root and contains all four behavioral rules from `docs/CLAUDE-MD-SOTA.md`.
+- [x] `CLAUDE.md` exists at project root and contains all four behavioral rules (project-specific conventions, not sourced from `docs/CLAUDE-MD-SOTA.md`).
 - [x] `.gitignore` correctly ignores `catalog/sources/*/` but allows `catalog/sources/local/`.
 - [x] `.claude/settings.json` is valid JSON.
 - [x] All directories listed in the target structure exist (may contain only `.gitkeep` placeholders).
@@ -123,7 +123,7 @@ Sprint 0 was completed when `docs/CLAUDE-MD-SOTA.md` still contained hardcoded b
    - Ensure subdirectories (`agents/`, `skills/`, `commands/`, `rules/`) contain `.gitkeep` files.
 
 3. **Document the source schema**
-   - Add a `docs/SOURCE-SCHEMA.md` describing each field in `sources.json`, valid values, and how priority resolution works.
+   - Add a [`SOURCE-SCHEMA.md`](SOURCE-SCHEMA.md) describing each field in `sources.json`, valid values, and how priority resolution works.
 
 ### Acceptance Criteria
 
@@ -250,7 +250,7 @@ Sprint 0 (directory skeleton must exist). Runs in parallel with Sprint 1.
    - Accept an optional `--source <id>` flag to sync only a single source.
 
 3. **Document `.source-meta.json` schema**
-   - Append the sync metadata format to `docs/SOURCE-SCHEMA.md`.
+   - Append the sync metadata format to [`SOURCE-SCHEMA.md`](SOURCE-SCHEMA.md).
 
 ### Acceptance Criteria
 

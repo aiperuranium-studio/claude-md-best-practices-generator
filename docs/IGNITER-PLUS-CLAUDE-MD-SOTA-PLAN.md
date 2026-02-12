@@ -20,7 +20,7 @@ Run `/ignite` after planning your new project's architecture, and get a fully ta
 
 ### CLAUDE.md Quality Gap
 
-`docs/CLAUDE-MD-SOTA.md` starts as a **blank file**. Its intended role is to be the **authoritative reference** governing how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time. It is populated from two sources: (1) tips from Claude Code's `/insights` command — real patterns discovered from actual coding sessions, and (2) best practices from official Anthropic docs, established community guides, and templates. A repeatable `/refresh-guidelines` skill collects, deduplicates, and merges content from both sources into this document.
+[CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) starts as a **blank file**. Its intended role is to be the **authoritative reference** governing how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time. It is populated from two sources: (1) tips from Claude Code's `/insights` command — real patterns discovered from actual coding sessions, and (2) best practices from official Anthropic docs, established community guides, and templates. A repeatable `/refresh-guidelines` skill collects, deduplicates, and merges content from both sources into this document.
 
 ### Design Principles
 
@@ -160,7 +160,7 @@ Create new project directory
 
 ### 3.1 Source Registry (`catalog/sources.json`)
 
-Defines where entities come from. Each source has: `id`, `url`, `branch`, `pin` (optional version lock), `priority` (lower = higher precedence), `entityPaths` (maps entity types to directories in the source repo).
+Defines where entities come from. Each source has: `id`, `url`, `branch`, `pin` (optional version lock), `priority` (lower = higher precedence), `entityPaths` (maps entity types to directories in the source repo). See [SOURCE-SCHEMA.md](SOURCE-SCHEMA.md) for the complete field reference.
 
 Primary source: `everything-claude-code` (priority 10). Local custom entities: `local` (priority 1, always wins).
 
@@ -187,7 +187,7 @@ Tags are auto-classified by the manifest builder using keyword analysis of entit
 | **3. Select entities** | Core entities (always) + language-matched + framework-matched + category-based (Claude's judgment). Individual hook selection. Exclude irrelevant entities |
 | **4. Present selection** | Structured report: what's selected and why, what's excluded, gap analysis. User can add/remove before proceeding |
 | **5. Install & specialize** | Copy entities to project's `.claude/`, adapt descriptions/examples/paths/tools to the specific tech stack. Add provenance headers. Merge hooks into settings.json. Handle rules via CLAUDE.md embedding or agent prompt injection |
-| **6. Update CLAUDE.md** | Generate per `docs/CLAUDE-MD-SOTA.md` — document installed entities, active hooks, and known gaps |
+| **6. Update CLAUDE.md** | Generate per [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) — document installed entities, active hooks, and known gaps |
 
 ### 3.4 Specialization Mechanism
 
@@ -256,7 +256,7 @@ A **dual-source enrichment** skill combining `/insights` tips (real usage patter
 
 ### 3.8 CLAUDE-MD-SOTA.md Lifecycle
 
-`docs/CLAUDE-MD-SOTA.md` **starts as a blank file**. It contains no hardcoded rules or seed content. All content is populated via `/refresh-guidelines` from two sources:
+[CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) **starts as a blank file**. It contains no hardcoded rules or seed content. All content is populated via `/refresh-guidelines` from two sources:
 
 1. **`/insights` tips** — real behavioral patterns and workflow rules discovered from actual Claude Code coding sessions, accumulated by the user in `docs/insights-raw.md`
 2. **Web-sourced best practices** — official Anthropic docs, established community guides, and templates, fetched by `fetch-guidelines.py` into `docs/guidelines-raw.json`
