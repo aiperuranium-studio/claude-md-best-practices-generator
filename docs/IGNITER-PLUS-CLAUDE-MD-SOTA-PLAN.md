@@ -20,7 +20,7 @@ Run `/ignite` after planning your new project's architecture, and get a fully ta
 
 ### CLAUDE.md Quality Gap
 
-[CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) starts as a **blank file**. Its intended role is to be the **authoritative reference** governing how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time. It is populated from two sources: (1) tips from Claude Code's `/insights` command — real patterns discovered from actual coding sessions, and (2) best practices from official Anthropic docs, established community guides, and templates. A repeatable `/refresh-guidelines` skill collects, deduplicates, and merges content from both sources into this document.
+[CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) starts as a **blank file**. Its intended role is to be the **authoritative reference** governing how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time. It is populated from two sources: (1) `/insights` data — real behavioral patterns automatically parsed from the user's Claude Code usage report (`~/.claude/usage-data/report.html`) by `parse-insights.py`, supplemented by manual tips in `docs/insights-raw.md`, and (2) best practices from official Anthropic docs, established community guides, and templates. A repeatable `/refresh-guidelines` skill collects, deduplicates, and merges content from both sources into this document.
 
 ### Design Principles
 
@@ -72,7 +72,8 @@ claude-code-project-igniter/
 │   │       │   ├── curated-sources.md        # Tiered URL registry
 │   │       │   └── enrichment-procedure.md   # Merge/dedup/conflict algorithm
 │   │       └── scripts/
-│   │           └── fetch-guidelines.py       # Stdlib-only web fetcher
+│   │           ├── fetch-guidelines.py       # Stdlib-only web fetcher
+│   │           └── parse-insights.py         # Parses /insights HTML report
 │   └── agents/
 │       └── catalog-inspector.md      # Optional: deep entity inspection
 │
@@ -81,6 +82,7 @@ claude-code-project-igniter/
 │   ├── CLAUDE-MD-SOTA.md             # Authoritative CLAUDE.md generation reference
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md  # Sprint-based development plan
 │   ├── insights-raw.md               # User-accumulated /insights tips (gitignored)
+│   ├── insights-parsed.json          # Output of parse-insights.py (gitignored)
 │   ├── guidelines-raw.json           # Output of fetch-guidelines.py (gitignored)
 │   └── old/                          # Archived pre-merge plans
 │       ├── IGNITER-PLAN.md           # Original architecture plan
@@ -128,10 +130,11 @@ Clone igniter repo to a permanent location (e.g. ~/tools/)
 **1b. Guidelines enrichment** (on-demand, recommended before first ignition)
 
 ```
-→ (optional) run /insights in various projects, paste tips into docs/insights-raw.md
+→ (recommended) run /insights beforehand so the report is fresh
 → run /refresh-guidelines
 → fetch-guidelines.py collects content from curated web sources
-→ Claude reads both sources (insights-raw.md + guidelines-raw.json)
+→ parse-insights.py extracts structured data from ~/.claude/usage-data/report.html
+→ Claude reads all sources (insights-parsed.json + guidelines-raw.json + insights-raw.md)
 → classifies, deduplicates, and proposes enrichments
 → Human approves → CLAUDE-MD-SOTA.md populated/updated
 ```
@@ -230,14 +233,27 @@ A **dual-source enrichment** skill combining `/insights` tips (real usage patter
 
 **Execution procedure:**
 1. Run `fetch-guidelines.py` to collect raw content from curated web sources.
-2. Read `docs/guidelines-raw.json` output (web sources).
-3. Read `docs/insights-raw.md` if present (/insights tips).
-4. Read current `docs/CLAUDE-MD-SOTA.md` (may be blank on first run).
-5. Per theme section: classify incoming blocks from both sources (duplicate/novel/reinforcing/conflicting).
-6. Produce enrichment report showing all proposed changes with source attribution.
-7. Present report for human approval.
-8. On approval: populate/update CLAUDE-MD-SOTA.md with approved changes.
-9. Update Source Attribution section.
+2. Run `parse-insights.py` to extract structured data from the user's `/insights` report at `~/.claude/usage-data/report.html` (+ `facets/*.json` and `session-meta/*.json`). Output: `docs/insights-parsed.json`. If the report is missing, skip with a warning. If stale (>7 days), warn user and suggest re-running `/insights`.
+3. Read `docs/guidelines-raw.json` output (web sources).
+4. Read `docs/insights-parsed.json` (parsed /insights report). Also read [`docs/insights-raw.md`](insights-raw.md) if it has manual tips beyond the header (supplement, not replace).
+5. Read current [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) (may be blank on first run).
+6. Per theme section: classify incoming blocks from all sources (duplicate/novel/reinforcing/conflicting).
+7. Produce enrichment report showing all proposed changes with source attribution.
+8. Present report for human approval.
+9. On approval: populate/update CLAUDE-MD-SOTA.md with approved changes.
+10. Update Source Attribution section.
+
+**`/insights` report sections extracted** by `parse-insights.py`:
+
+| Report Section | Source ID | Themes | Target Part |
+|----------------|-----------|--------|-------------|
+| CLAUDE.md Recommendations | `insights-claudemd-rec` | content, behavioral | Parts 2, 4 |
+| Friction Points | `insights-friction` | anti-patterns, behavioral | Parts 2, 4 |
+| Working Workflows (wins) | `insights-wins` | behavioral | Part 4 |
+| Feature Recommendations | `insights-features` | integration | Part 3 |
+| Usage Patterns | `insights-patterns` | behavioral, maintenance | Parts 4, 5 |
+| Future Workflows (horizon) | `insights-horizon` | maintenance | Part 5 |
+| Usage Narrative | `insights-usage` | behavioral | Part 4 |
 
 **Curated web sources** are organized into three tiers:
 
@@ -247,7 +263,7 @@ A **dual-source enrichment** skill combining `/insights` tips (real usage patter
 | **Tier 2** | Established community guides (HumanLayer, Builder.io, Dometrain, Tembo, Arize) | Medium |
 | **Tier 3** | Community templates & examples (GitHub repos, blog posts) | Lowest |
 
-**Source precedence** (highest → lowest): T1 official docs > `/insights` tips > T2 community guides > T3 templates. `/insights` tips rank high because they reflect real usage patterns, but official documentation takes ultimate precedence.
+**Source precedence** (highest → lowest): T1 official docs > `/insights` data (source type `"insights"`) > T2 community guides > T3 templates. `/insights` data is not assigned a numeric tier — it is a distinct empirical source type, automatically parsed from the user's usage report. It ranks high because it reflects real usage patterns, but official documentation takes ultimate precedence. Within `/insights` data, internal priority for 300-line trimming: CLAUDE.md Recommendations > Friction > Wins > Features > Patterns > Horizon.
 
 **Enrichment algorithm** (3 phases — detailed procedure in `enrichment-procedure.md`):
 1. **Classification**: For each incoming block, classify as `novel` (insert), `duplicate` (skip), `reinforcing` (merge), or `conflicting` (flag for human). On first run with blank document, all content is `novel`.
@@ -258,7 +274,7 @@ A **dual-source enrichment** skill combining `/insights` tips (real usage patter
 
 [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) **starts as a blank file**. It contains no hardcoded rules or seed content. All content is populated via `/refresh-guidelines` from two sources:
 
-1. **`/insights` tips** — real behavioral patterns and workflow rules discovered from actual Claude Code coding sessions, accumulated by the user in `docs/insights-raw.md`
+1. **`/insights` data** — real behavioral patterns and workflow rules discovered from actual Claude Code coding sessions, automatically parsed from `~/.claude/usage-data/report.html` by `parse-insights.py` into `docs/insights-parsed.json`. Manual tips in [`docs/insights-raw.md`](insights-raw.md) serve as a supplementary source.
 2. **Web-sourced best practices** — official Anthropic docs, established community guides, and templates, fetched by `fetch-guidelines.py` into `docs/guidelines-raw.json`
 
 **Target structure** after running `/refresh-guidelines` (under 300 lines):
@@ -335,13 +351,17 @@ Sprint 1.5 rationale: Having a populated CLAUDE-MD-SOTA.md early means all subse
 5. `/refresh-guidelines` skill is invocable and Claude discovers it.
 6. `fetch-guidelines.py` fetches content from at least Tier 1 sources without errors.
 7. `docs/guidelines-raw.json` produced with valid JSON and themed content blocks.
-8. CLAUDE-MD-SOTA.md starts blank and contains no hardcoded content.
-9. After `/refresh-guidelines`, CLAUDE-MD-SOTA.md is populated into the 6-part structure with substantive content.
-10. `/insights` tips correctly integrated when present in `docs/insights-raw.md`.
-11. Source Attribution lists all sources (web URLs + /insights references) with dates.
-12. Enrichment report correctly classifies incoming content (novel on first run; duplicate/reinforcing on subsequent runs).
-13. No conflicting information merged without human review.
-14. Document stays under 300 lines.
+8. `parse-insights.py` produces valid `docs/insights-parsed.json` when `~/.claude/usage-data/report.html` is present.
+9. `/insights` report sections (CLAUDE.md recs, friction, wins, features, patterns, horizon, usage) are correctly extracted into themed content blocks.
+10. Staleness warning produced when `/insights` report is older than 7 days.
+11. `parse-insights.py` handles missing report gracefully (exits 0, produces minimal JSON).
+12. CLAUDE-MD-SOTA.md starts blank and contains no hardcoded content.
+13. After `/refresh-guidelines`, CLAUDE-MD-SOTA.md is populated into the 6-part structure with substantive content.
+14. `/insights` data correctly integrated from `docs/insights-parsed.json`; manual tips in `docs/insights-raw.md` also integrated when present.
+15. Source Attribution lists all sources (web URLs + /insights report references) with dates.
+16. Enrichment report correctly classifies incoming content (novel on first run; duplicate/reinforcing on subsequent runs).
+17. No conflicting information merged without human review.
+18. Document stays under 300 lines.
 
 ---
 
@@ -360,3 +380,6 @@ Sprint 1.5 rationale: Having a populated CLAUDE-MD-SOTA.md early means all subse
 | URL changes/redirects | `fetch-guidelines.py` follows redirects; curated-sources updated when URLs change |
 | Network failures during fetch | Fault-tolerant: skip failed URLs, produce partial results, report errors |
 | /insights tips unavailable or low quality | Document can be fully populated from web sources alone; /insights enriches but isn't required. `/refresh-guidelines` works with whichever sources are available |
+| `/insights` report HTML structure changes across Claude Code versions | `parse-insights.py` uses class-based extraction (`.big-win`, `.friction-category`, etc.) which is more stable than positional parsing. Graceful degradation: missing sections produce empty entries, not errors |
+| No `/insights` report exists (first-time users) | `parse-insights.py` outputs minimal JSON with empty entries and `is_stale: true`. Pipeline proceeds with web sources only |
+| `/insights` report covers all projects, not just current one | For CLAUDE-MD-SOTA.md (a universal reference), cross-project insights are desirable. `parse-insights.py` includes session-meta data for optional project filtering if needed in the future |

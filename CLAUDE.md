@@ -40,6 +40,8 @@ claude-code-project-igniter/
 │   ├── CLAUDE-MD-SOTA.md             # Authoritative CLAUDE.md generation reference
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md  # Sprint-based development plan
 │   ├── guidelines-raw.json           # Output of fetch-guidelines.py (gitignored)
+│   ├── insights-raw.md               # Accumulated /insights tips (gitignored)
+│   ├── insights-parsed.json          # Output of parse-insights.py (gitignored)
 │   └── old/                          # Archived pre-merge plans
 │       ├── IGNITER-PLAN.md
 │       └── CLAUDE-MD-SOTA-PLAN.md
@@ -66,7 +68,8 @@ claude-code-project-igniter/
 │   │       │   ├── curated-sources.md
 │   │       │   └── enrichment-procedure.md
 │   │       └── scripts/
-│   │           └── fetch-guidelines.py
+│   │           ├── fetch-guidelines.py
+│   │           └── parse-insights.py
 │   └── agents/
 │       └── catalog-inspector.md
 ├── catalog/

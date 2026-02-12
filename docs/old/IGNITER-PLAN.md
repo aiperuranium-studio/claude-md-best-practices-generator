@@ -1,6 +1,6 @@
 # Claude Code Project Igniter — Implementation Plan
 
-> **Archived.** This document has been merged into the [unified plan](../IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md) together with [CLAUDE-MD-SOTA-PLAN.md](CLAUDE-MD-SOTA-PLAN.md). Kept for historical reference only.
+> **Archived.** This document has been merged into the [unified plan](../IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md) together with [CLAUDE-MD-SOTA-PLAN.md](CLAUDE-MD-SOTA-PLAN.md). See the [development agenda](../IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md) for the current sprint plan. Kept for historical reference only.
 
 ## Context
 

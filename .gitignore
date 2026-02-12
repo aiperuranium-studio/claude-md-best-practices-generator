@@ -4,6 +4,11 @@
 catalog/sources/*/
 !catalog/sources/local/
 
+# Guidelines enrichment artifacts (re-fetchable)
+docs/guidelines-raw.json
+docs/insights-raw.md
+docs/insights-parsed.json
+
 # Python
 __pycache__/
 *.pyc

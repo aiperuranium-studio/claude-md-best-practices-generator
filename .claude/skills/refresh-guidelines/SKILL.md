@@ -1,0 +1,164 @@
+# /refresh-guidelines
+
+Populate or update `docs/CLAUDE-MD-SOTA.md` from dual sources: `/insights` tips and web-sourced best practices. This document serves as the authoritative reference for how `/ignite` generates target project CLAUDE.md files.
+
+## When to Use
+
+- **First run**: CLAUDE-MD-SOTA.md is blank — populates the full 6-part structure from scratch.
+- **Subsequent runs**: Merges new content from updated sources, deduplicates, and flags conflicts.
+- **After running `/insights`**: When the user has fresh `/insights` data to integrate.
+- **After adding manual tips**: When `docs/insights-raw.md` has new supplementary entries.
+
+## Prerequisites
+
+- Python 3.10+ available on PATH.
+- Network access for fetching web sources (partial results on failure).
+- `~/.claude/usage-data/` accessible (for `/insights` report parsing — optional, script degrades gracefully if missing).
+
+## Procedure
+
+Follow these steps in order. Do NOT skip steps or auto-approve — human review is required.
+
+### Step 1: Fetch web content
+
+Run the fetch script to collect raw content from curated web sources:
+
+```bash
+python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py
+```
+
+This reads `.claude/skills/refresh-guidelines/references/curated-sources.md` for URLs, fetches each source, and writes structured output to `docs/guidelines-raw.json`.
+
+Report: number of sources fetched, any failures/warnings.
+
+### Step 2: Parse /insights report
+
+Run the insights parser to extract structured data from the user's `/insights` report:
+
+```bash
+python3 .claude/skills/refresh-guidelines/scripts/parse-insights.py
+```
+
+This reads `~/.claude/usage-data/report.html` (and supporting `facets/*.json` + `session-meta/*.json`), extracts 7 actionable sections (CLAUDE.md recommendations, friction points, working workflows, feature recommendations, usage patterns, future workflows, usage narrative), and writes structured output to `docs/insights-parsed.json`.
+
+If the report is missing, inform the user and proceed with web sources only.
+
+If the report is stale (>7 days old), warn the user: "Your /insights report is {N} days old. For the most accurate behavioral patterns, consider running `/insights` first, then re-running `/refresh-guidelines`. Proceed with current report? [y/N]"
+
+Report: report age, number of sections parsed, any warnings.
+
+### Step 3: Read web source data
+
+Read `docs/guidelines-raw.json`. This contains themed content blocks extracted from each web source, organized by tier and theme.
+
+### Step 4: Read /insights data
+
+Read `docs/insights-parsed.json`. This contains themed content blocks extracted from the user's `/insights` report, organized by section type (CLAUDE.md recommendations, friction points, working workflows, feature recommendations, usage patterns, future workflows, usage narrative).
+
+Also read `docs/insights-raw.md` if it exists and has content beyond the instructions header — manual tips supplement the parsed report.
+
+If neither source has data, proceed without /insights — the document can be fully populated from web sources alone.
+
+### Step 5: Read current CLAUDE-MD-SOTA.md
+
+Read `docs/CLAUDE-MD-SOTA.md`. On first run this will be blank. On subsequent runs it contains the existing 6-part structure.
+
+### Step 6: Classify incoming content
+
+For each incoming content block from **all** sources (web + /insights parsed + /insights manual), classify against the current document using the procedure in `references/enrichment-procedure.md`:
+
+- **Novel**: New information not present in the current document. Action: propose insertion.
+- **Duplicate**: Already present (same meaning, possibly different wording). Action: skip.
+- **Reinforcing**: Supports existing content with additional evidence or examples. Action: propose merge with citation.
+- **Conflicting**: Contradicts existing content. Action: flag for human decision.
+
+On first run with a blank document, all content is classified as **novel**.
+
+Apply **source precedence** (highest to lowest):
+1. Tier 1 official Anthropic docs
+2. `/insights` data (source type `"insights"` — parsed report + manual tips)
+3. Tier 2 community guides
+4. Tier 3 community templates
+
+See `references/enrichment-procedure.md` for the full classification and conflict resolution algorithm.
+
+### Step 7: Produce enrichment report
+
+Present a structured report to the user showing ALL proposed changes:
+
+```
+## Enrichment Report
+
+### Summary
+- Sources processed: {count web} web + {count insights} /insights blocks
+- Novel: {count} | Duplicate: {count} | Reinforcing: {count} | Conflicting: {count}
+
+### Proposed Changes by Section
+
+#### Purpose & Scope
+| # | Change | Source | Classification | Content Summary |
+|---|--------|--------|----------------|-----------------|
+| 1 | INSERT | code.claude.com/docs/en/memory (T1) | novel | ... |
+
+#### Part 1: Structural Standards
+...
+
+#### Part 2: Content Guidelines
+...
+
+#### Part 3: Integration Guidelines
+...
+
+#### Part 4: Behavioral Patterns
+...
+
+#### Part 5: Maintenance Guidelines
+...
+
+### Conflicts Requiring Decision
+| # | Existing Content | Incoming Content | Source | Recommendation |
+|---|------------------|------------------|--------|----------------|
+```
+
+### Step 8: Human approval
+
+Present the enrichment report and WAIT for explicit human approval. The user may:
+- Approve all proposed changes.
+- Approve selectively (accept some, reject others).
+- Reject all changes.
+- Request modifications before approval.
+
+**Never auto-approve. Never merge conflicting content without explicit human decision.**
+
+### Step 9: Apply approved changes
+
+On approval, write the populated/updated `docs/CLAUDE-MD-SOTA.md` with the approved changes. The target structure (under 300 lines):
+
+- **Purpose & Scope**: Role of this document, dual-source enrichment model, how /ignite consumes it.
+- **Part 1: Structural Standards**: Size constraints, recommended sections, file hierarchy strategy, formatting rules.
+- **Part 2: Content Guidelines**: What to include, what to exclude, anti-patterns.
+- **Part 3: Integration Guidelines**: Hooks vs CLAUDE.md, Skills vs CLAUDE.md, Rules directory.
+- **Part 4: Behavioral Patterns**: Workflow rules, coding patterns, interaction preferences.
+- **Part 5: Maintenance Guidelines**: Review cadence, self-improving pattern, versioning.
+- **Source Attribution**: Web URLs, /insights session references, last-verified dates.
+
+### Step 10: Update Source Attribution
+
+Add or update the Source Attribution section at the bottom of CLAUDE-MD-SOTA.md with:
+- All web source URLs that contributed content (with tier label).
+- /insights references that contributed content.
+- Date of this enrichment run.
+
+## References
+
+- `references/curated-sources.md` — Tiered web source registry with URLs and theme tags.
+- `references/enrichment-procedure.md` — Full classification and merge algorithm.
+- `scripts/parse-insights.py` — Extracts structured data from `/insights` report into `docs/insights-parsed.json`.
+
+## Constraints
+
+- CLAUDE-MD-SOTA.md must stay **under 300 lines**.
+- All content must be **source-attributed** — nothing is invented or hardcoded.
+- Conflicts are **never auto-resolved** — always presented for human decision.
+- The document must be **idempotent** — running /refresh-guidelines again deduplicates and merges, never duplicates.
+- `docs/insights-parsed.json` is **gitignored** — regenerated on each run from the user's local `/insights` report.
