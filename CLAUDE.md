@@ -4,7 +4,7 @@ An AI-driven tool that maintains a catalog of Claude Code entities (agents, skil
 
 ## Authoritative Documents
 
-- **Architecture & design**: [docs/IGNITER-PLAN.md](docs/IGNITER-PLAN.md)
+- **Architecture & design**: [docs/IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md](docs/IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md)
 - **CLAUDE.md generation rules**: [docs/CLAUDE-MD-SOTA.md](docs/CLAUDE-MD-SOTA.md)
 - **Development agenda**: [docs/IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md](docs/IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md)
 
@@ -36,9 +36,13 @@ claude-code-project-igniter/
 ├── CLAUDE.md                              # This file
 ├── .gitignore
 ├── docs/
-│   ├── IGNITER-PLAN.md                    # Architecture & design
-│   ├── CLAUDE-MD-SOTA.md             # Behavioral rules for generated CLAUDE.md
-│   └── IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md              # Sprint-based development plan
+│   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md # Architecture & design (unified plan)
+│   ├── CLAUDE-MD-SOTA.md             # Authoritative CLAUDE.md generation reference
+│   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md  # Sprint-based development plan
+│   ├── guidelines-raw.json           # Output of fetch-guidelines.py (gitignored)
+│   └── old/                          # Archived pre-merge plans
+│       ├── IGNITER-PLAN.md
+│       └── CLAUDE-MD-SOTA-PLAN.md
 ├── .claude/
 │   ├── settings.json
 │   ├── skills/
@@ -54,8 +58,15 @@ claude-code-project-igniter/
 │   │   │   ├── SKILL.md
 │   │   │   └── scripts/
 │   │   │       └── sync-catalog.sh
-│   │   └── add-source/                    # /add-source skill
-│   │       └── SKILL.md
+│   │   ├── add-source/                    # /add-source skill
+│   │   │   └── SKILL.md
+│   │   └── refresh-guidelines/            # /refresh-guidelines skill
+│   │       ├── SKILL.md
+│   │       ├── references/
+│   │       │   ├── curated-sources.md
+│   │       │   └── enrichment-procedure.md
+│   │       └── scripts/
+│   │           └── fetch-guidelines.py
 │   └── agents/
 │       └── catalog-inspector.md
 ├── catalog/
