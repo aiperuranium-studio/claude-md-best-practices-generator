@@ -1,1 +1,10 @@
 .idea
+
+# Downloaded remote sources (large, re-syncable)
+catalog/sources/*/
+!catalog/sources/local/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
