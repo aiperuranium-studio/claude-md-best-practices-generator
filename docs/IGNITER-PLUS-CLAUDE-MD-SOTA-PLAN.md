@@ -38,6 +38,13 @@ Run `/ignite` after planning your new project's architecture, and get a fully ta
 
 7. **Dual-source guidelines enrichment**: `/refresh-guidelines` combines `/insights` tips (real usage patterns) and a tiered web source registry (official docs + community guides) with automated fetching, Claude-driven semantic dedup/merge, and human approval.
 
+### Documentation Code of Conduct
+
+The following rules apply whenever any file under `docs/` or `docs/old/` is created or modified during a session:
+
+1. **Cross-referencing**: Check all files in `docs/` and `docs/old/` and add hyperlink references to related files when missing. Every doc file should link to the other docs it relates to (e.g., the plan links to the dev agenda and sub-products; sub-products cross-link each other).
+2. **Sub-product isolation**: Files classified as *sub-products* (`CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`) must **only** contain hyperlinks to other sub-products — never to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Internal dev docs may freely reference anything.
+
 ---
 
 ## 2. Architecture

@@ -28,6 +28,7 @@ An AI-driven tool that maintains a catalog of Claude Code entities (agents, skil
 - **Shell scripts**: `#!/usr/bin/env bash`, POSIX-compatible where possible.
 - **Documentation & entity definitions**: Markdown.
 - **Configuration**: JSON (`sources.json`, `manifest.json`, `settings.json`).
+- **Doc separation**: Files in `docs/` fall into two categories. *Internal dev docs* (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `old/`) are development-only and never shipped. *Sub-products* (`CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`) are application outputs; they must never reference internal dev docs, only other sub-products.
 
 ## Project Structure
 
@@ -39,6 +40,7 @@ claude-code-project-igniter/
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md # Architecture & design (unified plan)
 │   ├── CLAUDE-MD-SOTA.md             # Authoritative CLAUDE.md generation reference
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md  # Sprint-based development plan
+│   ├── SOURCE-SCHEMA.md              # Source registry field reference
 │   ├── guidelines-raw.json           # Output of fetch-guidelines.py (gitignored)
 │   ├── insights-raw.md               # Accumulated /insights tips (gitignored)
 │   ├── insights-parsed.json          # Output of parse-insights.py (gitignored)

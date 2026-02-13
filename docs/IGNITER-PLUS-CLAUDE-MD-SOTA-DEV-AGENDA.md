@@ -6,6 +6,13 @@ This document defines the sprint-by-sprint development plan for the Claude Code 
 
 **Estimated total effort**: 13–20 Claude Code sessions across 8 sprints.
 
+### Standing Conventions (all sprints)
+
+These rules apply to every sprint, whenever docs are created or modified:
+
+1. **Cross-referencing**: When any file in `docs/` or `docs/old/` is generated or modified, check all other docs files and add hyperlink references where missing. Every doc should link to related docs.
+2. **Sub-product isolation**: Sub-products (`CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`) may **only** hyperlink to other sub-products — never to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Internal dev docs have no such restriction.
+
 ---
 
 ## Sprint Overview

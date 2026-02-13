@@ -1,6 +1,6 @@
 # Source Schema Reference
 
-> Part of the [unified plan](IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md) (§3.1 Source Registry). Created in Sprint 1, extended in Sprint 2 — see the [development agenda](IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md).
+> Defines the schema for `catalog/sources.json`. See also [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) for the CLAUDE.md generation reference.
 
 This document describes the schema for `catalog/sources.json`, the source registry used by the Claude Code Project Igniter.
 

@@ -4,7 +4,7 @@
 
 ## Context
 
-`docs/CLAUDE-MD-SOTA.md` currently holds only 4 behavioral rules and a few domain-specific conditional rules. But its intended role in the `/ignite` pipeline is much larger: it should be the **authoritative reference** that governs how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time.
+[`docs/CLAUDE-MD-SOTA.md`](../CLAUDE-MD-SOTA.md) currently holds only 4 behavioral rules and a few domain-specific conditional rules. But its intended role in the `/ignite` pipeline is much larger: it should be the **authoritative reference** that governs how target project CLAUDE.md files are structured, what content they include/exclude, how they integrate with hooks/skills/rules, and how they're maintained over time.
 
 Web research reveals a rich body of CLAUDE.md best practices (from official Anthropic docs, established community guides, and templates) that are not yet captured in this document. The user wants a repeatable procedure to harvest these guidelines, deduplicate them, detect conflicts, and merge them into CLAUDE-MD-SOTA.md — so that `/ignite` can generate higher-quality, standards-compliant CLAUDE.md files.
 
@@ -112,7 +112,7 @@ Procedure:
 7. On approval: update CLAUDE-MD-SOTA.md with approved changes.
 8. Update Source Attribution section.
 
-### 6. Restructured `docs/CLAUDE-MD-SOTA.md`
+### 6. Restructured [`docs/CLAUDE-MD-SOTA.md`](../CLAUDE-MD-SOTA.md)
 
 Transform from a 4-rule behavioral doc into a 7-part authoritative reference:
 

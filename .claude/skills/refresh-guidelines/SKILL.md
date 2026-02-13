@@ -162,3 +162,4 @@ Add or update the Source Attribution section at the bottom of CLAUDE-MD-SOTA.md 
 - Conflicts are **never auto-resolved** — always presented for human decision.
 - The document must be **idempotent** — running /refresh-guidelines again deduplicates and merges, never duplicates.
 - `docs/insights-parsed.json` is **gitignored** — regenerated on each run from the user's local `/insights` report.
+- CLAUDE-MD-SOTA.md is an **application sub-product** — it must **never** contain hyperlinks or references to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Sub-products may only reference other sub-products.
