@@ -91,6 +91,7 @@ Generated CLAUDE.md files should include these sections in order:
 - Import ordering and style preferences.
 - Error handling patterns.
 - Custom CLI commands, monorepo navigation, non-standard file locations.
+- Team workflows — step-by-step procedures for common tasks (e.g., creating API endpoints: plan → confirm → implement → test → verify). Keeps agent output consistent with team standards.
 - **Prefer pointers to copies**: Don't embed code snippets in CLAUDE.md or context files — they go stale. Use `file:line` references to point Claude at the authoritative source code.
 
 *Sources: T1-002, T1-003, T2-003, T2-004*
@@ -108,7 +109,7 @@ Generated CLAUDE.md files should include these sections in order:
 
 ### 2.3 Anti-Patterns
 
-- **Kitchen sink**: Dumping everything into CLAUDE.md. Research shows LLMs reliably follow ~150-200 instructions; Claude Code's system prompt already uses ~50, leaving limited headroom. More instructions = uniform quality decay across all of them. Extract stable rules to `.claude/rules/` or hooks.
+- **Kitchen sink**: Dumping everything into CLAUDE.md. Research shows LLMs reliably follow ~150-200 instructions; Claude Code's system prompt already uses ~50, leaving limited headroom. More instructions = uniform quality decay across all of them (smaller models decay exponentially, frontier thinking models linearly). Extract stable rules to `.claude/rules/` or hooks. Note: Claude Code wraps CLAUDE.md in a `<system-reminder>` stating "this context may or may not be relevant" — bloated files with non-universal content get ignored entirely.
 - **Vague instructions**: "Write good code" is useless. "Use pytest fixtures from `tests/conftest.py`, run `make test` before committing" is actionable.
 - **Over-specification**: Documenting what Claude already knows adds noise without value.
 - **No curation**: Auto-generating CLAUDE.md without human review leads to bloated, generic files.
@@ -146,7 +147,7 @@ Generated CLAUDE.md files should include these sections in order:
 
 ### 3.4 MCP Server Integration
 
-Document configured MCP servers and instruct Claude when/how to use them. Example: "Use the Shadcn MCP to browse component registries before creating UI elements." MCP tools are configured via JSON; CLAUDE.md tells Claude the intent and workflow.
+Document configured MCP servers and instruct Claude when/how to use them. MCP tools are configured via JSON; CLAUDE.md tells Claude the intent and workflow. Example: "Use the Shadcn MCP to browse component registries before creating UI elements." Remind agents to check MCP tools before falling back to manual approaches.
 
 *Sources: T2-003, T1-002*
 
@@ -166,7 +167,13 @@ Reference shared instruction files to keep CLAUDE.md lean and modular:
 
 *Sources: T1-001, T1-002, T2-004*
 
-### 3.7 Plugins
+### 3.7 Custom Subagents
+
+Define specialized assistants in `.claude/agents/` with their own tool set, model, and system prompt. Subagents run in isolated context for focused tasks (security review, code analysis, documentation). CLAUDE.md should document available subagents and when to invoke them. Example: "Use a subagent to review this code for security issues."
+
+*Source: T1-002*
+
+### 3.8 Plugins
 
 Use `/plugin` to browse and install community-provided plugins that bundle skills, hooks, subagents, and MCP servers. Eliminates manual configuration for common setups. CLAUDE.md can document which plugins are active and any project-specific usage notes.
 
@@ -268,4 +275,4 @@ All content sourced from the following web references. Nothing in this document 
 | ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-13 |
 | abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Part 1 | 2026-02-13 |
 
-**Seed version**: 2026-02-13 | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
+**Seed version**: 2026-02-13 (refreshed) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
