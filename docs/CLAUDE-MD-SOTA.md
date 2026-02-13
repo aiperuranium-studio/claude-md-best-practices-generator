@@ -1,15 +1,20 @@
 # CLAUDE.md Lifecycle Guidelines
 
-Authoritative reference governing how `/ignite` generates target project CLAUDE.md files. All content is sourced from official Anthropic documentation, established community guides, and `/insights` tips — nothing is hardcoded or invented.
+Authoritative reference governing how `/ignite` generates target project CLAUDE.md files. This **seed version** contains web-sourced best practices only. Run `/refresh-guidelines` to produce `CLAUDE-MD-SOTA.enriched.md` which merges this seed with your personal `/insights` data.
 
-> Populated and maintained via the `/refresh-guidelines` skill.
+> Seed maintained in git. Enriched version (gitignored) produced by `/refresh-guidelines`.
 
 ## Purpose & Scope
 
-This document defines the standards for CLAUDE.md files that `/ignite` produces for target projects. It is populated and maintained via `/refresh-guidelines`, which merges content from two sources:
+This **seed file** defines the standards for CLAUDE.md files that `/ignite` produces for target projects. It contains web-sourced best practices only:
 
 1. **Web-sourced best practices** — official Anthropic docs (Tier 1), established community guides (Tier 2), and community templates (Tier 3).
+
+When `/refresh-guidelines` runs, it produces `docs/CLAUDE-MD-SOTA.enriched.md` (gitignored) which merges this seed with:
+
 2. **`/insights` tips** — real behavioral patterns discovered from actual Claude Code sessions, accumulated by the user.
+
+`/ignite` reads the enriched version if present, falling back to this seed.
 
 **How `/ignite` consumes this document:**
 
@@ -108,9 +113,8 @@ Generated CLAUDE.md files should include these sections in order:
 - **Over-specification**: Documenting what Claude already knows adds noise without value.
 - **No curation**: Auto-generating CLAUDE.md without human review leads to bloated, generic files.
 - **Non-universal instructions**: Claude Code wraps CLAUDE.md in a system reminder stating "this context may or may not be relevant." If content isn't universally applicable to the current task, Claude may ignore it entirely. Keep all instructions focused and broadly relevant.
-- **Incomplete task cycles**: Starting sessions then exiting early wastes context-building time. Break work into self-contained chunks so each unit completes before session limits. Advise well-scoped prompts over sprawling multi-file requests.
 
-*Sources: T2-001, T2-003, /insights (friction)*
+*Sources: T2-001, T2-003*
 
 ---
 
@@ -150,7 +154,7 @@ Document configured MCP servers and instruct Claude when/how to use them. Exampl
 
 Claude Code can run non-interactively (`claude -p "task"`) for batch processing. Use `--allowedTools` to scope permissions per invocation. Relevant for projects with repetitive multi-file tasks (migrations, bulk formatting, parallel validation).
 
-*Sources: T1-002, /insights (features)*
+*Source: T1-002*
 
 ### 3.6 @-Import Strategy
 
@@ -184,7 +188,7 @@ Give Claude specific verification commands rather than vague "make sure it works
 
 Instruct Claude to read existing code before modifying it. Prevents blind refactors that break established conventions. Document environment constraints upfront (existing entrypoints, file structures, mode limitations) to avoid false-start iterations. Example instruction: "Always read the existing implementation before proposing changes."
 
-*Sources: T1-002, /insights (friction)*
+*Source: T1-002*
 
 ### 4.3 Code Style Preferences
 
@@ -209,18 +213,6 @@ Document specific style rules Claude should follow — import ordering, destruct
 Use multiple Claude Code sessions for quality workflows — a Writer session implements, a separate Reviewer session reviews with fresh context (avoids bias toward own code). Also useful for test-driven patterns: one session writes tests, another writes code to pass them.
 
 *Source: T1-002*
-
-### 4.7 Multi-Pass Verification
-
-For complex validation tasks, perform TWO passes: first identify all issues, then re-read to catch anything missed. Single-pass reviews consistently miss items. Crucially, separate the read-only analysis phase from the editing phase — don't interleave analysis and corrections, as this wastes tokens and introduces cascading errors. Include this as a behavioral rule in generated CLAUDE.md for projects with validation-heavy workflows.
-
-*Sources: /insights (CLAUDE.md recs, patterns)*
-
-### 4.8 Structured Task Tracking
-
-Use TodoWrite/checklists at the start of multi-file sessions to ensure nothing gets dropped. For session resilience, also write persistent progress files (not just in-session TodoWrite) so interrupted sessions can resume cleanly. Most successful sessions involve systematic tracking; incomplete sessions often lack it. Generated CLAUDE.md should recommend structured tracking for complex tasks.
-
-*Source: /insights (patterns)*
 
 ---
 
@@ -252,13 +244,7 @@ Update CLAUDE.md when:
 
 *Source: T2-001*
 
-### 5.4 Encode Repeated Workflows
-
-When a workflow repeats across 3+ sessions, encode it as a Custom Skill (`/command`) rather than relying on CLAUDE.md instructions. Skills provide consistent execution of multi-step procedures and avoid re-explaining the same workflow each session.
-
-*Source: /insights (patterns)*
-
-### 5.5 Bootstrapping
+### 5.4 Bootstrapping
 
 Use `claude /init` to generate an initial CLAUDE.md from codebase analysis. This provides a baseline, but CLAUDE.md is the highest-leverage file in the harness — always curate and verify every line rather than trusting auto-generated content. `/ignite` replaces this with a richer, catalog-driven generation with human review.
 
@@ -268,7 +254,7 @@ Use `claude /init` to generate an initial CLAUDE.md from codebase analysis. This
 
 ## Source Attribution
 
-All content sourced from the following references. Nothing in this document is invented or hardcoded.
+All content sourced from the following web references. Nothing in this document is invented or hardcoded. `/insights` content appears only in the enriched version (`CLAUDE-MD-SOTA.enriched.md`).
 
 | Source | Tier | URL | Contributed to | Date |
 |--------|------|-----|----------------|------|
@@ -281,6 +267,5 @@ All content sourced from the following references. Nothing in this document is i
 | Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-13 |
 | ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-13 |
 | abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Part 1 | 2026-02-13 |
-| /insights (parsed) | insights | ~/.claude/usage-data/report.html | Parts 2, 4, 5 | 2026-02-13 |
 
-**Enrichment run**: 2026-02-13 | **Method**: `/refresh-guidelines` subsequent run (4 novel, 5 reinforcing, 0 conflicts) | **/insights**: 29 sessions, 25 blocks (report age: 1 day)
+**Seed version**: 2026-02-13 | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)

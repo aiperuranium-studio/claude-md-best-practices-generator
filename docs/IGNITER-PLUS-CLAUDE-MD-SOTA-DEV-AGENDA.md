@@ -2,7 +2,7 @@
 
 This document defines the sprint-by-sprint development plan for the Claude Code Project Igniter. Each sprint is self-contained, produces testable output, and builds logically on previous sprints.
 
-**Reference documents**: [IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md](IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md) (unified plan) · [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) (authoritative CLAUDE.md generation reference — starts blank, populated via `/refresh-guidelines`)
+**Reference documents**: [IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md](IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md) (unified plan) · [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) (seed: web-sourced generation reference, tracked) · `CLAUDE-MD-SOTA.enriched.md` (enriched: seed + /insights, gitignored)
 
 **Estimated total effort**: 13–20 Claude Code sessions across 8 sprints.
 
@@ -11,7 +11,7 @@ This document defines the sprint-by-sprint development plan for the Claude Code 
 These rules apply to every sprint, whenever docs are created or modified:
 
 1. **Cross-referencing**: When any file in `docs/` or `docs/old/` is generated or modified, check all other docs files and add hyperlink references where missing. Every doc should link to related docs.
-2. **Sub-product isolation**: Sub-products (`CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`) may **only** hyperlink to other sub-products — never to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Internal dev docs have no such restriction.
+2. **Sub-product isolation**: Sub-products (`CLAUDE-MD-SOTA.md`, `CLAUDE-MD-SOTA.enriched.md`, `SOURCE-SCHEMA.md`) may **only** hyperlink to other sub-products — never to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Internal dev docs have no such restriction.
 
 ---
 
@@ -77,7 +77,7 @@ None — this is the starting sprint.
 
 ### Retroactive Note
 
-Sprint 0 was completed when `docs/CLAUDE-MD-SOTA.md` still contained hardcoded behavioral rules. The model has since changed: CLAUDE-MD-SOTA.md now **starts blank** and is populated via `/refresh-guidelines` from `/insights` tips + web sources. The igniter's own `CLAUDE.md` behavioral rules (write-first, no preemptive execution, no scope creep, clarify before acting) exist independently — they are project-specific conventions for working on the igniter, not sourced from CLAUDE-MD-SOTA.md.
+Sprint 0 was completed when `docs/CLAUDE-MD-SOTA.md` still contained hardcoded behavioral rules. The model has since evolved twice: (1) CLAUDE-MD-SOTA.md was reset to blank and populated via `/refresh-guidelines` from `/insights` tips + web sources. (2) A **seed + enriched split** was introduced — `CLAUDE-MD-SOTA.md` (tracked) now contains web-sourced content only, while `CLAUDE-MD-SOTA.enriched.md` (gitignored) merges the seed with user-specific `/insights` data. The igniter's own `CLAUDE.md` behavioral rules exist independently — they are project-specific conventions, not sourced from CLAUDE-MD-SOTA.md.
 
 ---
 
@@ -148,9 +148,9 @@ Sprint 0 (directory skeleton must exist).
 
 ## Sprint 1.5: Guidelines Enrichment Pipeline
 
-**Goal**: Build the `/refresh-guidelines` skill and populate [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) from blank into a 6-part authoritative reference — using `/insights` tips and web-sourced best practices as dual input sources — so that Sprint 5's `/ignite` generates high-quality, standards-compliant CLAUDE.md files from the start.
+**Goal**: Build the `/refresh-guidelines` skill and populate the CLAUDE.md generation reference using a **seed + enriched two-file model** — [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) (seed, web-only, tracked) and `docs/CLAUDE-MD-SOTA.enriched.md` (seed + /insights, gitignored) — so that Sprint 5's `/ignite` generates high-quality, standards-compliant CLAUDE.md files from the start.
 
-**Rationale for early placement**: Having the enriched [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) before the `/ignite` skill is built means all subsequent work aligns with it. Sprint 1.5 runs in parallel with Sprint 1 (no dependency between them — both depend only on Sprint 0).
+**Rationale for early placement**: Having the populated [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) seed before the `/ignite` skill is built means all subsequent work aligns with it. Sprint 1.5 runs in parallel with Sprint 1 (no dependency between them — both depend only on Sprint 0).
 
 ### Tasks
 
@@ -165,8 +165,8 @@ Sprint 0 (directory skeleton must exist).
      6. Per theme section: classify incoming blocks from all sources (duplicate/novel/reinforcing/conflicting).
      7. Produce enrichment report showing all proposed changes with source attribution.
      8. Present report for human approval.
-     9. On approval: populate/update CLAUDE-MD-SOTA.md with approved changes.
-     10. Update Source Attribution section.
+     9. On approval: produce two files — seed (web-only, tracked) and enriched (seed + /insights, gitignored). If no /insights data, only seed is updated.
+     10. Update Source Attribution section in both files.
 
 2. **Create `.claude/skills/refresh-guidelines/references/curated-sources.md`**
    - Tiered source registry with authoritative URLs:
@@ -211,21 +211,21 @@ Sprint 0 (directory skeleton must exist).
    - Fault-tolerant: missing report produces minimal JSON with empty entries (exits 0).
    - Output schema mirrors `guidelines-raw.json` structure for pipeline consistency.
 
-6. **Reset `docs/CLAUDE-MD-SOTA.md` to blank**
-   - Start with an empty file (no hardcoded rules or seed content).
-   - After running `/refresh-guidelines`, populated into 6-part authoritative reference (under 300 lines):
-     - **Purpose & Scope**: Role of document, dual-source enrichment model, how `/ignite` consumes it.
+6. **Establish seed + enriched two-file model**
+   - **Seed** (`docs/CLAUDE-MD-SOTA.md`, git-tracked): After running `/refresh-guidelines`, populated with web-sourced content only (Tiers 1-3) into a 5-part structure (under 300 lines):
+     - **Purpose & Scope**: Role of document, seed/enriched model, how `/ignite` consumes it.
      - **Part 1: Structural Standards**: Size constraints, recommended sections, file hierarchy strategy, formatting rules (from web sources).
-     - **Part 2: Content Guidelines**: What to include, what to exclude, anti-patterns (from web sources + /insights).
+     - **Part 2: Content Guidelines**: What to include, what to exclude, anti-patterns (from web sources).
      - **Part 3: Integration Guidelines**: Hooks vs CLAUDE.md, Skills vs CLAUDE.md, Rules directory (from web sources).
-     - **Part 4: Behavioral Patterns**: Workflow rules, coding patterns, interaction preferences (from /insights + web sources — emergent, not hardcoded).
-     - **Part 5: Maintenance Guidelines**: Review cadence, self-improving pattern, versioning (from web sources + /insights).
-     - **Source Attribution**: Web URLs, /insights session references, last-verified dates.
-   - All content emerges from dual sources via `/refresh-guidelines` — nothing is pre-defined.
+     - **Part 4: Behavioral Patterns**: Workflow rules, coding patterns, interaction preferences (from web sources).
+     - **Part 5: Maintenance Guidelines**: Review cadence, self-improving pattern, versioning (from web sources).
+     - **Source Attribution**: Web URLs only, last-verified dates.
+   - **Enriched** (`docs/CLAUDE-MD-SOTA.enriched.md`, gitignored): Starts from seed, then merges `/insights` data into the appropriate sections. Includes `/insights` references in Source Attribution. Only produced when `/insights` data is available.
+   - `/ignite` reads the enriched version if present, falling back to the seed.
 
 7. **Update project files**
-   - `CLAUDE.md`: add `refresh-guidelines/` to project structure, add `parse-insights.py` and `insights-parsed.json` references.
-   - `.gitignore`: add `docs/guidelines-raw.json`, `docs/insights-raw.md`, and `docs/insights-parsed.json`.
+   - `CLAUDE.md`: add `refresh-guidelines/` to project structure, add `parse-insights.py`, `insights-parsed.json`, and `CLAUDE-MD-SOTA.enriched.md` references. Update doc separation to three categories (internal dev docs, sub-products, generated artifacts).
+   - `.gitignore`: add `docs/guidelines-raw.json`, `docs/insights-raw.md`, `docs/insights-parsed.json`, `docs/CLAUDE-MD-SOTA.enriched.md`, and `catalog/manifest.json`.
    - Create `docs/insights-raw.md`: empty placeholder with instructions header for supplementary manual `/insights` tips.
 
 ### Acceptance Criteria
@@ -233,10 +233,11 @@ Sprint 0 (directory skeleton must exist).
 - [x] `/refresh-guidelines` skill is invocable and Claude discovers it.
 - [x] `fetch-guidelines.py` fetches content from at least Tier 1 sources without errors.
 - [x] `docs/guidelines-raw.json` produced with valid JSON and themed content blocks.
-- [x] `docs/CLAUDE-MD-SOTA.md` starts blank and contains no hardcoded content.
-- [x] After `/refresh-guidelines`, CLAUDE-MD-SOTA.md is populated into the 6-part structure with substantive content.
-- [x] `/insights` tips correctly integrated when present in `docs/insights-raw.md`.
-- [x] Source Attribution lists all sources (web URLs + /insights references) with dates.
+- [x] After `/refresh-guidelines`, the seed (`CLAUDE-MD-SOTA.md`) contains only web-sourced content (no `/insights` material).
+- [x] After `/refresh-guidelines` with `/insights` data, `CLAUDE-MD-SOTA.enriched.md` is produced with seed + `/insights` merged.
+- [x] `/insights` tips correctly integrated into the enriched file when present.
+- [x] Seed Source Attribution lists web sources only. Enriched Source Attribution lists both web + `/insights` references.
+- [x] `CLAUDE-MD-SOTA.enriched.md` is gitignored. `CLAUDE-MD-SOTA.md` is tracked.
 - [x] Enrichment report correctly classifies incoming content (novel on first run; duplicate/reinforcing on subsequent runs).
 - [x] No conflicting information merged without human review.
 - [x] CLAUDE-MD-SOTA.md stays under 300 lines.
@@ -443,7 +444,7 @@ Sprint 3 (manifest builder must exist for `/sync-catalog` to chain into).
      - **Step 3**: Selection algorithm (core → language → framework → category). Exclusion rules. Per-hook evaluation.
      - **Step 4**: Report format (selected grouped by type, excluded with reasons, gap summary, action prompt).
      - **Step 5**: File copy, directory creation, specialization trigger, hook merging into `settings.json`, provenance headers.
-     - **Step 6**: Generated CLAUDE.md structure per [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) (structural standards → skeleton, content guidelines → section content, integration guidelines → placement decisions, behavioral patterns → selected and adapted per project, maintenance section, installed entities, active hooks, gap report).
+     - **Step 6**: Generated CLAUDE.md structure per `docs/CLAUDE-MD-SOTA.enriched.md` (if present) or [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) seed (structural standards → skeleton, content guidelines → section content, integration guidelines → placement decisions, behavioral patterns → selected and adapted per project, maintenance section, installed entities, active hooks, gap report).
 
 3. **Create `.claude/skills/ignite/references/specialization-guide.md`**
    - Adaptation rules per entity type:
@@ -473,7 +474,7 @@ Sprint 3 (manifest builder must exist for `/sync-catalog` to chain into).
 
 ### Dependencies
 
-Sprint 4 (`/sync-catalog` must work so the manifest exists) and Sprint 1.5 (enriched [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) must exist for Step 6).
+Sprint 4 (`/sync-catalog` must work so the manifest exists) and Sprint 1.5 (seed [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) must exist for Step 6; enriched version used if available).
 
 ---
 
@@ -540,7 +541,7 @@ Sprint 5 (all skills and reference docs must be complete).
 |--------|--------------------------|
 | 0 | `CLAUDE.md`, `.gitignore` (mod), `.claude/settings.json`, `.gitkeep` skeleton, `docs/old/` (archived pre-merge plans) |
 | 1 | `catalog/sources.json`, `catalog/sources/local/README.md`, `docs/SOURCE-SCHEMA.md` |
-| 1.5 | `.claude/skills/refresh-guidelines/SKILL.md`, `references/curated-sources.md`, `references/enrichment-procedure.md`, `scripts/fetch-guidelines.py`, `scripts/parse-insights.py`, `docs/CLAUDE-MD-SOTA.md` (reset to blank, populated via `/refresh-guidelines`), `docs/insights-raw.md`, `docs/insights-parsed.json` (gitignored), `CLAUDE.md` (mod), `.gitignore` (mod) |
+| 1.5 | `.claude/skills/refresh-guidelines/SKILL.md`, `references/curated-sources.md`, `references/enrichment-procedure.md`, `scripts/fetch-guidelines.py`, `scripts/parse-insights.py`, `docs/CLAUDE-MD-SOTA.md` (seed, web-only, tracked), `docs/CLAUDE-MD-SOTA.enriched.md` (seed + /insights, gitignored), `docs/insights-raw.md`, `docs/insights-parsed.json` (gitignored), `CLAUDE.md` (mod), `.gitignore` (mod) |
 | 2 | `.claude/skills/sync-catalog/scripts/sync-catalog.sh`, `docs/SOURCE-SCHEMA.md` (mod) |
 | 3 | `.claude/skills/ignite/scripts/build-manifest.py` |
 | 4 | `.claude/skills/sync-catalog/SKILL.md`, `.claude/skills/add-source/SKILL.md`, `.claude/agents/catalog-inspector.md` |

@@ -116,36 +116,55 @@ A conflict exists when:
 
 ## Phase 3: Integration
 
-### Producing the Updated Document
+### Two-File Output Model
 
-After human approval of the enrichment report:
+After human approval of the enrichment report, produce **two files**:
 
-1. **Start from current document** (or blank template on first run).
-2. **Apply approved insertions** in section order.
-3. **Apply approved merges** — integrate reinforcing content into existing paragraphs/bullets.
-4. **Apply approved conflict resolutions** — replace or adjust as directed.
-5. **Skip rejected changes** — do not include.
-6. **Update Source Attribution** — list all sources that contributed to this version, including `/insights` parsed entries:
+1. **Seed file** (`docs/CLAUDE-MD-SOTA.md`, git-tracked) — web-sourced content only (Tiers 1-3). No `/insights` material.
+2. **Enriched file** (`docs/CLAUDE-MD-SOTA.enriched.md`, gitignored) — seed content + approved `/insights` additions. Only produced if `/insights` data is available.
+
+### Producing the Seed File
+
+After human approval:
+
+1. **Start from current seed** (or blank template on first run).
+2. **Apply approved web-sourced insertions** in section order.
+3. **Apply approved web-sourced merges** — integrate reinforcing content into existing paragraphs/bullets.
+4. **Apply approved conflict resolutions** for web-sourced conflicts — replace or adjust as directed.
+5. **Skip rejected changes** and all `/insights`-sourced changes — these go to the enriched file only.
+6. **Update Source Attribution** — list web sources only:
    - Web sources: `| T1-001 | T1 | https://code.claude.com/docs/en/memory | Parts 1, 2, 3, 5 | 2026-02-12 |`
+
+### Producing the Enriched File
+
+1. **Start from the seed file** (just written above).
+2. **Apply approved `/insights` insertions** into the appropriate sections.
+3. **Apply approved `/insights` merges** — integrate reinforcing content inline.
+4. **Apply approved conflict resolutions** for `/insights` conflicts.
+5. **Update Source Attribution** — include both web sources and `/insights` references:
    - /insights: `| /insights (parsed) | insights | ~/.claude/usage-data/report.html | Parts 2, 3, 4, 5 | 2026-02-12 |`
 
-### First Run (Blank Document)
+If no `/insights` data was available, skip this step entirely (no enriched file produced).
 
-When CLAUDE-MD-SOTA.md is blank, build the document from scratch:
+### First Run (Blank Seed)
+
+When CLAUDE-MD-SOTA.md is blank, build the seed from scratch:
 
 1. Create the 7-section skeleton (Purpose & Scope, Parts 1–5, Source Attribution).
-2. Write Purpose & Scope section (static — describes the document's role and enrichment model).
-3. Populate Parts 1–5 from approved novel content, grouped by section.
-4. Within each section, order content by precedence tier (T1 first, then /insights, then T2, then T3).
-5. Write Source Attribution with all contributing sources and dates.
+2. Write Purpose & Scope section (static — describes the document's role and seed/enriched model).
+3. Populate Parts 1–5 from approved **web-sourced** novel content only, grouped by section.
+4. Within each section, order content by precedence tier (T1 first, then T2, then T3).
+5. Write Source Attribution with web sources and dates.
+6. Then produce the enriched file by layering `/insights` content on top (see above).
 
 ### Subsequent Runs
 
-1. Preserve all existing content that was not modified.
-2. Insert novel content at the end of the relevant section.
-3. Merge reinforcing content inline with existing bullets/paragraphs.
+1. Preserve all existing seed content that was not modified.
+2. Insert novel web-sourced content at the end of the relevant section.
+3. Merge reinforcing web-sourced content inline with existing bullets/paragraphs.
 4. Replace or adjust conflicting content per human decisions.
 5. Update Source Attribution with new sources and current date.
+6. Regenerate enriched file from updated seed + current `/insights` data.
 
 ### Size Constraint
 

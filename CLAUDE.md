@@ -28,7 +28,7 @@ An AI-driven tool that maintains a catalog of Claude Code entities (agents, skil
 - **Shell scripts**: `#!/usr/bin/env bash`, POSIX-compatible where possible.
 - **Documentation & entity definitions**: Markdown.
 - **Configuration**: JSON (`sources.json`, `manifest.json`, `settings.json`).
-- **Doc separation**: Files in `docs/` fall into two categories. *Internal dev docs* (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `old/`) are development-only and never shipped. *Sub-products* (`CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`) are application outputs; they must never reference internal dev docs, only other sub-products.
+- **Doc separation**: Files in `docs/` fall into three categories. *Internal dev docs* (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `old/`) are development-only and never shipped. *Sub-products* (`CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`) are application outputs tracked in git; they must never reference internal dev docs, only other sub-products. *Generated artifacts* (`CLAUDE-MD-SOTA.enriched.md`, `guidelines-raw.json`, `insights-parsed.json`, `insights-raw.md`) are produced locally by running the tool and are gitignored.
 
 ## Project Structure
 
@@ -38,7 +38,8 @@ claude-code-project-igniter/
 ├── .gitignore
 ├── docs/
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md # Architecture & design (unified plan)
-│   ├── CLAUDE-MD-SOTA.md             # Authoritative CLAUDE.md generation reference
+│   ├── CLAUDE-MD-SOTA.md             # Seed: web-sourced generation reference (tracked)
+│   ├── CLAUDE-MD-SOTA.enriched.md    # Enriched: seed + /insights (gitignored)
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md  # Sprint-based development plan
 │   ├── SOURCE-SCHEMA.md              # Source registry field reference
 │   ├── guidelines-raw.json           # Output of fetch-guidelines.py (gitignored)
@@ -76,7 +77,7 @@ claude-code-project-igniter/
 │       └── catalog-inspector.md
 ├── catalog/
 │   ├── sources.json                       # Source registry
-│   ├── manifest.json                      # Auto-generated entity index
+│   ├── manifest.json                      # Auto-generated entity index (gitignored)
 │   └── sources/                           # Downloaded repos (gitignored except local/)
 │       ├── everything-claude-code/
 │       └── local/                         # User's custom entities
