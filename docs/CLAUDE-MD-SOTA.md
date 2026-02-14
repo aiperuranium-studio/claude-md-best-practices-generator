@@ -1,8 +1,6 @@
 # CLAUDE.md Lifecycle Guidelines
 
-Authoritative reference governing how `/ignite` generates target project CLAUDE.md files. This **seed version** contains web-sourced best practices only. Run `/refresh-guidelines` to produce `CLAUDE-MD-SOTA.enriched.md` which merges this seed with your personal `/insights` data.
-
-> Seed maintained in git. Enriched version (gitignored) produced by `/refresh-guidelines`.
+Authoritative reference governing how `/ignite` generates target project CLAUDE.md files. This **seed version** contains web-sourced best practices only. Run `/refresh-guidelines` to produce `CLAUDE-MD-SOTA.enriched.md` which merges this seed with your personal `/insights` data. Seed maintained in git; enriched version gitignored.
 
 ## Purpose & Scope
 
@@ -69,16 +67,31 @@ Generated CLAUDE.md files should include these sections in order:
 - **Bullets over prose** — Scannable lists are followed more reliably than paragraphs.
 - **Specific over vague** — `pytest tests/ -v` beats "run the tests".
 - **Headings for scanning** — Claude parses structured documents more effectively.
-- **Keep concise** — Shorter files are more reliably followed. Every line should earn its place.
+- **Keep concise** — Shorter files are more reliably followed. General consensus: <300 lines max; HumanLayer keeps theirs under 60 lines. Every line should earn its place.
 - **Repeat critical rules** — Emphasis (bold) or repetition at multiple points improves compliance with the most important instructions.
+- **Emphasis keywords** — Use `IMPORTANT` or `YOU MUST` to improve adherence on critical rules. Standard phrasing is easier for the model to deprioritize.
 
-*Sources: T1-003, T2-001*
+*Sources: T1-002, T1-003, T2-001, T3-002*
+
+### 1.5 Placement Decision Guide
+
+| Scope | File | Examples |
+|-------|------|----------|
+| **Global** | `~/.claude/CLAUDE.md` | "Always run tests", "ask before committing" |
+| **Project** | `CLAUDE.md` | Tech stack, structure, commands, conventions |
+| **Local** | `CLAUDE.local.md` (gitignored) | Terminal prefs, personal MCP servers |
+
+Override order: local > project > global. Don't duplicate rules across levels.
+
+*Source: T3-002*
 
 ---
 
 ## Part 2: Content Guidelines
 
 ### 2.1 What to Include
+
+Structure content around three questions — **WHAT** (tech, stack, project structure), **WHY** (project purpose, component roles), **HOW** (build/test/deploy commands, verification steps).
 
 - Non-obvious build, test, and lint commands.
 - Architectural decisions and their rationale.
@@ -94,7 +107,7 @@ Generated CLAUDE.md files should include these sections in order:
 - Team workflows — step-by-step procedures for common tasks (e.g., creating API endpoints: plan → confirm → implement → test → verify). Keeps agent output consistent with team standards.
 - **Prefer pointers to copies**: Don't embed code snippets in CLAUDE.md or context files — they go stale. Use `file:line` references to point Claude at the authoritative source code.
 
-*Sources: T1-002, T1-003, T2-003, T2-004*
+*Sources: T1-002, T1-003, T2-001, T2-003, T2-004*
 
 ### 2.2 What to Exclude
 
@@ -109,13 +122,15 @@ Generated CLAUDE.md files should include these sections in order:
 
 ### 2.3 Anti-Patterns
 
-- **Kitchen sink**: Dumping everything into CLAUDE.md. Research shows LLMs reliably follow ~150-200 instructions; Claude Code's system prompt already uses ~50, leaving limited headroom. More instructions = uniform quality decay across all of them (smaller models decay exponentially, frontier thinking models linearly). Extract stable rules to `.claude/rules/` or hooks. Note: Claude Code wraps CLAUDE.md in a `<system-reminder>` stating "this context may or may not be relevant" — bloated files with non-universal content get ignored entirely.
+- **Kitchen sink**: Dumping everything into CLAUDE.md. Research shows LLMs reliably follow ~150-200 instructions; Claude Code's system prompt already uses ~50, leaving limited headroom. More instructions = uniform quality decay across **all** of them — not just newer ones, all instructions degrade equally (smaller models decay exponentially, frontier thinking models linearly). Extract stable rules to `.claude/rules/` or hooks.
 - **Vague instructions**: "Write good code" is useless. "Use pytest fixtures from `tests/conftest.py`, run `make test` before committing" is actionable.
 - **Over-specification**: Documenting what Claude already knows adds noise without value.
 - **No curation**: Auto-generating CLAUDE.md without human review leads to bloated, generic files.
-- **Non-universal instructions**: Claude Code wraps CLAUDE.md in a system reminder stating "this context may or may not be relevant." If content isn't universally applicable to the current task, Claude may ignore it entirely. Keep all instructions focused and broadly relevant.
+- **Non-universal instructions**: Claude Code wraps CLAUDE.md in a `<system-reminder>` stating "this context may or may not be relevant." If content isn't universally applicable to the current task, Claude may ignore it entirely. Keep all instructions focused and broadly relevant.
+- **Personality prompts**: "Be a senior engineer" or "Think step by step" wastes tokens. Claude Code already has strong system-level instructions — role-playing directives add noise.
+- **Blanket @-imports**: Writing `@docs/api-guide.md` embeds the entire file into context every session. Instead, *describe when* to read it: "For Stripe integration issues, see `docs/stripe-guide.md`." Let Claude decide when context is needed.
 
-*Sources: T2-001, T2-003*
+*Sources: T2-001, T2-003, T3-002*
 
 ---
 
@@ -140,7 +155,7 @@ Generated CLAUDE.md files should include these sections in order:
 ### 3.3 CLAUDE.md vs .claude/rules/
 
 - **CLAUDE.md** = universal project guidance, always loaded.
-- **`.claude/rules/`** = modular, topic-specific rule files. Support glob patterns for file-type scoping (e.g., `*.{ts,tsx}` via brace expansion). Rules organized in subdirectories (`frontend/`, `backend/`), discovered recursively. Symlinks supported for sharing rules across projects. User-level rules in `~/.claude/rules/` apply globally.
+- **`.claude/rules/`** = modular, topic-specific rule files. Support glob patterns for file-type scoping (e.g., `*.{ts,tsx}` via brace expansion). Rules organized in subdirectories (`frontend/`, `backend/`), discovered recursively. Symlinks supported for sharing rules across projects. User-level rules in `~/.claude/rules/` apply globally. Best practices: keep each file focused on one topic, use descriptive filenames, use conditional `paths` sparingly, organize related rules with subdirectories.
 - **Rule of thumb**: Stable, categorical rules (language-specific conventions, security policies) go in rules/. Project-wide context (overview, structure, commands) stays in CLAUDE.md.
 
 *Sources: T1-001, T1-002*
@@ -163,9 +178,9 @@ Reference shared instruction files to keep CLAUDE.md lean and modular:
 - `@docs/git-instructions.md` — Git workflow rules.
 - `@.claude/testing-conventions.md` — Test patterns.
 - Personal overrides: `@~/.claude/my-project-instructions.md`.
-- **Context file approval**: List context files with brief descriptions, then instruct Claude to ask which to read (or present its choices for approval) before loading. Gives explicit control over what context enters each session.
+- **Context file approval**: List context files with brief descriptions and instruct Claude to present which ones it wants to read for approval before loading. Gives explicit control over what context enters each session.
 
-*Sources: T1-001, T1-002, T2-004*
+*Sources: T1-001, T1-002, T2-001, T2-004*
 
 ### 3.7 Custom Subagents
 
@@ -217,7 +232,13 @@ Document specific style rules Claude should follow — import ordering, destruct
 
 ### 4.6 Parallel Sessions
 
-Use multiple Claude Code sessions for quality workflows — a Writer session implements, a separate Reviewer session reviews with fresh context (avoids bias toward own code). Also useful for test-driven patterns: one session writes tests, another writes code to pass them.
+Use multiple Claude Code sessions for quality workflows. Fan out across files with `claude -p` for batch operations; use `--allowedTools` to scope permissions per invocation.
+
+*Source: T1-002*
+
+### 4.7 Writer/Reviewer Pattern
+
+Dedicate separate sessions to distinct roles: a Writer session implements, a Reviewer session reviews with fresh context (avoids bias toward own code). Also applies to TDD: one session writes tests, another writes code to pass them.
 
 *Source: T1-002*
 
@@ -241,7 +262,9 @@ Update CLAUDE.md when:
 3. **Add** the rule to CLAUDE.md (or `.claude/rules/` if it's categorical).
 4. **Verify** compliance in the next session.
 
-*Source: T1-003*
+Shortcut: after every correction, end with "Update CLAUDE.md so you don't make that mistake again." Claude is effective at writing rules for itself; the file compounds in value over time.
+
+*Sources: T1-003, T3-002*
 
 ### 5.3 Version Control
 
@@ -253,9 +276,9 @@ Update CLAUDE.md when:
 
 ### 5.4 Bootstrapping
 
-Use `claude /init` to generate an initial CLAUDE.md from codebase analysis. This provides a baseline, but CLAUDE.md is the highest-leverage file in the harness — always curate and verify every line rather than trusting auto-generated content. `/ignite` replaces this with a richer, catalog-driven generation with human review.
+Use `claude /init` to generate an initial CLAUDE.md from codebase analysis. This provides a baseline, but CLAUDE.md is the highest-leverage file in the harness — always curate and verify every line rather than trusting auto-generated content. Start simple with basic structure and build commands, then expand based on actual friction points. `/ignite` replaces this with a richer, catalog-driven generation with human review.
 
-*Sources: T1-002, T2-001*
+*Sources: T1-002, T1-003, T2-001*
 
 ---
 
@@ -265,14 +288,14 @@ All content sourced from the following web references. Nothing in this document 
 
 | Source | Tier | URL | Contributed to | Date |
 |--------|------|-----|----------------|------|
-| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-13 |
-| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 2, 3, 4 | 2026-02-13 |
-| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-13 |
-| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 2, 3, 5 | 2026-02-13 |
-| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-13 |
-| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-13 |
-| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-13 |
-| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-13 |
-| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Part 1 | 2026-02-13 |
+| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-14 |
+| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4 | 2026-02-14 |
+| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-14 |
+| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-02-14 |
+| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-14 |
+| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-14 |
+| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-14 |
+| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-14 |
+| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-14 |
 
-**Seed version**: 2026-02-13 (refreshed) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
+**Seed version**: 2026-02-14 (refreshed) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
