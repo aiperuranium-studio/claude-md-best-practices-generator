@@ -228,6 +228,14 @@ Sprint 0 (directory skeleton must exist).
    - `.gitignore`: add `docs/guidelines-raw.json`, `docs/insights-raw.md`, `docs/insights-parsed.json`, `docs/CLAUDE-MD-SOTA.enriched.md`, and `catalog/manifest.json`.
    - Create `docs/insights-raw.md`: empty placeholder with instructions header for supplementary manual `/insights` tips.
 
+8. **Create scoped child-directory CLAUDE.md files**
+   - Per CLAUDE-MD-SOTA.md §1.1, subdirectories with enough content get their own `CLAUDE.md` with scoped instructions (loaded on-demand, keeps root lean).
+   - `docs/CLAUDE.md` (~28 lines): doc classification (3 categories), sub-product isolation, cross-referencing, renumbering rules.
+   - `catalog/CLAUDE.md` (~36 lines): sources.json schema pointer, priority model, local entity conventions, manifest.json warning.
+   - `.claude/skills/refresh-guidelines/CLAUDE.md` (~36 lines): pipeline overview, script inventory, reference files, output conventions (seed vs enriched), test location.
+   - `tests/CLAUDE.md` (~30 lines): pytest via `.venv/bin/pytest` or `uv run`, naming convention, current test files, coding conventions.
+   - Each file under 50 lines, no overlap with root CLAUDE.md, bullets over prose.
+
 ### Acceptance Criteria
 
 - [x] `/refresh-guidelines` skill is invocable and Claude discovers it.
@@ -246,6 +254,9 @@ Sprint 0 (directory skeleton must exist).
 - [x] Staleness warning produced when `/insights` report is older than 7 days.
 - [x] `parse-insights.py` handles missing report gracefully (exits 0, produces minimal JSON).
 - [x] SKILL.md references `parse-insights.py` and `insights-parsed.json`.
+- [x] Scoped `CLAUDE.md` files exist in `docs/`, `catalog/`, `.claude/skills/refresh-guidelines/`, and `tests/`.
+- [x] Each scoped `CLAUDE.md` is under 50 lines and contains no overlap with root `CLAUDE.md`.
+- [x] `tests/CLAUDE.md` documents `.venv/bin/pytest` and `uv run pytest` as the correct run commands.
 
 ### Dependencies
 
@@ -541,7 +552,7 @@ Sprint 5 (all skills and reference docs must be complete).
 |--------|--------------------------|
 | 0 | `CLAUDE.md`, `.gitignore` (mod), `.claude/settings.json`, `.gitkeep` skeleton, `docs/old/` (archived pre-merge plans) |
 | 1 | `catalog/sources.json`, `catalog/sources/local/README.md`, `docs/SOURCE-SCHEMA.md` |
-| 1.5 | `.claude/skills/refresh-guidelines/SKILL.md`, `references/curated-sources.md`, `references/enrichment-procedure.md`, `scripts/fetch-guidelines.py`, `scripts/parse-insights.py`, `docs/CLAUDE-MD-SOTA.md` (seed, web-only, tracked), `docs/CLAUDE-MD-SOTA.enriched.md` (seed + /insights, gitignored), `docs/insights-raw.md`, `docs/insights-parsed.json` (gitignored), `CLAUDE.md` (mod), `.gitignore` (mod) |
+| 1.5 | `.claude/skills/refresh-guidelines/SKILL.md`, `references/curated-sources.md`, `references/enrichment-procedure.md`, `scripts/fetch-guidelines.py`, `scripts/parse-insights.py`, `docs/CLAUDE-MD-SOTA.md` (seed, web-only, tracked), `docs/CLAUDE-MD-SOTA.enriched.md` (seed + /insights, gitignored), `docs/insights-raw.md`, `docs/insights-parsed.json` (gitignored), `CLAUDE.md` (mod), `.gitignore` (mod), scoped `CLAUDE.md` files: `docs/CLAUDE.md`, `catalog/CLAUDE.md`, `.claude/skills/refresh-guidelines/CLAUDE.md`, `tests/CLAUDE.md` |
 | 2 | `.claude/skills/sync-catalog/scripts/sync-catalog.sh`, `docs/SOURCE-SCHEMA.md` (mod) |
 | 3 | `.claude/skills/ignite/scripts/build-manifest.py` |
 | 4 | `.claude/skills/sync-catalog/SKILL.md`, `.claude/skills/add-source/SKILL.md`, `.claude/agents/catalog-inspector.md` |

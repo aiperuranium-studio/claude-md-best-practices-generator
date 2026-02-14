@@ -45,6 +45,8 @@ The CLAUDE.md generation reference uses a **seed + enriched** two-file model:
 
 7. **Dual-source guidelines enrichment**: `/refresh-guidelines` combines `/insights` tips (real usage patterns) and a tiered web source registry (official docs + community guides) with automated fetching, Claude-driven semantic dedup/merge, and human approval.
 
+8. **Scoped child-directory CLAUDE.md files**: Per CLAUDE-MD-SOTA.md §1.1, subdirectories with enough content get their own `CLAUDE.md` providing scoped instructions loaded on-demand. This keeps the root file lean (~100 lines) while giving Claude deep context where it matters (doc classification rules in `docs/`, schema conventions in `catalog/`, pipeline details in `refresh-guidelines/`, test conventions in `tests/`).
+
 ### Documentation Code of Conduct
 
 The following rules apply whenever any file under `docs/` or `docs/old/` is created or modified during a session:
@@ -60,7 +62,7 @@ The following rules apply whenever any file under `docs/` or `docs/old/` is crea
 
 ```
 claude-code-project-igniter/
-├── CLAUDE.md                          # Instructions for working ON this project
+├── CLAUDE.md                          # Instructions for working ON this project (root)
 ├── .gitignore                         # Ignores catalog/sources/*/ (downloaded content)
 │
 ├── .claude/
@@ -81,6 +83,7 @@ claude-code-project-igniter/
 │   │   ├── add-source/
 │   │   │   └── SKILL.md              # /add-source entrypoint
 │   │   └── refresh-guidelines/
+│   │       ├── CLAUDE.md             # Scoped: pipeline overview, scripts, output conventions
 │   │       ├── SKILL.md              # /refresh-guidelines entrypoint
 │   │       ├── references/
 │   │       │   ├── curated-sources.md        # Tiered URL registry
@@ -92,6 +95,7 @@ claude-code-project-igniter/
 │       └── catalog-inspector.md      # Optional: deep entity inspection
 │
 ├── docs/
+│   ├── CLAUDE.md                              # Scoped: doc classification, sub-product isolation
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md  # Unified architecture plan (this file)
 │   ├── CLAUDE-MD-SOTA.md             # Seed: web-sourced generation reference (tracked)
 │   ├── CLAUDE-MD-SOTA.enriched.md    # Enriched: seed + /insights (gitignored)
@@ -103,7 +107,11 @@ claude-code-project-igniter/
 │       ├── IGNITER-PLAN.md           # Original architecture plan
 │       └── CLAUDE-MD-SOTA-PLAN.md    # Original /refresh-guidelines plan
 │
+├── tests/
+│   └── CLAUDE.md                      # Scoped: pytest conventions, run commands, naming
+│
 ├── catalog/
+│   ├── CLAUDE.md                      # Scoped: sources.json schema, priority model, local conventions
 │   ├── sources.json                  # Registry of remote sources
 │   ├── manifest.json                 # Auto-generated entity index (gitignored)
 │   └── sources/                      # Downloaded repos (gitignored)
