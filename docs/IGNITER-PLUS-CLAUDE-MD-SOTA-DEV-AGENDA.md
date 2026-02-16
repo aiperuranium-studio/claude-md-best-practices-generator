@@ -289,12 +289,12 @@ Sprint 0 (directory skeleton must exist). Runs in parallel with Sprint 1.
 
 ### Acceptance Criteria
 
-- [ ] Running `bash .claude/skills/sync-catalog/scripts/sync-catalog.sh` from the project root clones `everything-claude-code` into `catalog/sources/everything-claude-code/`.
-- [ ] `catalog/sources/everything-claude-code/.source-meta.json` exists after sync with valid JSON containing all required fields.
-- [ ] Running the script a second time performs a pull (not a fresh clone) and updates `.source-meta.json`.
-- [ ] The `local` source directory is untouched by the sync script.
-- [ ] `catalog/sources/everything-claude-code/` is ignored by git (verify with `git status`).
-- [ ] The script exits with non-zero status and a clear error message if the network is unavailable.
+- [x] Running `bash .claude/skills/sync-catalog/scripts/sync-catalog.sh` from the project root clones `everything-claude-code` into `catalog/sources/everything-claude-code/`.
+- [x] `catalog/sources/everything-claude-code/.source-meta.json` exists after sync with valid JSON containing all required fields.
+- [x] Running the script a second time performs a pull (not a fresh clone) and updates `.source-meta.json`.
+- [x] The `local` source directory is untouched by the sync script.
+- [x] `catalog/sources/everything-claude-code/` is ignored by git (verify with `git status`).
+- [x] The script exits with non-zero status and a clear error message if the network is unavailable.
 
 ### Dependencies
 

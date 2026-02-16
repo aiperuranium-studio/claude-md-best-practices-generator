@@ -24,6 +24,7 @@ uv run pytest tests/ -v                                   # alternative via uv
 
 - `test_sprint1_catalog_foundation.py` — catalog/sources.json schema, local source directory structure, SOURCE-SCHEMA.md
 - `test_sprint1_5_guidelines_enrichment.py` — skill files, script functions, reference parsing, output schemas, gitignore entries
+- `test_sprint2_catalog_sync.py` — sync-catalog.sh existence, executability, git operations, .source-meta.json schema, error handling
 
 ## Conventions
 
