@@ -4,12 +4,7 @@
 
 The source registry defining where entities come from. Full schema: [docs/SOURCE-SCHEMA.md](../docs/SOURCE-SCHEMA.md).
 
-Each source entry has: `id`, `url`, `branch`, `pin`, `priority`, `entityPaths`.
-
-**Validate after any edit:**
-```bash
-python3 -c "import json; json.load(open('catalog/sources.json'))"
-```
+Each source entry has: `id`, `url`, `branch`, `pin`, `priority`, `entityPaths`. Validate after edits — see root `CLAUDE.md` Common Commands.
 
 ## Priority Model
 

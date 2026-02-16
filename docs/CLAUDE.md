@@ -13,7 +13,7 @@ Every file in this directory belongs to exactly one category:
 
 ## Sub-product Isolation
 
-Sub-products may **only** hyperlink to other sub-products. They must **never** reference internal dev docs. Internal dev docs may freely reference anything.
+**IMPORTANT**: Sub-products may **only** hyperlink to other sub-products. They must **never** reference internal dev docs. Internal dev docs may freely reference anything.
 
 ## Cross-referencing
 
@@ -21,8 +21,4 @@ When creating or modifying any file here, check all other docs files and add hyp
 
 ## Renumbering & Reference Validation
 
-After any insertion, deletion, or reordering of numbered sections or references, re-validate all numbering. Never leave orphaned references.
-
-## Pointers Over Copies
-
-Don't embed code snippets in documentation — use `file:line` references to point at the authoritative source code.
+After any insertion, deletion, or reordering of numbered sections or references in docs, re-validate all numbering. Never leave orphaned references.

@@ -1,6 +1,6 @@
 # CLAUDE.md Lifecycle Guidelines
 
-Authoritative reference governing how `/ignite` generates target project CLAUDE.md files. This **seed version** contains web-sourced best practices only. Run `/refresh-guidelines` to produce `CLAUDE-MD-SOTA.enriched.md` which merges this seed with your personal `/insights` data. Seed maintained in git; enriched version gitignored.
+Authoritative reference for `/ignite` target project CLAUDE.md generation. **Seed version**: web-sourced best practices only. Run `/refresh-guidelines` to produce `CLAUDE-MD-SOTA.enriched.md` (seed + `/insights` data, gitignored).
 
 ## Purpose & Scope
 
@@ -257,14 +257,11 @@ Update CLAUDE.md when:
 
 ### 5.2 Self-Improving Pattern
 
-1. **Observe** a mistake or suboptimal behavior in a session.
-2. **Abstract** it into a general rule (not a one-off fix).
-3. **Add** the rule to CLAUDE.md (or `.claude/rules/` if it's categorical).
-4. **Verify** compliance in the next session.
+1. **Observe** a mistake → 2. **Abstract** into a rule → 3. **Add** to CLAUDE.md or `.claude/rules/` → 4. **Verify** next session.
 
-Shortcut: after every correction, end with "Update CLAUDE.md so you don't make that mistake again." Claude is effective at writing rules for itself; the file compounds in value over time.
+Shortcut: after every correction, end with "Update CLAUDE.md so you don't make that mistake again." Use `/memory` to open any memory file in your system editor for extensive edits.
 
-*Sources: T1-003, T3-002*
+*Sources: T1-001, T1-003, T3-002*
 
 ### 5.3 Version Control
 
@@ -276,26 +273,25 @@ Shortcut: after every correction, end with "Update CLAUDE.md so you don't make t
 
 ### 5.4 Bootstrapping
 
-Use `claude /init` to generate an initial CLAUDE.md from codebase analysis. This provides a baseline, but CLAUDE.md is the highest-leverage file in the harness — always curate and verify every line rather than trusting auto-generated content. Start simple with basic structure and build commands, then expand based on actual friction points. `/ignite` replaces this with a richer, catalog-driven generation with human review.
+Use `claude /init` for a baseline, but always curate every line. Start simple, expand based on friction points. `/ignite` replaces this with catalog-driven generation and human review.
 
 *Sources: T1-002, T1-003, T2-001*
 
 ---
 
 ## Source Attribution
-
-All content sourced from the following web references. Nothing in this document is invented or hardcoded. `/insights` content appears only in the enriched version (`CLAUDE-MD-SOTA.enriched.md`).
+All content sourced from the following web references. Nothing invented or hardcoded. `/insights` content appears only in the enriched version (`CLAUDE-MD-SOTA.enriched.md`).
 
 | Source | Tier | URL | Contributed to | Date |
 |--------|------|-----|----------------|------|
-| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-14 |
-| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4 | 2026-02-14 |
-| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-14 |
-| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-02-14 |
-| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-14 |
-| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-14 |
-| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-14 |
-| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-14 |
-| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-14 |
+| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-16 |
+| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4 | 2026-02-16 |
+| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-16 |
+| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-02-16 |
+| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-16 |
+| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-16 |
+| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-16 |
+| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-16 |
+| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-16 |
 
-**Seed version**: 2026-02-14 (refreshed) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
+**Seed version**: 2026-02-16 (refreshed) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)

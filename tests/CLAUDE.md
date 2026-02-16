@@ -14,7 +14,7 @@ Use the project virtualenv (`.venv/`) or `uv run`:
 uv run pytest tests/ -v                                   # alternative via uv
 ```
 
-**Do not** use bare `pytest` — it is not installed system-wide.
+**IMPORTANT**: Do not use bare `pytest` — it is not installed system-wide.
 
 ## Naming Convention
 
