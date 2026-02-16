@@ -1,0 +1,31 @@
+{
+  "sources": [
+    {
+      "id": "everything-claude-code",
+      "url": "https://github.com/affaan-m/everything-claude-code.git",
+      "branch": "main",
+      "pin": null,
+      "priority": 10,
+      "entityPaths": {
+        "agents": "agents",
+        "skills": "skills",
+        "commands": "commands",
+        "rules": "rules",
+        "hooks": "hooks"
+      }
+    },
+    {
+      "id": "local",
+      "url": null,
+      "branch": null,
+      "pin": null,
+      "priority": 1,
+      "entityPaths": {
+        "agents": "agents",
+        "skills": "skills",
+        "commands": "commands",
+        "rules": "rules"
+      }
+    }
+  ]
+}
