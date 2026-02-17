@@ -294,4 +294,4 @@ All content sourced from the following web references. Nothing invented or hardc
 | ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-16 |
 | abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-16 |
 
-**Seed version**: 2026-02-16 (refreshed) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
+**Seed version**: 2026-02-17 (refreshed, no content changes) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
