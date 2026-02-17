@@ -9,6 +9,7 @@ catalog/manifest.json
 
 # Guidelines enrichment artifacts (re-fetchable)
 docs/guidelines-raw.json
+docs/freshness-report.json
 docs/insights-raw.md
 docs/insights-parsed.json
 docs/CLAUDE-MD-SOTA.enriched.md
