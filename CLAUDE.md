@@ -25,9 +25,11 @@ Skills (invoked within Claude Code):
 
 ## Project Structure
 
-| Directory | Purpose |
-|-----------|---------|
+| Path | Purpose |
+|------|---------|
+| `README.md` | Project overview, prerequisites, installation, quick-start |
 | `docs/` | Architecture plan, dev agenda, CLAUDE-MD-SOTA generation reference, source schema |
+| `docs/test-archetypes/` | Sprint 6 archetype descriptions + `RESULTS.md` (integration testing) |
 | `.claude/skills/` | `/ignite`, `/sync-catalog`, `/add-source`, `/refresh-guidelines` skill definitions |
 | `.claude/agents/` | `catalog-inspector` agent (Sprint 4+) |
 | `catalog/sources.json` | Source registry — where entities come from |

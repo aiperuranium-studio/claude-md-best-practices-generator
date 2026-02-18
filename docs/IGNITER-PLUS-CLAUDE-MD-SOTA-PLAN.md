@@ -94,6 +94,8 @@ claude-code-project-igniter/
 │   └── agents/
 │       └── catalog-inspector.md      # Optional: deep entity inspection
 │
+├── README.md                              # Project overview, install, quick-start
+│
 ├── docs/
 │   ├── CLAUDE.md                              # Scoped: doc classification, sub-product isolation
 │   ├── IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md  # Unified architecture plan (this file)
@@ -103,6 +105,7 @@ claude-code-project-igniter/
 │   ├── insights-raw.md               # User-accumulated /insights tips (gitignored)
 │   ├── insights-parsed.json          # Output of parse-insights.py (gitignored)
 │   ├── guidelines-raw.json           # Output of fetch-guidelines.py (gitignored)
+│   ├── test-archetypes/              # Sprint 6: archetype descriptions + RESULTS.md
 │   └── old/                          # Archived pre-merge plans
 │       ├── IGNITER-PLAN.md           # Original architecture plan
 │       └── CLAUDE-MD-SOTA-PLAN.md    # Original /refresh-guidelines plan
@@ -378,6 +381,7 @@ Sprint 1.5 rationale: Having a populated CLAUDE-MD-SOTA.md early means all subse
    - No installation of irrelevant entities
    - Hooks correctly merged into settings.json
    - CLAUDE.md correctly generated
+   - Results documented in [docs/test-archetypes/RESULTS.md](test-archetypes/RESULTS.md)
 4. **Edge cases**: Empty project (conversation-only context), project with no matching entities, project with conflicting sources.
 
 ### Guidelines Enrichment

@@ -550,14 +550,14 @@ Sprint 5 was completed in the same session as Sprint 4 (both in 1 session total 
 
 ### Acceptance Criteria
 
-- [ ] All 6 archetype descriptions exist in `docs/test-archetypes/`.
-- [ ] `docs/test-archetypes/RESULTS.md` documents actual vs. expected results.
-- [ ] Entity selection is correct for all archetypes.
-- [ ] Specialization produces adapted content for at least 2 archetypes.
-- [ ] Gap analysis correctly identifies missing coverage for Go microservice.
-- [ ] Edge cases are handled gracefully.
-- [ ] `README.md` exists with installation and quick-start instructions.
-- [ ] Complete pipeline works: clone → `/sync-catalog` → `/ignite` → tailored configuration.
+- [x] All 6 archetype descriptions exist in `docs/test-archetypes/`.
+- [x] `docs/test-archetypes/RESULTS.md` documents actual vs. expected results.
+- [x] Entity selection is correct for all archetypes.
+- [x] Specialization produces adapted content for at least 2 archetypes.
+- [x] Gap analysis correctly identifies missing coverage for Go microservice.
+- [x] Edge cases are handled gracefully.
+- [x] `README.md` exists with installation and quick-start instructions.
+- [x] Complete pipeline works: clone → `/sync-catalog` → `/ignite` → tailored configuration.
 
 ### Dependencies
 
