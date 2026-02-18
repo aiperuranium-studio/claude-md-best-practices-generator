@@ -22,6 +22,7 @@ import sys
 import tempfile
 import textwrap
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -133,9 +134,9 @@ class TestSkillFileExists(unittest.TestCase):
         content = SKILL_MD.read_text()
         self.assertIn("## Procedure", content)
 
-    def test_skill_md_has_all_ten_steps(self):
+    def test_skill_md_has_all_steps(self):
         content = SKILL_MD.read_text()
-        for step_num in range(1, 11):
+        for step_num in range(0, 11):
             self.assertIn(
                 f"### Step {step_num}",
                 content,
@@ -256,6 +257,9 @@ class TestFetchScriptExists(unittest.TestCase):
             "strip_html",
             "extract_content_blocks",
             "fetch_url",
+            "check_url_status",
+            "check_source_freshness",
+            "check_freshness_main",
             "main",
         ):
             self.assertTrue(
@@ -357,6 +361,9 @@ class TestGitignoreEntries(unittest.TestCase):
     def test_insights_parsed_json_ignored(self):
         self.assertIn("docs/insights-parsed.json", self.content)
 
+    def test_freshness_report_json_ignored(self):
+        self.assertIn("docs/freshness-report.json", self.content)
+
 
 class TestClaudeMdProjectStructure(unittest.TestCase):
     """CLAUDE.md project structure includes all enrichment files."""
@@ -409,7 +416,7 @@ class TestParseCuratedSources(unittest.TestCase):
         self.assertGreater(len(t3), 0, "Should have Tier 3 sources")
 
     def test_all_sources_have_required_fields(self):
-        required = {"id", "source_name", "url", "tier", "themes"}
+        required = {"id", "source_name", "url", "tier", "themes", "last_verified"}
         for src in self.sources:
             self.assertTrue(
                 required.issubset(src.keys()),
@@ -546,6 +553,257 @@ class TestParseCuratedSourcesSynthetic(unittest.TestCase):
         md = "# Title\n\nSome text without source entries.\n"
         result = self._parse(md)
         self.assertEqual(result, [])
+
+    def test_last_verified_parsed(self):
+        md = textwrap.dedent("""\
+            ### T1-001: Test Source
+            - **URL**: https://example.com/page
+            - **Themes**: structural
+            - **Last verified**: 2026-02-12
+        """)
+        result = self._parse(md)
+        self.assertEqual(result[0]["last_verified"], "2026-02-12")
+
+    def test_last_verified_missing_is_none(self):
+        md = textwrap.dedent("""\
+            ### T1-001: Test Source
+            - **URL**: https://example.com/page
+            - **Themes**: structural
+        """)
+        result = self._parse(md)
+        self.assertIsNone(result[0]["last_verified"])
+
+
+# ===================================================================
+# 2b. check_url_status() tests (mocked)
+# ===================================================================
+
+
+class TestCheckUrlStatus(unittest.TestCase):
+    """Test URL status checking."""
+
+    def setUp(self):
+        self.fg = _load_fg()
+
+    @patch.object(_load_fg(), "_opener")
+    def test_success_returns_200(self, mock_opener):
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.url = "https://example.com"
+        mock_resp.__enter__ = lambda s: s
+        mock_resp.__exit__ = MagicMock(return_value=False)
+        mock_opener.open.return_value = mock_resp
+
+        status, url = self.fg.check_url_status("https://example.com")
+        self.assertEqual(status, 200)
+        self.assertEqual(url, "https://example.com")
+
+    def test_http_error_returns_code(self):
+        with patch.object(
+            self.fg,
+            "_opener",
+            **{
+                "open.side_effect": self.fg.urllib.error.HTTPError(
+                    "https://example.com", 404, "Not Found", {}, None
+                )
+            },
+        ):
+            status, url = self.fg.check_url_status("https://example.com")
+            self.assertEqual(status, 404)
+            self.assertIsNone(url)
+
+    def test_network_error_returns_none(self):
+        with patch.object(
+            self.fg,
+            "_opener",
+            **{
+                "open.side_effect": self.fg.urllib.error.URLError("Connection refused")
+            },
+        ):
+            status, url = self.fg.check_url_status("https://example.com")
+            self.assertIsNone(status)
+            self.assertIsNone(url)
+
+    def test_timeout_returns_none(self):
+        with patch.object(
+            self.fg,
+            "_opener",
+            **{"open.side_effect": TimeoutError()},
+        ):
+            status, url = self.fg.check_url_status("https://example.com")
+            self.assertIsNone(status)
+            self.assertIsNone(url)
+
+
+# ===================================================================
+# 2c. check_source_freshness() tests
+# ===================================================================
+
+
+class TestCheckSourceFreshness(unittest.TestCase):
+    """Test source freshness checking logic."""
+
+    def setUp(self):
+        self.fg = _load_fg()
+        self.today = datetime(2026, 2, 17, tzinfo=timezone.utc)
+
+    def _make_source(self, last_verified="2026-02-10"):
+        return {
+            "id": "T1-001",
+            "source_name": "Test",
+            "url": "https://example.com",
+            "tier": 1,
+            "themes": ["structural"],
+            "last_verified": last_verified,
+        }
+
+    def test_fresh_source_not_stale(self):
+        sources = [self._make_source("2026-02-10")]
+        with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertFalse(results[0]["is_stale"])
+        self.assertTrue(results[0]["is_reachable"])
+        self.assertFalse(results[0]["needs_attention"])
+
+    def test_stale_source_detected(self):
+        sources = [self._make_source("2025-12-01")]
+        with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertTrue(results[0]["is_stale"])
+        self.assertTrue(results[0]["needs_attention"])
+        self.assertGreater(results[0]["days_since_verified"], 30)
+
+    def test_missing_date_is_stale(self):
+        sources = [self._make_source(None)]
+        with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertTrue(results[0]["is_stale"])
+        self.assertEqual(results[0]["days_since_verified"], -1)
+
+    def test_broken_url_detected(self):
+        sources = [self._make_source("2026-02-10")]
+        with patch.object(self.fg, "check_url_status", return_value=(404, None)):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertFalse(results[0]["is_reachable"])
+        self.assertTrue(results[0]["needs_attention"])
+        self.assertEqual(results[0]["http_status"], 404)
+
+    def test_network_error_detected(self):
+        sources = [self._make_source("2026-02-10")]
+        with patch.object(self.fg, "check_url_status", return_value=(None, None)):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertFalse(results[0]["is_reachable"])
+        self.assertIsNone(results[0]["http_status"])
+
+    def test_redirect_captured(self):
+        sources = [self._make_source("2026-02-10")]
+        with patch.object(self.fg, "check_url_status", return_value=(200, "https://new.com/page")):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertEqual(results[0]["final_url"], "https://new.com/page")
+        self.assertTrue(results[0]["is_reachable"])
+
+    def test_multiple_sources(self):
+        sources = [
+            self._make_source("2026-02-10"),
+            self._make_source("2025-11-01"),
+        ]
+        sources[1]["id"] = "T2-001"
+        with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+        self.assertEqual(len(results), 2)
+        self.assertFalse(results[0]["is_stale"])
+        self.assertTrue(results[1]["is_stale"])
+
+
+# ===================================================================
+# 2d. check_freshness_main() integration tests (mocked)
+# ===================================================================
+
+
+class TestCheckFreshnessMain(unittest.TestCase):
+    """Test check_freshness_main() function behavior."""
+
+    def setUp(self):
+        self.fg = _load_fg()
+
+    def test_writes_report_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report_path = Path(tmpdir) / "freshness-report.json"
+            original = self.fg.FRESHNESS_REPORT_FILE
+            self.fg.FRESHNESS_REPORT_FILE = report_path
+            try:
+                with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+                    result = self.fg.check_freshness_main()
+                self.assertEqual(result, 0)
+                self.assertTrue(report_path.exists())
+                data = json.loads(report_path.read_text())
+                self.assertIn("sources", data)
+                self.assertIn("stale_threshold_days", data)
+                self.assertIn("total_sources", data)
+            finally:
+                self.fg.FRESHNESS_REPORT_FILE = original
+
+    def test_returns_1_when_curated_sources_missing(self):
+        with patch.object(
+            self.fg, "CURATED_SOURCES", Path("/nonexistent/path.md")
+        ):
+            result = self.fg.check_freshness_main()
+            self.assertEqual(result, 1)
+
+    def test_report_counts_are_consistent(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report_path = Path(tmpdir) / "freshness-report.json"
+            original = self.fg.FRESHNESS_REPORT_FILE
+            self.fg.FRESHNESS_REPORT_FILE = report_path
+            try:
+                with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+                    self.fg.check_freshness_main()
+                data = json.loads(report_path.read_text())
+                self.assertEqual(data["total_sources"], len(data["sources"]))
+            finally:
+                self.fg.FRESHNESS_REPORT_FILE = original
+
+
+# ===================================================================
+# 2e. freshness-report.json output validation (if present)
+# ===================================================================
+
+
+FRESHNESS_REPORT_JSON = PROJECT_ROOT / "docs" / "freshness-report.json"
+
+
+class TestFreshnessReportJsonSchema(unittest.TestCase):
+    """Validate freshness-report.json output schema (if present)."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not FRESHNESS_REPORT_JSON.exists():
+            raise unittest.SkipTest("freshness-report.json not present")
+        with open(FRESHNESS_REPORT_JSON) as f:
+            cls.data = json.load(f)
+
+    def test_has_top_level_fields(self):
+        for field in (
+            "generated_at",
+            "stale_threshold_days",
+            "total_sources",
+            "stale_count",
+            "broken_count",
+            "needs_attention_count",
+            "sources",
+        ):
+            self.assertIn(field, self.data, f"Missing top-level field: {field}")
+
+    def test_sources_have_required_fields(self):
+        required = {"id", "source_name", "url", "is_stale", "is_reachable", "needs_attention"}
+        for src in self.data["sources"]:
+            self.assertTrue(
+                required.issubset(src.keys()),
+                f"Source {src.get('id', '?')} missing: {required - src.keys()}",
+            )
+
+    def test_counts_are_consistent(self):
+        self.assertEqual(self.data["total_sources"], len(self.data["sources"]))
 
 
 # ===================================================================

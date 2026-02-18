@@ -371,15 +371,15 @@ Sprint 1 (`sources.json` must exist).
 
 ### Acceptance Criteria
 
-- [ ] Running `python3 .claude/skills/ignite/scripts/build-manifest.py` produces `catalog/manifest.json`.
-- [ ] The manifest is valid JSON with entries from `everything-claude-code`.
-- [ ] Every entity has all required fields: `id`, `source`, `type`, `name`, `path`, `tags`, `coreEntity`, `requiresAdaptation`, `metadata`.
-- [ ] Composite IDs follow `{source}::{type}::{name}` format.
-- [ ] Core entities are correctly identified with `coreEntity: true`.
-- [ ] The `coverage` summary lists discovered languages, frameworks, and categories.
-- [ ] Language-specific entities have correct language tags.
-- [ ] Running the script twice produces identical output (deterministic).
-- [ ] Runs without external pip dependencies (or clearly documents `pyyaml` as optional).
+- [x] Running `python3 .claude/skills/ignite/scripts/build-manifest.py` produces `catalog/manifest.json`.
+- [x] The manifest is valid JSON with entries from `everything-claude-code`.
+- [x] Every entity has all required fields: `id`, `source`, `type`, `name`, `path`, `tags`, `coreEntity`, `requiresAdaptation`, `metadata`.
+- [x] Composite IDs follow `{source}::{type}::{name}` format.
+- [x] Core entities are correctly identified with `coreEntity: true`.
+- [x] The `coverage` summary lists discovered languages, frameworks, and categories.
+- [x] Language-specific entities have correct language tags.
+- [x] Running the script twice produces identical output (deterministic).
+- [x] Runs without external pip dependencies (or clearly documents `pyyaml` as optional).
 
 ### Dependencies
 

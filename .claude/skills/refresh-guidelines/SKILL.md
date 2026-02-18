@@ -24,6 +24,43 @@ Populate or update the CLAUDE.md generation reference from dual sources: web-sou
 
 Follow these steps in order. Do NOT skip steps or auto-approve — human review is required.
 
+### Step 0: Source freshness check
+
+Run the freshness checker to identify stale or broken sources:
+
+```bash
+python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py --check-freshness
+```
+
+This checks each source in `curated-sources.md` for:
+- **Staleness**: "Last verified" date is >30 days old or missing.
+- **Reachability**: URL returns HTTP error or is unreachable.
+
+Read `docs/freshness-report.json` and present a summary table:
+
+```
+## Source Freshness Report
+
+| ID | Source | Last Verified | Status | Issue |
+|----|--------|---------------|--------|-------|
+| T1-001 | Claude Code Memory Management | 2026-02-12 | OK | — |
+| T2-003 | Dometrain Guide | 2025-12-15 | STALE | 64 days since verification |
+| T3-002 | Templates repo | — | BROKEN | HTTP 404 |
+
+**Action needed**: {N} sources require attention.
+```
+
+If no sources need attention, report "All sources fresh and reachable" and proceed to Step 1.
+
+If sources need attention:
+1. For **broken** sources: Use WebSearch to find replacement URLs covering the same themes. Propose replacements with the same tier and ID.
+2. For **stale but reachable** sources: Mark for "Last verified" date update after the full fetch succeeds in Step 1.
+3. Present all proposed changes to `curated-sources.md` and **wait for human approval**.
+4. On approval, update `curated-sources.md` with:
+   - Replacement URLs and descriptions (for broken sources).
+   - Updated "Last verified" dates (set to today) for successfully verified sources.
+5. If the user rejects all changes, proceed with existing sources (some fetches may fail).
+
 ### Step 1: Fetch web content
 
 Run the fetch script to collect raw content from curated web sources:
@@ -170,6 +207,7 @@ Update the Source Attribution section in both files:
 
 - `references/curated-sources.md` — Tiered web source registry with URLs and theme tags.
 - `references/enrichment-procedure.md` — Full classification and merge algorithm.
+- `scripts/fetch-guidelines.py --check-freshness` — Produces `docs/freshness-report.json` with per-source staleness and reachability status.
 - `scripts/parse-insights.py` — Extracts structured data from `/insights` report into `docs/insights-parsed.json`.
 
 ## Constraints
