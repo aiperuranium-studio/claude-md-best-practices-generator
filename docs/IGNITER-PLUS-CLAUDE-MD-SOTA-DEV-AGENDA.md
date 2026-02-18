@@ -438,6 +438,10 @@ Sprint 2 (synced sources must exist in `catalog/sources/`).
 
 Sprint 3 (manifest builder must exist for `/sync-catalog` to chain into).
 
+### Retroactive Note
+
+Sprint 4 was completed in the same session as Sprint 5. All three deliverables are documentation-only (SKILL.md and agent definition files) — no Python scripts or tests were created for this sprint. The existing Sprint 1–3 tests (307 tests) continue to pass and validate the underlying scripts that these skills wrap.
+
 ---
 
 ## Sprint 5: Ignite Skill & Reference Docs
@@ -485,18 +489,22 @@ Sprint 3 (manifest builder must exist for `/sync-catalog` to chain into).
 
 ### Acceptance Criteria
 
-- [ ] `.claude/skills/ignite/SKILL.md` exists and is under 500 lines.
-- [ ] SKILL.md contains a clear 6-step procedure referencing all three reference documents.
-- [ ] `ignite-workflow.md` documents all 6 steps with actionable detail.
-- [ ] `specialization-guide.md` covers all 5 entity types with specific adaptation rules.
-- [ ] `gap-analysis-guide.md` defines the three coverage levels, report format, and recommendation actions.
-- [ ] The specialization guide states all four constraints.
-- [ ] CLAUDE.md generation references [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) emergent content structure (Parts 1–5: structural standards, content guidelines, integration guidelines, behavioral patterns, maintenance).
-- [ ] All reference documents are cross-referenced consistently.
+- [x] `.claude/skills/ignite/SKILL.md` exists and is under 500 lines.
+- [x] SKILL.md contains a clear 6-step procedure referencing all three reference documents.
+- [x] `ignite-workflow.md` documents all 6 steps with actionable detail.
+- [x] `specialization-guide.md` covers all 5 entity types with specific adaptation rules.
+- [x] `gap-analysis-guide.md` defines the three coverage levels, report format, and recommendation actions.
+- [x] The specialization guide states all four constraints.
+- [x] CLAUDE.md generation references [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) emergent content structure (Parts 1–5: structural standards, content guidelines, integration guidelines, behavioral patterns, maintenance).
+- [x] All reference documents are cross-referenced consistently.
 
 ### Dependencies
 
 Sprint 4 (`/sync-catalog` must work so the manifest exists) and Sprint 1.5 (seed [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) must exist for Step 6; enriched version used if available).
+
+### Retroactive Note
+
+Sprint 5 was completed in the same session as Sprint 4 (both in 1 session total vs. the estimated 3–5 sessions combined). All four deliverables are documentation-only (SKILL.md + 3 reference guides) — no Python scripts or tests were created. The `/ignite` skill orchestrates existing infrastructure (manifest reading, file copying, CLAUDE.md generation) entirely through Claude's natural language understanding of the reference documents, rather than through scripts. The existing 307 tests for Sprints 1–3 remain the validation baseline for the underlying pipeline.
 
 ---
 
@@ -567,7 +575,7 @@ Sprint 5 (all skills and reference docs must be complete).
 | 2 | `.claude/skills/sync-catalog/scripts/sync-catalog.sh`, `docs/SOURCE-SCHEMA.md` (mod), `tests/test_sprint2_catalog_sync.py` |
 | 3 | `.claude/skills/ignite/scripts/build-manifest.py`, `tests/test_sprint3_manifest_builder.py`, `RELEASE-NOTES-v1.0.md` |
 | 4 | `.claude/skills/sync-catalog/SKILL.md`, `.claude/skills/add-source/SKILL.md`, `.claude/agents/catalog-inspector.md` |
-| 5 | `.claude/skills/ignite/SKILL.md`, `.claude/skills/ignite/references/ignite-workflow.md`, `specialization-guide.md`, `gap-analysis-guide.md` |
+| 5 | `.claude/skills/ignite/SKILL.md`, `.claude/skills/ignite/references/ignite-workflow.md`, `.claude/skills/ignite/references/specialization-guide.md`, `.claude/skills/ignite/references/gap-analysis-guide.md` |
 | 6 | `README.md`, `docs/test-archetypes/*.md`, `docs/test-archetypes/RESULTS.md` |
 
 ---
