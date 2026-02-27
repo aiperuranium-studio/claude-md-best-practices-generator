@@ -23,9 +23,9 @@ Default priority for `/add-source`: 50.
 
 - Always tracked in git (not gitignored)
 - Wins all conflicts via priority 1
-- Never overwritten by `/sync-catalog`
+- **IMPORTANT**: Never overwritten by `/sync-catalog`
 - Subdirectories mirror entity types: `agents/`, `skills/`, `commands/`, `rules/`
 
 ## manifest.json
 
-Auto-generated entity index — **do not edit manually**. Gitignored, rebuilt by `/sync-catalog`.
+**IMPORTANT**: Never edit `manifest.json` manually — it is auto-generated, gitignored, and rebuilt by `/sync-catalog`.

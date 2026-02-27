@@ -6,7 +6,7 @@ Dual-source enrichment pipeline: fetches web best practices + `/insights` behavi
 
 ## Scripts
 
-- **`scripts/fetch-guidelines.py`** — Reads `references/curated-sources.md` for URLs, fetches each source, writes `docs/guidelines-raw.json`
+- **`scripts/fetch-guidelines.py`** — Reads `references/curated-sources.md` for URLs, fetches each source, writes `docs/guidelines-raw.json`. With `--check-freshness`: checks URL reachability and "Last verified" staleness, writes `docs/freshness-report.json`.
 - **`scripts/parse-insights.py`** — Reads `~/.claude/usage-data/report.html` (+ `facets/*.json`, `session-meta/*.json`), writes `docs/insights-parsed.json`
 
 Both scripts: Python 3.10+, stdlib only, no external dependencies.
@@ -18,7 +18,7 @@ Both scripts: Python 3.10+, stdlib only, no external dependencies.
 
 ## Output Conventions
 
-Two output files, never conflate them:
+**IMPORTANT**: Two output files, never conflate them — seed contains web sources only, enriched merges /insights:
 
 | File | Contains | Git Status |
 |------|----------|------------|

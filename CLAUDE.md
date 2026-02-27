@@ -12,7 +12,8 @@ An AI-driven tool that maintains a catalog of Claude Code entities (agents, skil
 ## Common Commands
 
 - `python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py` — Fetch raw content from curated web sources into `docs/guidelines-raw.json`.
-- `python3 .claude/skills/refresh-guidelines/scripts/parse-insights.py` — Parse `/insights` report into `docs/insights-parsed.json`.
+- `python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py --check-freshness` — Check source URL reachability and staleness, write `docs/freshness-report.json`.
+- `python3 .claude/skills/refresh-guidelines/scripts/parse-insights.py` — Parse `/insights` report into `docs/insights-parsed.json`. Manual tips go in `docs/insights-raw.md`.
 - `python3 -c "import json; json.load(open('catalog/sources.json'))"` — Validate `sources.json` syntax.
 - `.venv/bin/pytest tests/ -v` — Run all tests (or `uv run pytest tests/ -v`).
 
@@ -24,9 +25,11 @@ Skills (invoked within Claude Code):
 
 ## Project Structure
 
-| Directory | Purpose |
-|-----------|---------|
+| Path | Purpose |
+|------|---------|
+| `README.md` | Project overview, prerequisites, installation, quick-start |
 | `docs/` | Architecture plan, dev agenda, CLAUDE-MD-SOTA generation reference, source schema |
+| `docs/test-archetypes/` | Sprint 6 archetype descriptions + `RESULTS.md` (integration testing) |
 | `.claude/skills/` | `/ignite`, `/sync-catalog`, `/add-source`, `/refresh-guidelines` skill definitions |
 | `.claude/agents/` | `catalog-inspector` agent (Sprint 4+) |
 | `catalog/sources.json` | Source registry — where entities come from |
@@ -47,7 +50,8 @@ Each subdirectory has its own scoped `CLAUDE.md` with directory-specific instruc
 - **IMPORTANT: No preemptive execution** — Do NOT implement or run code unless explicitly asked. Wait for user approval after presenting plans.
 - **IMPORTANT: No scope creep** — Do NOT extrapolate or expand scope beyond what was requested. Mention ideas briefly at the end only if relevant.
 - **Clarify before acting** — When unclear on a request (especially Italian or domain-specific terms), ask rather than guess.
-- **Proportional response** — For simple changes, act directly. Match complexity of approach to complexity of task.
+- **Proportional response** — For simple changes, act directly without entering plan mode. Reserve plan mode for genuinely complex, multi-approach decisions.
+- **Verification** — Run `.venv/bin/pytest tests/<specific_file.py> -v` after code changes; full suite (`.venv/bin/pytest tests/ -v`) as final gate only. Run `ruff check` on Python changes before reporting completion.
 - **One-section-at-a-time** — Complete one document/section fully before moving to the next. Do not scatter partial edits.
 
 ## Authoritative Documents
