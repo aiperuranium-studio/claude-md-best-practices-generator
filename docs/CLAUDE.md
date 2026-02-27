@@ -17,8 +17,8 @@ Every file in this directory belongs to exactly one category:
 
 ## Cross-referencing
 
-When creating or modifying any file here, check all other docs files and add hyperlink references where missing. Every doc should link to related docs.
+**IMPORTANT**: When creating or modifying any file here, check all other docs files and add hyperlink references where missing. Every doc should link to related docs.
 
 ## Renumbering & Reference Validation
 
-After any insertion, deletion, or reordering of numbered sections or references in docs, re-validate all numbering. Never leave orphaned references.
+**IMPORTANT**: After any insertion, deletion, or reordering of numbered sections or references in docs, re-validate all numbering. Never leave orphaned references.

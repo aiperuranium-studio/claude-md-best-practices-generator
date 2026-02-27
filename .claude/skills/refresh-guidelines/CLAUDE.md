@@ -18,7 +18,7 @@ Both scripts: Python 3.10+, stdlib only, no external dependencies.
 
 ## Output Conventions
 
-Two output files, never conflate them:
+**IMPORTANT**: Two output files, never conflate them — seed contains web sources only, enriched merges /insights:
 
 | File | Contains | Git Status |
 |------|----------|------------|

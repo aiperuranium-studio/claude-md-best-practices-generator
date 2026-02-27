@@ -50,7 +50,8 @@ Each subdirectory has its own scoped `CLAUDE.md` with directory-specific instruc
 - **IMPORTANT: No preemptive execution** — Do NOT implement or run code unless explicitly asked. Wait for user approval after presenting plans.
 - **IMPORTANT: No scope creep** — Do NOT extrapolate or expand scope beyond what was requested. Mention ideas briefly at the end only if relevant.
 - **Clarify before acting** — When unclear on a request (especially Italian or domain-specific terms), ask rather than guess.
-- **Proportional response** — For simple changes, act directly. Match complexity of approach to complexity of task.
+- **Proportional response** — For simple changes, act directly without entering plan mode. Reserve plan mode for genuinely complex, multi-approach decisions.
+- **Verification** — Run `.venv/bin/pytest tests/<specific_file.py> -v` after code changes; full suite (`.venv/bin/pytest tests/ -v`) as final gate only. Run `ruff check` on Python changes before reporting completion.
 - **One-section-at-a-time** — Complete one document/section fully before moving to the next. Do not scatter partial edits.
 
 ## Authoritative Documents

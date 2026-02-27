@@ -43,7 +43,7 @@ CLAUDE.md operates within a multi-level memory hierarchy. `/ignite` should gener
 
 ### 1.2 @-Imports for Modularity
 
-Use `@path/to/file.md` to import shared instructions rather than duplicating content. Keeps the root CLAUDE.md concise and avoids drift between copies. Examples: `@docs/git-instructions.md`, `@.claude/testing-conventions.md`.
+Use `@path/to/file.md` to import shared instructions rather than duplicating content. Keeps the root CLAUDE.md concise and avoids drift between copies. Examples: `@docs/git-instructions.md`, `@.claude/testing-conventions.md`. Imports are resolved recursively up to 5 hops deep. Use `/memory` to inspect which memory files are loaded in the current session.
 
 *Source: T1-001, T1-002*
 
@@ -98,7 +98,7 @@ Structure content around three questions — **WHAT** (tech, stack, project stru
 - Naming conventions specific to this project.
 - Gotchas and known issues (e.g., "migrations must be run before tests").
 - Environment quirks (e.g., "requires Node 20+, not 22").
-- Domain-specific terminology and vocabulary.
+- Domain-specific terminology and vocabulary — Claude understands general programming but lacks context for your business domain. Document project jargon, acronyms, and domain terms upfront.
 - Type hint/annotation policies.
 - Test framework details and fixture locations.
 - Import ordering and style preferences.
@@ -106,6 +106,7 @@ Structure content around three questions — **WHAT** (tech, stack, project stru
 - Custom CLI commands, monorepo navigation, non-standard file locations.
 - Team workflows — step-by-step procedures for common tasks (e.g., creating API endpoints: plan → confirm → implement → test → verify). Keeps agent output consistent with team standards.
 - **Prefer pointers to copies**: Don't embed code snippets in CLAUDE.md or context files — they go stale. Use `file:line` references to point Claude at the authoritative source code.
+- Prefer CLI tools (`gh`, `aws`, `gcloud`, `sentry-cli`) when interacting with external services — the most context-efficient integration method.
 
 *Sources: T1-002, T1-003, T2-001, T2-003, T2-004*
 
@@ -141,14 +142,15 @@ Structure content around three questions — **WHAT** (tech, stack, project stru
 - **CLAUDE.md** = advisory behavioral guidance. Claude follows it as best-effort context.
 - **Hooks** = mandatory automated enforcement. Run deterministically on events (pre-commit, file save).
 - **Rule of thumb**: If a rule can be checked mechanically (formatting, linting, type checking), use a hook. If it requires judgment (architecture, naming, approach), use CLAUDE.md.
+- **Permissions**: Use `/permissions` to allowlist safe commands (e.g., `npm run lint`, `git commit`) or `/sandbox` for OS-level isolation, reducing approval interruptions. `--dangerously-skip-permissions` is available for fully contained batch workflows (only in sandboxed, internet-free environments).
 
-*Source: T1-001*
+*Source: T1-001, T1-002*
 
 ### 3.2 CLAUDE.md vs Skills
 
 - **CLAUDE.md** = always-active background context read every session.
 - **Skills** = on-demand task workflows invoked explicitly (e.g., `/tdd`, `/code-review`).
-- **Rule of thumb**: Don't put procedural multi-step workflows in CLAUDE.md. Use skills for task-specific procedures, CLAUDE.md for universal project guidance.
+- **Rule of thumb**: Don't put procedural multi-step workflows in CLAUDE.md. Use skills for task-specific procedures, CLAUDE.md for universal project guidance. Use `disable-model-invocation: true` in skill frontmatter for workflows with side effects that must be triggered manually.
 
 *Source: T1-002*
 
@@ -179,6 +181,7 @@ Reference shared instruction files to keep CLAUDE.md lean and modular:
 - `@.claude/testing-conventions.md` — Test patterns.
 - Personal overrides: `@~/.claude/my-project-instructions.md`.
 - **Context file approval**: List context files with brief descriptions and instruct Claude to present which ones it wants to read for approval before loading. Gives explicit control over what context enters each session.
+- **Additional directories**: Set `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` with `--add-dir ../path` to load memory files from directories outside the main working directory (e.g., shared team config repos).
 
 *Sources: T1-001, T1-002, T2-001, T2-004*
 
@@ -203,6 +206,8 @@ Use `/plugin` to browse and install community-provided plugins that bundle skill
 Give Claude specific verification commands rather than vague "make sure it works":
 - `npm test`, `cargo clippy`, `mypy .`, `pytest tests/ -v`
 - Include the exact commands in the Common Commands section of generated CLAUDE.md files.
+- Prefer running single tests over the full suite for speed; run the full suite only as a final gate.
+- Typecheck after making a series of code changes, not just individual edits.
 
 *Source: T1-002*
 
@@ -261,7 +266,9 @@ Update CLAUDE.md when:
 
 Shortcut: after every correction, end with "Update CLAUDE.md so you don't make that mistake again." Use `/memory` to open any memory file in your system editor for extensive edits.
 
-*Sources: T1-001, T1-003, T3-002*
+Treat CLAUDE.md like code: if Claude ignores a rule, the file is likely too long; if Claude asks questions already answered in the file, the phrasing is ambiguous. Prune and clarify accordingly.
+
+*Sources: T1-001, T1-002, T1-003, T3-002*
 
 ### 5.3 Version Control
 
@@ -284,14 +291,14 @@ All content sourced from the following web references. Nothing invented or hardc
 
 | Source | Tier | URL | Contributed to | Date |
 |--------|------|-----|----------------|------|
-| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-16 |
-| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4 | 2026-02-16 |
-| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-16 |
-| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-02-16 |
-| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-16 |
-| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-16 |
-| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-16 |
-| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-16 |
-| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-16 |
+| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-27 |
+| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4, 5 | 2026-02-27 |
+| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-27 |
+| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-02-27 |
+| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-27 |
+| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-27 |
+| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-27 |
+| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-27 |
+| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-27 |
 
-**Seed version**: 2026-02-17 (refreshed, no content changes) | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
+**Seed version**: 2026-02-27 | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
