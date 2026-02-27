@@ -46,13 +46,21 @@ These rules apply to every sprint, whenever docs are created or modified:
    - Keep existing `.idea` entry.
    - Add `catalog/sources/*/` (downloaded remote repos, gitignored).
    - Explicitly un-ignore `catalog/sources/local/` with `!catalog/sources/local/`.
-   - Add common Python ignores: `__pycache__/`, `*.pyc`, `.venv/`.
+   - Add common Python ignores: `__pycache__/`, `*.pyc`, `.venv/`, `.pytest_cache/`.
+   - Add `uv.lock` (UV package manager lock file, re-generatable).
 
 3. **Create `.claude/settings.json`**
    - Minimal valid settings file. Hooks array will be populated in later sprints.
    - This establishes the `.claude/` directory that all skills and agents will live under.
 
-4. **Create directory skeleton** (empty directories with `.gitkeep` where needed)
+4. **Create `pyproject.toml`**
+   - Python project configuration for `claude-code-project-igniter`.
+   - `requires-python = ">=3.10"`, no runtime dependencies.
+   - Dev dependency group: `pytest>=8.0`, `ruff>=0.9`.
+   - Pytest config: `testpaths = ["tests"]`, `pythonpath = ["."]`.
+   - Ruff config: `target-version = "py310"`, `line-length = 100`, select `E`, `W`, `F`, `I`, `B`, `UP`.
+
+5. **Create directory skeleton** (empty directories with `.gitkeep` where needed)
    - `.claude/skills/ignite/references/`
    - `.claude/skills/ignite/scripts/`
    - `.claude/skills/sync-catalog/scripts/`
@@ -68,6 +76,7 @@ These rules apply to every sprint, whenever docs are created or modified:
 - [x] `CLAUDE.md` exists at project root and contains all four behavioral rules (project-specific conventions, not sourced from `docs/CLAUDE-MD-SOTA.md`).
 - [x] `.gitignore` correctly ignores `catalog/sources/*/` but allows `catalog/sources/local/`.
 - [x] `.claude/settings.json` is valid JSON.
+- [x] `pyproject.toml` exists with correct Python version, dev dependencies, pytest and ruff configuration.
 - [x] All directories listed in the target structure exist (may contain only `.gitkeep` placeholders).
 - [x] `git status` shows a clean working tree after committing.
 
@@ -186,6 +195,7 @@ Sprint 0 (directory skeleton must exist).
    - Python 3.10+, stdlib only (`urllib.request`, `json`, `re`, `html.parser`, `pathlib`, `datetime`).
    - **Input**: reads `curated-sources.md` to extract URLs + theme tags.
    - **Output**: writes `docs/guidelines-raw.json` with structured content blocks.
+   - **Freshness mode** (`--check-freshness`): Checks URL reachability and staleness (>30 days since last fetch), writes `docs/freshness-report.json` instead of fetching full content.
    - Fault-tolerant: skips failed URLs with warnings, produces partial results.
    - Follows redirects. Handles both HTML (strip tags) and raw markdown (GitHub).
    - Output schema per entry:
@@ -225,7 +235,7 @@ Sprint 0 (directory skeleton must exist).
 
 7. **Update project files**
    - `CLAUDE.md`: add `refresh-guidelines/` to project structure, add `parse-insights.py`, `insights-parsed.json`, and `CLAUDE-MD-SOTA.enriched.md` references. Update doc separation to three categories (internal dev docs, sub-products, generated artifacts).
-   - `.gitignore`: add `docs/guidelines-raw.json`, `docs/insights-raw.md`, `docs/insights-parsed.json`, `docs/CLAUDE-MD-SOTA.enriched.md`, and `catalog/manifest.json`.
+   - `.gitignore`: add `docs/guidelines-raw.json`, `docs/freshness-report.json`, `docs/insights-raw.md`, `docs/insights-parsed.json`, `docs/CLAUDE-MD-SOTA.enriched.md`, and `catalog/manifest.json`.
    - Create `docs/insights-raw.md`: empty placeholder with instructions header for supplementary manual `/insights` tips.
 
 8. **Create scoped child-directory CLAUDE.md files**
@@ -240,6 +250,7 @@ Sprint 0 (directory skeleton must exist).
 
 - [x] `/refresh-guidelines` skill is invocable and Claude discovers it.
 - [x] `fetch-guidelines.py` fetches content from at least Tier 1 sources without errors.
+- [x] `fetch-guidelines.py --check-freshness` produces `docs/freshness-report.json` with URL reachability and staleness data.
 - [x] `docs/guidelines-raw.json` produced with valid JSON and themed content blocks.
 - [x] After `/refresh-guidelines`, the seed (`CLAUDE-MD-SOTA.md`) contains only web-sourced content (no `/insights` material).
 - [x] After `/refresh-guidelines` with `/insights` data, `CLAUDE-MD-SOTA.enriched.md` is produced with seed + `/insights` merged.
@@ -289,12 +300,12 @@ Sprint 0 (directory skeleton must exist). Runs in parallel with Sprint 1.
 
 ### Acceptance Criteria
 
-- [ ] Running `bash .claude/skills/sync-catalog/scripts/sync-catalog.sh` from the project root clones `everything-claude-code` into `catalog/sources/everything-claude-code/`.
-- [ ] `catalog/sources/everything-claude-code/.source-meta.json` exists after sync with valid JSON containing all required fields.
-- [ ] Running the script a second time performs a pull (not a fresh clone) and updates `.source-meta.json`.
-- [ ] The `local` source directory is untouched by the sync script.
-- [ ] `catalog/sources/everything-claude-code/` is ignored by git (verify with `git status`).
-- [ ] The script exits with non-zero status and a clear error message if the network is unavailable.
+- [x] Running `bash .claude/skills/sync-catalog/scripts/sync-catalog.sh` from the project root clones `everything-claude-code` into `catalog/sources/everything-claude-code/`.
+- [x] `catalog/sources/everything-claude-code/.source-meta.json` exists after sync with valid JSON containing all required fields.
+- [x] Running the script a second time performs a pull (not a fresh clone) and updates `.source-meta.json`.
+- [x] The `local` source directory is untouched by the sync script.
+- [x] `catalog/sources/everything-claude-code/` is ignored by git (verify with `git status`).
+- [x] The script exits with non-zero status and a clear error message if the network is unavailable.
 
 ### Dependencies
 
@@ -371,15 +382,15 @@ Sprint 1 (`sources.json` must exist).
 
 ### Acceptance Criteria
 
-- [ ] Running `python3 .claude/skills/ignite/scripts/build-manifest.py` produces `catalog/manifest.json`.
-- [ ] The manifest is valid JSON with entries from `everything-claude-code`.
-- [ ] Every entity has all required fields: `id`, `source`, `type`, `name`, `path`, `tags`, `coreEntity`, `requiresAdaptation`, `metadata`.
-- [ ] Composite IDs follow `{source}::{type}::{name}` format.
-- [ ] Core entities are correctly identified with `coreEntity: true`.
-- [ ] The `coverage` summary lists discovered languages, frameworks, and categories.
-- [ ] Language-specific entities have correct language tags.
-- [ ] Running the script twice produces identical output (deterministic).
-- [ ] Runs without external pip dependencies (or clearly documents `pyyaml` as optional).
+- [x] Running `python3 .claude/skills/ignite/scripts/build-manifest.py` produces `catalog/manifest.json`.
+- [x] The manifest is valid JSON with entries from `everything-claude-code`.
+- [x] Every entity has all required fields: `id`, `source`, `type`, `name`, `path`, `tags`, `coreEntity`, `requiresAdaptation`, `metadata`.
+- [x] Composite IDs follow `{source}::{type}::{name}` format.
+- [x] Core entities are correctly identified with `coreEntity: true`.
+- [x] The `coverage` summary lists discovered languages, frameworks, and categories.
+- [x] Language-specific entities have correct language tags.
+- [x] Running the script twice produces identical output (deterministic).
+- [x] Runs without external pip dependencies (or clearly documents `pyyaml` as optional).
 
 ### Dependencies
 
@@ -417,15 +428,19 @@ Sprint 2 (synced sources must exist in `catalog/sources/`).
 
 ### Acceptance Criteria
 
-- [ ] Running `/sync-catalog` in Claude Code triggers the sync script and manifest build, reporting results.
-- [ ] Running `/add-source` prompts for all required fields and adds a valid entry to `catalog/sources.json`.
-- [ ] The `/add-source` skill rejects duplicate source IDs and invalid URLs.
-- [ ] `.claude/agents/catalog-inspector.md` exists with a well-formed agent system prompt.
-- [ ] All `SKILL.md` files have clear descriptions suitable for Claude's skill discovery.
+- [x] Running `/sync-catalog` in Claude Code triggers the sync script and manifest build, reporting results.
+- [x] Running `/add-source` prompts for all required fields and adds a valid entry to `catalog/sources.json`.
+- [x] The `/add-source` skill rejects duplicate source IDs and invalid URLs.
+- [x] `.claude/agents/catalog-inspector.md` exists with a well-formed agent system prompt.
+- [x] All `SKILL.md` files have clear descriptions suitable for Claude's skill discovery.
 
 ### Dependencies
 
 Sprint 3 (manifest builder must exist for `/sync-catalog` to chain into).
+
+### Retroactive Note
+
+Sprint 4 was completed in the same session as Sprint 5. All three deliverables are documentation-only (SKILL.md and agent definition files) — no Python scripts or tests were created for this sprint. The existing Sprint 1–3 tests (307 tests) continue to pass and validate the underlying scripts that these skills wrap.
 
 ---
 
@@ -474,18 +489,22 @@ Sprint 3 (manifest builder must exist for `/sync-catalog` to chain into).
 
 ### Acceptance Criteria
 
-- [ ] `.claude/skills/ignite/SKILL.md` exists and is under 500 lines.
-- [ ] SKILL.md contains a clear 6-step procedure referencing all three reference documents.
-- [ ] `ignite-workflow.md` documents all 6 steps with actionable detail.
-- [ ] `specialization-guide.md` covers all 5 entity types with specific adaptation rules.
-- [ ] `gap-analysis-guide.md` defines the three coverage levels, report format, and recommendation actions.
-- [ ] The specialization guide states all four constraints.
-- [ ] CLAUDE.md generation references [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) emergent content structure (Parts 1–5: structural standards, content guidelines, integration guidelines, behavioral patterns, maintenance).
-- [ ] All reference documents are cross-referenced consistently.
+- [x] `.claude/skills/ignite/SKILL.md` exists and is under 500 lines.
+- [x] SKILL.md contains a clear 6-step procedure referencing all three reference documents.
+- [x] `ignite-workflow.md` documents all 6 steps with actionable detail.
+- [x] `specialization-guide.md` covers all 5 entity types with specific adaptation rules.
+- [x] `gap-analysis-guide.md` defines the three coverage levels, report format, and recommendation actions.
+- [x] The specialization guide states all four constraints.
+- [x] CLAUDE.md generation references [`docs/CLAUDE-MD-SOTA.md`](CLAUDE-MD-SOTA.md) emergent content structure (Parts 1–5: structural standards, content guidelines, integration guidelines, behavioral patterns, maintenance).
+- [x] All reference documents are cross-referenced consistently.
 
 ### Dependencies
 
 Sprint 4 (`/sync-catalog` must work so the manifest exists) and Sprint 1.5 (seed [CLAUDE-MD-SOTA.md](CLAUDE-MD-SOTA.md) must exist for Step 6; enriched version used if available).
+
+### Retroactive Note
+
+Sprint 5 was completed in the same session as Sprint 4 (both in 1 session total vs. the estimated 3–5 sessions combined). All four deliverables are documentation-only (SKILL.md + 3 reference guides) — no Python scripts or tests were created. The `/ignite` skill orchestrates existing infrastructure (manifest reading, file copying, CLAUDE.md generation) entirely through Claude's natural language understanding of the reference documents, rather than through scripts. The existing 307 tests for Sprints 1–3 remain the validation baseline for the underlying pipeline.
 
 ---
 
@@ -531,14 +550,14 @@ Sprint 4 (`/sync-catalog` must work so the manifest exists) and Sprint 1.5 (seed
 
 ### Acceptance Criteria
 
-- [ ] All 6 archetype descriptions exist in `docs/test-archetypes/`.
-- [ ] `docs/test-archetypes/RESULTS.md` documents actual vs. expected results.
-- [ ] Entity selection is correct for all archetypes.
-- [ ] Specialization produces adapted content for at least 2 archetypes.
-- [ ] Gap analysis correctly identifies missing coverage for Go microservice.
-- [ ] Edge cases are handled gracefully.
-- [ ] `README.md` exists with installation and quick-start instructions.
-- [ ] Complete pipeline works: clone → `/sync-catalog` → `/ignite` → tailored configuration.
+- [x] All 6 archetype descriptions exist in `docs/test-archetypes/`.
+- [x] `docs/test-archetypes/RESULTS.md` documents actual vs. expected results.
+- [x] Entity selection is correct for all archetypes.
+- [x] Specialization produces adapted content for at least 2 archetypes.
+- [x] Gap analysis correctly identifies missing coverage for Go microservice.
+- [x] Edge cases are handled gracefully.
+- [x] `README.md` exists with installation and quick-start instructions.
+- [x] Complete pipeline works: clone → `/sync-catalog` → `/ignite` → tailored configuration.
 
 ### Dependencies
 
@@ -550,13 +569,13 @@ Sprint 5 (all skills and reference docs must be complete).
 
 | Sprint | Files Created / Modified |
 |--------|--------------------------|
-| 0 | `CLAUDE.md`, `.gitignore` (mod), `.claude/settings.json`, `.gitkeep` skeleton, `docs/old/` (archived pre-merge plans) |
-| 1 | `catalog/sources.json`, `catalog/sources/local/README.md`, `docs/SOURCE-SCHEMA.md` |
-| 1.5 | `.claude/skills/refresh-guidelines/SKILL.md`, `references/curated-sources.md`, `references/enrichment-procedure.md`, `scripts/fetch-guidelines.py`, `scripts/parse-insights.py`, `docs/CLAUDE-MD-SOTA.md` (seed, web-only, tracked), `docs/CLAUDE-MD-SOTA.enriched.md` (seed + /insights, gitignored), `docs/insights-raw.md`, `docs/insights-parsed.json` (gitignored), `CLAUDE.md` (mod), `.gitignore` (mod), scoped `CLAUDE.md` files: `docs/CLAUDE.md`, `catalog/CLAUDE.md`, `.claude/skills/refresh-guidelines/CLAUDE.md`, `tests/CLAUDE.md` |
-| 2 | `.claude/skills/sync-catalog/scripts/sync-catalog.sh`, `docs/SOURCE-SCHEMA.md` (mod) |
-| 3 | `.claude/skills/ignite/scripts/build-manifest.py` |
+| 0 | `CLAUDE.md`, `.gitignore` (mod), `.claude/settings.json`, `pyproject.toml`, `.gitkeep` skeleton, `docs/old/` (archived pre-merge plans: `IGNITER-PLAN.md`, `CLAUDE-MD-SOTA-PLAN.md`) |
+| 1 | `catalog/sources.json`, `catalog/sources/local/README.md`, `docs/SOURCE-SCHEMA.md`, `tests/test_sprint1_catalog_foundation.py` |
+| 1.5 | `.claude/skills/refresh-guidelines/SKILL.md`, `references/curated-sources.md`, `references/enrichment-procedure.md`, `scripts/fetch-guidelines.py`, `scripts/parse-insights.py`, `docs/CLAUDE-MD-SOTA.md` (seed, web-only, tracked), `docs/CLAUDE-MD-SOTA.enriched.md` (seed + /insights, gitignored), `docs/insights-raw.md`, `docs/insights-parsed.json` (gitignored), `docs/freshness-report.json` (gitignored), `CLAUDE.md` (mod), `.gitignore` (mod), scoped `CLAUDE.md` files: `docs/CLAUDE.md`, `catalog/CLAUDE.md`, `.claude/skills/refresh-guidelines/CLAUDE.md`, `tests/CLAUDE.md`, `tests/test_sprint1_5_guidelines_enrichment.py` |
+| 2 | `.claude/skills/sync-catalog/scripts/sync-catalog.sh`, `docs/SOURCE-SCHEMA.md` (mod), `tests/test_sprint2_catalog_sync.py` |
+| 3 | `.claude/skills/ignite/scripts/build-manifest.py`, `tests/test_sprint3_manifest_builder.py`, `RELEASE-NOTES-v1.0.md` |
 | 4 | `.claude/skills/sync-catalog/SKILL.md`, `.claude/skills/add-source/SKILL.md`, `.claude/agents/catalog-inspector.md` |
-| 5 | `.claude/skills/ignite/SKILL.md`, `.claude/skills/ignite/references/ignite-workflow.md`, `specialization-guide.md`, `gap-analysis-guide.md` |
+| 5 | `.claude/skills/ignite/SKILL.md`, `.claude/skills/ignite/references/ignite-workflow.md`, `.claude/skills/ignite/references/specialization-guide.md`, `.claude/skills/ignite/references/gap-analysis-guide.md` |
 | 6 | `README.md`, `docs/test-archetypes/*.md`, `docs/test-archetypes/RESULTS.md` |
 
 ---
@@ -572,7 +591,7 @@ Sprint 5 (all skills and reference docs must be complete).
 | Rules cannot be installed at project level via files | 5 | Embed rules in generated `CLAUDE.md` as documented in specialization guide. |
 | Fetched web content structure changes | 1.5 | Defensive parsing with fallbacks; `curated-sources.md` records expected format per URL. |
 | CLAUDE-MD-SOTA.md becomes too long | 1.5 | Use @import references for detailed subsections; keep main doc as structured index under 300 lines. |
-| Curated source URLs change or break | 1.5 | `fetch-guidelines.py` follows redirects, skips failures; curated-sources updated when URLs change. |
+| Curated source URLs change or break | 1.5 | `fetch-guidelines.py` follows redirects, skips failures; `--check-freshness` mode produces `docs/freshness-report.json` to detect stale/broken URLs proactively. `curated-sources.md` updated when URLs change. |
 | Guidelines sources genuinely conflict | 1.5 | Enrichment procedure classifies conflicts explicitly, escalates to human; higher tier wins by default. |
 | /insights tips unavailable or low quality | 1.5 | Document can be fully populated from web sources alone; /insights enriches but isn't required. `/refresh-guidelines` works with whichever sources are available. |
 | `/insights` report HTML structure changes across versions | 1.5 | `parse-insights.py` uses class-based extraction (`.big-win`, `.friction-category`, etc.); graceful degradation on missing sections. |

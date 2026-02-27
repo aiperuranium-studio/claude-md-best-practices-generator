@@ -24,9 +24,13 @@ uv run pytest tests/ -v                                   # alternative via uv
 
 - `test_sprint1_catalog_foundation.py` — catalog/sources.json schema, local source directory structure, SOURCE-SCHEMA.md
 - `test_sprint1_5_guidelines_enrichment.py` — skill files, script functions, reference parsing, output schemas, gitignore entries
+- `test_sprint2_catalog_sync.py` — sync-catalog.sh existence, executability, git operations, .source-meta.json schema, error handling
+- `test_sprint3_manifest_builder.py` — build-manifest.py functions, entity discovery (agents/skills/commands/rules/hooks), tag classification, core entity identification, manifest output schema, determinism
+
+Update this list when new sprint test files are added.
 
 ## Conventions
 
 - Test files use `PROJECT_ROOT = Path(__file__).resolve().parent.parent` for path resolution
 - Scripts are loaded as modules via `importlib.util` to avoid `__main__` side-effects (`test_sprint1_5_guidelines_enrichment.py:19-30`)
-- Mock external I/O (network, filesystem) — tests must run offline
+- **IMPORTANT**: Mock external I/O (network, filesystem) — tests must run offline

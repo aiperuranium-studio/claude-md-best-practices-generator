@@ -24,6 +24,11 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parents[3]  # .claude/skills/refresh-guidelines/scripts/ -> root
 CURATED_SOURCES = SCRIPT_DIR.parent / "references" / "curated-sources.md"
 OUTPUT_FILE = PROJECT_ROOT / "docs" / "guidelines-raw.json"
+FRESHNESS_REPORT_FILE = PROJECT_ROOT / "docs" / "freshness-report.json"
+
+# Freshness settings
+STALE_THRESHOLD_DAYS = 30
+FRESHNESS_TIMEOUT_SECONDS = 15
 
 # Fetch settings
 TIMEOUT_SECONDS = 30
@@ -104,6 +109,7 @@ def parse_curated_sources(path: Path) -> list[dict]:
     # Match metadata fields
     url_re = re.compile(r"^\s*-\s*\*\*URL\*\*:\s*(.+)$", re.MULTILINE)
     themes_re = re.compile(r"^\s*-\s*\*\*Themes\*\*:\s*(.+)$", re.MULTILINE)
+    verified_re = re.compile(r"^\s*-\s*\*\*Last verified\*\*:\s*(\d{4}-\d{2}-\d{2})\s*$", re.MULTILINE)
 
     # Split into sections by ### headings
     sections = re.split(r"(?=^### T\d+-\d+:)", content, flags=re.MULTILINE)
@@ -127,6 +133,7 @@ def parse_curated_sources(path: Path) -> list[dict]:
 
         url_match = url_re.search(section)
         themes_match = themes_re.search(section)
+        verified_match = verified_re.search(section)
 
         if not url_match:
             print(f"  WARNING: No URL found for {source_id}, skipping", file=sys.stderr)
@@ -137,12 +144,15 @@ def parse_curated_sources(path: Path) -> list[dict]:
         if themes_match:
             themes = [t.strip() for t in themes_match.group(1).split(",")]
 
+        last_verified = verified_match.group(1) if verified_match else None
+
         sources.append({
             "id": source_id,
             "source_name": source_name,
             "url": url,
             "tier": tier,
             "themes": themes,
+            "last_verified": last_verified,
         })
 
     return sources
@@ -285,10 +295,160 @@ def _truncate(text: str, max_chars: int) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Source freshness checking
+# ---------------------------------------------------------------------------
+
+def check_url_status(url: str, timeout: int = FRESHNESS_TIMEOUT_SECONDS) -> tuple[int | None, str | None]:
+    """Check URL reachability via HEAD (fallback to GET on 405).
+
+    Returns (http_status, final_url). On network error returns (None, None).
+    """
+    for method in ("HEAD", "GET"):
+        req = urllib.request.Request(
+            url,
+            method=method,
+            headers={"User-Agent": USER_AGENT},
+        )
+        try:
+            with _opener.open(req, timeout=timeout) as resp:
+                return (resp.status, resp.url)
+        except urllib.error.HTTPError as e:
+            if e.code == 405 and method == "HEAD":
+                continue  # retry with GET
+            return (e.code, None)
+        except (urllib.error.URLError, TimeoutError, OSError):
+            return (None, None)
+
+    return (None, None)
+
+
+def check_source_freshness(
+    sources: list[dict],
+    stale_threshold_days: int = STALE_THRESHOLD_DAYS,
+    today: datetime | None = None,
+) -> list[dict]:
+    """Check each source for staleness and URL reachability.
+
+    Args:
+        sources: Parsed source entries from parse_curated_sources().
+        stale_threshold_days: Days after which a source is considered stale.
+        today: Override for current date (for testing).
+
+    Returns:
+        List of dicts with freshness status per source.
+    """
+    if today is None:
+        today = datetime.now(timezone.utc)
+
+    results: list[dict] = []
+
+    for source in sources:
+        last_verified = source.get("last_verified")
+
+        # Compute staleness
+        if last_verified:
+            verified_date = datetime.strptime(last_verified, "%Y-%m-%d").replace(
+                tzinfo=timezone.utc
+            )
+            days_since = (today - verified_date).days
+            is_stale = days_since > stale_threshold_days
+        else:
+            days_since = -1
+            is_stale = True  # Missing date = treat as stale
+
+        # Check URL reachability
+        http_status, final_url = check_url_status(source["url"])
+        is_reachable = http_status is not None and 200 <= http_status < 400
+
+        results.append({
+            "id": source["id"],
+            "source_name": source["source_name"],
+            "url": source["url"],
+            "tier": source["tier"],
+            "last_verified": last_verified,
+            "is_stale": is_stale,
+            "days_since_verified": days_since,
+            "http_status": http_status,
+            "is_reachable": is_reachable,
+            "final_url": final_url,
+            "needs_attention": is_stale or not is_reachable,
+        })
+
+    return results
+
+
+def check_freshness_main() -> int:
+    """Entry point for --check-freshness mode."""
+    print(f"fetch-guidelines.py --check-freshness — {datetime.now(timezone.utc).isoformat()}",
+          file=sys.stderr)
+
+    if not CURATED_SOURCES.exists():
+        print(f"ERROR: Curated sources not found: {CURATED_SOURCES}", file=sys.stderr)
+        return 1
+
+    sources = parse_curated_sources(CURATED_SOURCES)
+    print(f"Found {len(sources)} sources in curated-sources.md", file=sys.stderr)
+
+    if not sources:
+        print("ERROR: No sources found", file=sys.stderr)
+        return 1
+
+    print(f"Checking freshness (threshold: {STALE_THRESHOLD_DAYS} days)...\n", file=sys.stderr)
+    results = check_source_freshness(sources)
+
+    stale_count = sum(1 for r in results if r["is_stale"])
+    broken_count = sum(1 for r in results if not r["is_reachable"])
+    attention_count = sum(1 for r in results if r["needs_attention"])
+
+    # Print per-source status
+    for r in results:
+        status = "OK"
+        issue = ""
+        if not r["is_reachable"]:
+            status = "BROKEN"
+            issue = f"HTTP {r['http_status']}" if r["http_status"] else "unreachable"
+        elif r["is_stale"]:
+            status = "STALE"
+            if r["days_since_verified"] == -1:
+                issue = "no verified date"
+            else:
+                issue = f"{r['days_since_verified']} days since verification"
+        print(f"  [{r['id']}] {r['source_name']}: {status}"
+              + (f" ({issue})" if issue else ""), file=sys.stderr)
+
+    # Write report
+    report = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "stale_threshold_days": STALE_THRESHOLD_DAYS,
+        "total_sources": len(results),
+        "stale_count": stale_count,
+        "broken_count": broken_count,
+        "needs_attention_count": attention_count,
+        "sources": results,
+    }
+
+    FRESHNESS_REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    FRESHNESS_REPORT_FILE.write_text(
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+    print(f"\n--- Freshness Summary ---", file=sys.stderr)
+    print(f"Stale: {stale_count}, Broken: {broken_count}, "
+          f"Needs attention: {attention_count}, Total: {len(results)}", file=sys.stderr)
+    print(f"Report: {FRESHNESS_REPORT_FILE}", file=sys.stderr)
+
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 def main() -> int:
+    if "--check-freshness" in sys.argv:
+        return check_freshness_main()
+
     print(f"fetch-guidelines.py — {datetime.now(timezone.utc).isoformat()}", file=sys.stderr)
 
     # Validate paths
