@@ -165,8 +165,8 @@ For each framework in the Technology Profile:
 3. Note the reason: "Framework match: {framework}".
 
 Examples:
-- FastAPI project → include `fastapi-patterns`
-- React project → include `react-patterns`, `nextjs-patterns` (if Next.js detected)
+- FastAPI project → include `fastapi-patterns`, framework-specific rules (e.g. `python/security` which carries a Django tag)
+- React project → include `react-patterns`, `nextjs-patterns` (if Next.js detected), framework-specific rules
 
 ### Phase 4 — Category Matching
 
