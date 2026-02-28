@@ -433,7 +433,7 @@ def check_freshness_main() -> int:
         encoding="utf-8",
     )
 
-    print(f"\n--- Freshness Summary ---", file=sys.stderr)
+    print("\n--- Freshness Summary ---", file=sys.stderr)
     print(f"Stale: {stale_count}, Broken: {broken_count}, "
           f"Needs attention: {attention_count}, Total: {len(results)}", file=sys.stderr)
     print(f"Report: {FRESHNESS_REPORT_FILE}", file=sys.stderr)
@@ -478,7 +478,7 @@ def main() -> int:
         text = fetch_url(source["url"])
         if text is None:
             fail_count += 1
-            print(f"  FAILED — skipping", file=sys.stderr)
+            print("  FAILED — skipping", file=sys.stderr)
             continue
 
         # Extract content blocks
@@ -510,7 +510,7 @@ def main() -> int:
         encoding="utf-8",
     )
 
-    print(f"\n--- Summary ---", file=sys.stderr)
+    print("\n--- Summary ---", file=sys.stderr)
     print(f"Sources: {success_count} fetched, {fail_count} failed, {len(sources)} total", file=sys.stderr)
     print(f"Output: {OUTPUT_FILE}", file=sys.stderr)
 

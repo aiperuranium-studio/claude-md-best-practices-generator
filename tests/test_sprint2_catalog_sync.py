@@ -18,7 +18,6 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 # Project root: tests/ lives one level below project root
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -234,7 +233,7 @@ class TestSyncScriptErrorHandling(unittest.TestCase):
             [
                 "bash",
                 "-c",
-                f"""
+                """
                 export SOURCES_JSON=/nonexistent/path/sources.json
                 # Simulate the check from the script
                 if [[ ! -f "$SOURCES_JSON" ]]; then

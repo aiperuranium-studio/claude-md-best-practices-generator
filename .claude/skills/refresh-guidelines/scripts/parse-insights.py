@@ -12,7 +12,6 @@ Python 3.10+, stdlib only.
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 from datetime import datetime, timezone
@@ -811,7 +810,7 @@ def main(report_dir: Path | None = None) -> int:
 
     # Summary
     total_blocks = sum(len(e["content_blocks"]) for e in entries)
-    print(f"\n--- Summary ---", file=sys.stderr)
+    print("\n--- Summary ---", file=sys.stderr)
     print(f"Entries: {len(entries)} sections, {total_blocks} content blocks", file=sys.stderr)
     print(f"Sessions analyzed: {output['sessions_analyzed']}", file=sys.stderr)
     print(f"Date range: {output['date_range']}", file=sys.stderr)
