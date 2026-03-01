@@ -15,7 +15,8 @@ A tool for enriching CLAUDE.md generation guidelines from curated web sources an
 - `.venv/bin/pytest tests/ -v` — Run all tests (or `uv run pytest tests/ -v`).
 
 Skills (invoked within Claude Code):
-- `/refresh-guidelines` — Enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
+- `/refresh-guidelines` — Direct mode (`--add-dir`): enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
+- `/claude-md-best-practices:refresh-guidelines` — Plugin mode: same skill, namespaced after `claude plugin install claude-md-best-practices`.
 
 ## Project Structure
 
@@ -25,6 +26,7 @@ Skills (invoked within Claude Code):
 | `docs/` | CLAUDE-MD-SOTA generation reference |
 | `docs/CODEMAPS/` | Auto-generated architecture docs — regenerate with `/everything-claude-code:update-codemaps` |
 | `.claude/skills/refresh-guidelines/` | `/refresh-guidelines` skill definition and scripts |
+| `.claude-plugin/` | Claude Code plugin manifest (`plugin.json`) and marketplace registry (`marketplace.json`) |
 | `tests/` | pytest test files |
 
 Each subdirectory has its own scoped `CLAUDE.md` with directory-specific instructions.
