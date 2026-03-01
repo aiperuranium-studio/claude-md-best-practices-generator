@@ -724,7 +724,8 @@ def main(report_dir: Path | None = None) -> int:
     is_stale = staleness_days > STALENESS_DAYS
     if is_stale:
         print(
-            f"WARNING: /insights report is {staleness_days} days old (stale > {STALENESS_DAYS} days).",
+            f"WARNING: /insights report is {staleness_days} days old"
+            f" (stale > {STALENESS_DAYS} days).",
             file=sys.stderr,
         )
         print(

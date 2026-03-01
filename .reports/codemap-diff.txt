@@ -1,0 +1,39 @@
+Codemap Diff Report
+Generated: 2026-02-28
+Run type: FIRST GENERATION (full baseline — no prior codemaps to diff against)
+
+=== Files Created ===
+docs/CODEMAPS/architecture.md   (~65 lines)
+docs/CODEMAPS/skills.md         (~72 lines)
+docs/CODEMAPS/data.md           (~75 lines)
+docs/CODEMAPS/dependencies.md   (~57 lines)
+
+=== Key Files Scanned ===
+catalog/sources.json                                    (31 lines)
+catalog/manifest.json                                   (auto-generated, 147 entities)
+pyproject.toml                                          (30 lines)
+.claude/skills/ignite/scripts/build-manifest.py         (651 lines)
+.claude/skills/refresh-guidelines/scripts/fetch-guidelines.py (526 lines)
+.claude/skills/refresh-guidelines/scripts/parse-insights.py   (850 lines)
+.claude/skills/sync-catalog/scripts/sync-catalog.sh     (169 lines)
+tests/test_sprint1_catalog_foundation.py                (317 lines)
+tests/test_sprint2_catalog_sync.py                      (287 lines)
+tests/test_sprint3_manifest_builder.py                  (892 lines)
+tests/test_sprint1_5_guidelines_enrichment.py           (1782 lines)
+CLAUDE.md, catalog/CLAUDE.md, docs/CLAUDE.md, tests/CLAUDE.md
+.claude/skills/{ignite,sync-catalog,add-source,refresh-guidelines}/SKILL.md
+
+=== Entity Counts (from manifest.json) ===
+Total:    147
+Skills:    56
+Commands:  33
+Rules:     29
+Hooks:     15
+Agents:    14
+Sources:    2 (everything-claude-code + local)
+
+=== Notes ===
+- frontend.md skipped: project is a CLI tool with no UI
+- No codemaps existed before this run; all 4 files are new baselines
+- manifest.json entity count reflects everything-claude-code source (synced)
+- Local source (catalog/sources/local/) contains no entities currently

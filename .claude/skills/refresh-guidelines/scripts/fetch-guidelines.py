@@ -33,7 +33,7 @@ FRESHNESS_TIMEOUT_SECONDS = 15
 # Fetch settings
 TIMEOUT_SECONDS = 30
 MAX_CONTENT_LENGTH = 500_000  # 500KB per source
-USER_AGENT = "claude-code-project-igniter/1.0 (fetch-guidelines)"
+USER_AGENT = "claude-md-best-practices/3.0 (fetch-guidelines)"
 
 
 # ---------------------------------------------------------------------------
@@ -109,7 +109,9 @@ def parse_curated_sources(path: Path) -> list[dict]:
     # Match metadata fields
     url_re = re.compile(r"^\s*-\s*\*\*URL\*\*:\s*(.+)$", re.MULTILINE)
     themes_re = re.compile(r"^\s*-\s*\*\*Themes\*\*:\s*(.+)$", re.MULTILINE)
-    verified_re = re.compile(r"^\s*-\s*\*\*Last verified\*\*:\s*(\d{4}-\d{2}-\d{2})\s*$", re.MULTILINE)
+    verified_re = re.compile(
+        r"^\s*-\s*\*\*Last verified\*\*:\s*(\d{4}-\d{2}-\d{2})\s*$", re.MULTILINE
+    )
 
     # Split into sections by ### headings
     sections = re.split(r"(?=^### T\d+-\d+:)", content, flags=re.MULTILINE)
@@ -196,7 +198,11 @@ def fetch_url(url: str) -> str | None:
             text = raw.decode(encoding, errors="replace")
 
             # Strip HTML if content is HTML
-            if "html" in content_type.lower() or text.strip().startswith("<!") or text.strip().startswith("<html"):
+            if (
+                "html" in content_type.lower()
+                or text.strip().startswith("<!")
+                or text.strip().startswith("<html")
+            ):
                 text = strip_html(text)
 
             return text
@@ -298,7 +304,9 @@ def _truncate(text: str, max_chars: int) -> str:
 # Source freshness checking
 # ---------------------------------------------------------------------------
 
-def check_url_status(url: str, timeout: int = FRESHNESS_TIMEOUT_SECONDS) -> tuple[int | None, str | None]:
+def check_url_status(
+    url: str, timeout: int = FRESHNESS_TIMEOUT_SECONDS
+) -> tuple[int | None, str | None]:
     """Check URL reachability via HEAD (fallback to GET on 405).
 
     Returns (http_status, final_url). On network error returns (None, None).
@@ -511,7 +519,10 @@ def main() -> int:
     )
 
     print("\n--- Summary ---", file=sys.stderr)
-    print(f"Sources: {success_count} fetched, {fail_count} failed, {len(sources)} total", file=sys.stderr)
+    print(
+        f"Sources: {success_count} fetched, {fail_count} failed, {len(sources)} total",
+        file=sys.stderr,
+    )
     print(f"Output: {OUTPUT_FILE}", file=sys.stderr)
 
     # Return 0 even with partial failures (fault-tolerant)
