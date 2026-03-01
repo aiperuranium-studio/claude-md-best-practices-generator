@@ -4,6 +4,8 @@
 .claude/settings.local.json
 .claude/settings.json
 
+.reports
+
 # Guidelines enrichment artifacts (re-fetchable)
 docs/CLAUDE-MD-SOTA.enriched.md
 docs/freshness-report.json
