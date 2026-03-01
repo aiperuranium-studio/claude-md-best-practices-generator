@@ -108,7 +108,6 @@ class InsightsHTMLParser(HTMLParser):
         # Temp storage for current card being parsed
         self._card_title: str = ""
         self._card_desc: str = ""
-        self._card_evidence: str = ""  # For friction examples, cmd-why, etc.
 
         # CLAUDE.md recommendation parsing
         self._in_cmd_item: bool = False
@@ -198,7 +197,6 @@ class InsightsHTMLParser(HTMLParser):
                 self._card_depth = 1  # We're inside the card's opening div
                 self._card_title = ""
                 self._card_desc = ""
-                self._card_evidence = ""
                 self._friction_examples = []
                 self._feature_oneliner = ""
                 self._pattern_summary = ""
