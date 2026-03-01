@@ -10,9 +10,12 @@
   "repository": "https://github.com/aiperuranium-studio/claude-md-best-practices-generator",
   "license": "MIT",
   "keywords": [
-    "claude-md", 
-    "best-practices", 
-    "guidelines", 
+    "claude-md",
+    "best-practices",
+    "guidelines",
     "anthropic"
+  ],
+  "skills": [
+    "./.claude/skills/refresh-guidelines/"
   ]
 }

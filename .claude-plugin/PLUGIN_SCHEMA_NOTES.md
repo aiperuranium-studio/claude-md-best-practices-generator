@@ -102,8 +102,10 @@ This is the most common source of validation errors.
 
 ### Commands and Skills
 
-* `commands` and `skills` accept directory paths **only when wrapped in arrays**
-* Explicit file paths are safest and most future-proof
+* `commands` and `skills` **require directory paths** (explicit file paths are rejected with `skills: Invalid input`)
+* Paths must start with `./` and must not contain `..` (path traversal is blocked)
+* Paths are resolved from the **repo root** (where `claude plugin validate` is run), not from the `.claude-plugin/` directory
+* Example: `"./.claude/skills/refresh-guidelines/"` ✔ — `"../skills/SKILL.md"` ✘
 
 ---
 
@@ -180,11 +182,13 @@ Avoid cleverness. Be explicit.
     "./agents/code-reviewer.md"
   ],
   "commands": ["./commands/"],
-  "skills": ["./skills/"]
+  "skills": ["./.claude/skills/refresh-guidelines/"]
 }
 ```
 
 This structure has been validated against the Claude plugin validator.
+
+**Key insight:** `skills` paths are resolved from the **repo root**, so skills living inside `.claude/` are referenced as `./.claude/skills/<name>/` — not relative to `.claude-plugin/`.
 
 **Important:** Notice there is NO `"hooks"` field. The `hooks/hooks.json` file is loaded automatically by convention. Adding it explicitly causes a duplicate error.
 
