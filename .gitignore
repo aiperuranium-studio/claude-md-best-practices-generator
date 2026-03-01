@@ -1,6 +1,8 @@
 .idea
 .cursor
 
+.claude/settings.local.json
+.claude/settings.json
 
 # Guidelines enrichment artifacts (re-fetchable)
 docs/guidelines-raw.json
