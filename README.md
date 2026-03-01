@@ -18,7 +18,7 @@ Attach the tool to your Claude Code session so its `.claude/` directory is merge
 ### Option A — `--add-dir` (recommended)
 
 ```bash
-git clone https://github.com/your-org/claude-code-best-practices ~/claude-md-best-practices
+git clone https://github.com/aiperuranium-studio/claude-md-best-practices-generator ~/claude-md-best-practices
 claude --add-dir ~/claude-md-best-practices
 ```
 
@@ -30,13 +30,22 @@ The `/refresh-guidelines` skill becomes available in every session.
 alias claude-bp='claude --add-dir ~/claude-md-best-practices'
 ```
 
+### Option C — Claude Code plugin (no clone required)
+
+```bash
+claude plugin marketplace add aiperuranium-studio/claude-md-best-practices-generator
+claude plugin install claude-md-best-practices
+```
+
+The skill is namespaced as `/claude-md-best-practices:refresh-guidelines` in plugin mode.
+
 ---
 
 ## Quick Start
 
 ```bash
 # 1. Clone once
-git clone https://github.com/your-org/claude-code-best-practices ~/claude-md-best-practices
+git clone https://github.com/aiperuranium-studio/claude-md-best-practices-generator ~/claude-md-best-practices
 
 # 2. Open any project
 cd ~/my-project
@@ -55,9 +64,9 @@ claude --add-dir ~/claude-md-best-practices
 
 ## Skills Reference
 
-| Skill | Description |
-|-------|-------------|
-| `/refresh-guidelines` | Enriches `docs/CLAUDE-MD-SOTA.md` from curated web sources + `/insights` data. Produces `docs/CLAUDE-MD-SOTA.enriched.md`. |
+| Skill (direct mode) | Skill (plugin mode) | Description |
+|---------------------|---------------------|-------------|
+| `/refresh-guidelines` | `/claude-md-best-practices:refresh-guidelines` | Enriches `docs/CLAUDE-MD-SOTA.md` from curated web sources + `/insights` data. Produces `docs/CLAUDE-MD-SOTA.enriched.md`. |
 
 ---
 
