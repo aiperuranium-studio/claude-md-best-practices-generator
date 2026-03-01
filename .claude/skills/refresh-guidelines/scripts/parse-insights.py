@@ -11,6 +11,7 @@ Python 3.10+, stdlib only.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -18,13 +19,15 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 
-# Resolve project root (4 levels up from this script)
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parents[3]  # .claude/skills/refresh-guidelines/scripts/ -> root
-OUTPUT_FILE = PROJECT_ROOT / "docs" / "insights-parsed.json"
-
 # Default /insights data location
 DEFAULT_USAGE_DATA_DIR = Path.home() / ".claude" / "usage-data"
+
+
+def _resolve_docs_dir(docs_dir_arg: str | None) -> Path:
+    """Return the docs output directory, defaulting to cwd/docs."""
+    if docs_dir_arg:
+        return Path(docs_dir_arg)
+    return Path.cwd() / "docs"
 
 # Staleness threshold in days
 STALENESS_DAYS = 7
@@ -692,15 +695,17 @@ def _parse_subtitle(subtitle: str) -> tuple[int, str]:
 # Main
 # ---------------------------------------------------------------------------
 
-def main(report_dir: Path | None = None) -> int:
+def main(report_dir: Path | None = None, docs_dir: Path | None = None) -> int:
     """Parse /insights data and write structured output.
 
     Args:
         report_dir: Override for ~/.claude/usage-data/ (for testing).
+        docs_dir: Override for output directory (for testing or plugin mode).
 
     Returns 0 on success (including missing report), 1 on fatal error.
     """
     data_dir = report_dir or DEFAULT_USAGE_DATA_DIR
+    output_file = (docs_dir or Path.cwd() / "docs") / "insights-parsed.json"
 
     print(
         f"parse-insights.py — {datetime.now(timezone.utc).isoformat()}",
@@ -716,7 +721,7 @@ def main(report_dir: Path | None = None) -> int:
             file=sys.stderr,
         )
         print("Producing minimal output — web sources only.", file=sys.stderr)
-        _write_minimal_output(data_dir)
+        _write_minimal_output(data_dir, output_file)
         return 0
 
     is_stale = staleness_days > STALENESS_DAYS
@@ -738,7 +743,7 @@ def main(report_dir: Path | None = None) -> int:
         html_content = report_path.read_text(encoding="utf-8")
     except OSError as e:
         print(f"ERROR: Cannot read report: {e}", file=sys.stderr)
-        _write_minimal_output(data_dir)
+        _write_minimal_output(data_dir, output_file)
         return 0
 
     parser = InsightsHTMLParser()
@@ -801,8 +806,8 @@ def main(report_dir: Path | None = None) -> int:
     }
 
     # Write output
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_FILE.write_text(
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(
         json.dumps(output, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
@@ -814,12 +819,12 @@ def main(report_dir: Path | None = None) -> int:
     print(f"Sessions analyzed: {output['sessions_analyzed']}", file=sys.stderr)
     print(f"Date range: {output['date_range']}", file=sys.stderr)
     print(f"Stale: {is_stale} ({staleness_days} days)", file=sys.stderr)
-    print(f"Output: {OUTPUT_FILE}", file=sys.stderr)
+    print(f"Output: {output_file}", file=sys.stderr)
 
     return 0
 
 
-def _write_minimal_output(data_dir: Path) -> None:
+def _write_minimal_output(data_dir: Path, output_file: Path) -> None:
     """Write minimal output JSON when no report is available."""
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -838,12 +843,21 @@ def _write_minimal_output(data_dir: Path) -> None:
             "outcome_distribution": {},
         },
     }
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_FILE.write_text(
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(
         json.dumps(output, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    parser = argparse.ArgumentParser(
+        description="Parse /insights HTML report into structured JSON."
+    )
+    parser.add_argument(
+        "--docs-dir",
+        metavar="PATH",
+        help="Directory for output files (default: ./docs relative to cwd).",
+    )
+    args = parser.parse_args()
+    sys.exit(main(docs_dir=_resolve_docs_dir(args.docs_dir)))

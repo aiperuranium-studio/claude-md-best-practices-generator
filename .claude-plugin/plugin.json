@@ -1,0 +1,19 @@
+{
+  "name": "claude-md-best-practices",
+  "version": "3.0.0",
+  "description": "Enriches CLAUDE.md generation guidelines from curated web sources and /insights behavioral data. Provides /claude-md-best-practices:refresh-guidelines.",
+  "author": {
+    "name": "Simone Scannapieco",
+    "url": "https://github.com/aiperuranium-studio"
+  },
+  "homepage": "https://github.com/aiperuranium-studio/claude-md-best-practices-generator",
+  "repository": "https://github.com/aiperuranium-studio/claude-md-best-practices-generator",
+  "license": "MIT",
+  "keywords": [
+    "claude-md", 
+    "best-practices", 
+    "guidelines", 
+    "anthropic"
+  ],
+  "skills": ["./.claude/skills/"]
+}

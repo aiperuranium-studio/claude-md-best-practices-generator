@@ -1,0 +1,42 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-md-best-practices",
+  "description": "CLAUDE.md best practices generator plugin",
+  "owner": {
+    "name": "Simone Scannapieco",
+    "email": "simone.scannapieco@aiperuranium.it"
+  },
+  "metadata": {
+    "description": "Enriches CLAUDE.md generation guidelines from curated web sources and /insights behavioral data"
+  },
+  "plugins": [
+    {
+      "name": "claude-md-best-practices",
+      "source": "./",
+      "description": "Enriches CLAUDE.md guidelines from web sources and /insights data. Provides /claude-md-best-practices:refresh-guidelines.",
+      "version": "3.0.0",
+      "author": {
+        "name": "Simone Scannapieco",
+        "email": "simone.scannapieco@aiperuranium.it"
+      },
+      "homepage": "https://github.com/aiperuranium-studio/claude-md-best-practices-generator",
+      "repository": "https://github.com/aiperuranium-studio/claude-md-best-practices-generator",
+      "license": "MIT",
+      "keywords": [
+        "claude-md", 
+        "best-practices", 
+        "guidelines", 
+        "anthropic"
+      ],
+      "category": "documentation",
+      "tags": [
+        "claude-md", 
+        "best-practices", 
+        "guidelines", 
+        "documentation", 
+        "anthropic"
+      ],
+      "strict": false
+    }
+  ]
+}
