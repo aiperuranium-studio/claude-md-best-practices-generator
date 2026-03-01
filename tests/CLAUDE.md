@@ -9,9 +9,9 @@ pytest (not unittest). Stdlib + pytest only — no external test dependencies.
 Use the project virtualenv (`.venv/`) or `uv run`:
 
 ```bash
-.venv/bin/pytest tests/ -v                                # all tests
-.venv/bin/pytest tests/test_sprint1_catalog_foundation.py -v  # single file
-uv run pytest tests/ -v                                   # alternative via uv
+.venv/bin/pytest tests/ -v                                    # all tests
+.venv/bin/pytest tests/test_sprint1_5_guidelines_enrichment.py -v  # single file
+uv run pytest tests/ -v                                       # alternative via uv
 ```
 
 **IMPORTANT**: Do not use bare `pytest` — it is not installed system-wide.
@@ -22,10 +22,7 @@ uv run pytest tests/ -v                                   # alternative via uv
 
 ## Current Test Files
 
-- `test_sprint1_catalog_foundation.py` — catalog/sources.json schema, local source directory structure, SOURCE-SCHEMA.md
 - `test_sprint1_5_guidelines_enrichment.py` — skill files, script functions, reference parsing, output schemas, gitignore entries
-- `test_sprint2_catalog_sync.py` — sync-catalog.sh existence, executability, git operations, .source-meta.json schema, error handling
-- `test_sprint3_manifest_builder.py` — build-manifest.py functions, entity discovery (agents/skills/commands/rules/hooks), tag classification, core entity identification, manifest output schema, determinism
 
 Update this list when new sprint test files are added.
 

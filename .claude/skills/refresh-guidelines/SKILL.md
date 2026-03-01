@@ -5,7 +5,7 @@ Populate or update the CLAUDE.md generation reference from dual sources: web-sou
 - **`docs/CLAUDE-MD-SOTA.md`** (seed, git-tracked) — Web-sourced content only (Tiers 1-3). Shipped with the repo.
 - **`docs/CLAUDE-MD-SOTA.enriched.md`** (gitignored) — Seed + `/insights` data merged. User-specific, produced locally.
 
-`/ignite` reads the enriched version if present, falling back to the seed.
+Use the enriched version when writing CLAUDE.md files; fall back to the seed when unavailable.
 
 ## When to Use
 
@@ -180,7 +180,7 @@ On approval, write **two files**:
 
 Contains only web-sourced content (Tiers 1-3). No `/insights` material. The target structure (under 300 lines):
 
-- **Purpose & Scope**: Role of this document, seed/enriched model, how /ignite consumes it.
+- **Purpose & Scope**: Role of this document, seed/enriched model, how to use it when writing CLAUDE.md files.
 - **Part 1: Structural Standards**: Size constraints, recommended sections, file hierarchy strategy, formatting rules.
 - **Part 2: Content Guidelines**: What to include, what to exclude, anti-patterns.
 - **Part 3: Integration Guidelines**: Hooks vs CLAUDE.md, Skills vs CLAUDE.md, Rules directory.
@@ -219,4 +219,4 @@ Update the Source Attribution section in both files:
 - Conflicts are **never auto-resolved** — always presented for human decision.
 - The process must be **idempotent** — running /refresh-guidelines again deduplicates and merges, never duplicates.
 - `docs/insights-parsed.json` is **gitignored** — regenerated on each run from the user's local `/insights` report.
-- Both files are **application sub-products** — they must **never** contain hyperlinks or references to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Sub-products may only reference other sub-products.
+- Both files are **application sub-products** — they must **never** contain hyperlinks or references to internal dev docs. Sub-products may only reference other sub-products.

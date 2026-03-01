@@ -12,7 +12,6 @@ Python 3.10+, stdlib only.
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 from datetime import datetime, timezone
@@ -109,7 +108,6 @@ class InsightsHTMLParser(HTMLParser):
         # Temp storage for current card being parsed
         self._card_title: str = ""
         self._card_desc: str = ""
-        self._card_evidence: str = ""  # For friction examples, cmd-why, etc.
 
         # CLAUDE.md recommendation parsing
         self._in_cmd_item: bool = False
@@ -199,7 +197,6 @@ class InsightsHTMLParser(HTMLParser):
                 self._card_depth = 1  # We're inside the card's opening div
                 self._card_title = ""
                 self._card_desc = ""
-                self._card_evidence = ""
                 self._friction_examples = []
                 self._feature_oneliner = ""
                 self._pattern_summary = ""
@@ -725,7 +722,8 @@ def main(report_dir: Path | None = None) -> int:
     is_stale = staleness_days > STALENESS_DAYS
     if is_stale:
         print(
-            f"WARNING: /insights report is {staleness_days} days old (stale > {STALENESS_DAYS} days).",
+            f"WARNING: /insights report is {staleness_days} days old"
+            f" (stale > {STALENESS_DAYS} days).",
             file=sys.stderr,
         )
         print(
@@ -811,7 +809,7 @@ def main(report_dir: Path | None = None) -> int:
 
     # Summary
     total_blocks = sum(len(e["content_blocks"]) for e in entries)
-    print(f"\n--- Summary ---", file=sys.stderr)
+    print("\n--- Summary ---", file=sys.stderr)
     print(f"Entries: {len(entries)} sections, {total_blocks} content blocks", file=sys.stderr)
     print(f"Sessions analyzed: {output['sessions_analyzed']}", file=sys.stderr)
     print(f"Date range: {output['date_range']}", file=sys.stderr)

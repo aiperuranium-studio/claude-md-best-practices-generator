@@ -1,7 +1,7 @@
 [project]
-name = "claude-code-project-igniter"
-version = "0.1.0"
-description = "AI-driven catalog of Claude Code entities with intelligent selection, specialization, and installation"
+name = "claude-md-best-practices"
+version = "3.0.0"
+description = "CLAUDE.md best practices generator — enriches guidelines from curated web sources and /insights behavioral data"
 requires-python = ">=3.10"
 dependencies = []
 

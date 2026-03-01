@@ -4,16 +4,14 @@
 
 Every file in this directory belongs to exactly one category:
 
-- **Internal dev docs** — Development-only, never shipped:
-  `IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `old/`
 - **Sub-products** — Application outputs, tracked in git:
-  `CLAUDE-MD-SOTA.md`, `SOURCE-SCHEMA.md`
+  `CLAUDE-MD-SOTA.md`
 - **Generated artifacts** — Produced locally by running tools, gitignored:
-  `CLAUDE-MD-SOTA.enriched.md`, `guidelines-raw.json`, `insights-parsed.json`, `insights-raw.md`
+  `CLAUDE-MD-SOTA.enriched.md`, `guidelines-raw.json`, `insights-parsed.json`, `insights-raw.md`, `freshness-report.json`
 
 ## Sub-product Isolation
 
-**IMPORTANT**: Sub-products may **only** hyperlink to other sub-products. They must **never** reference internal dev docs. Internal dev docs may freely reference anything.
+**IMPORTANT**: Sub-products may **only** hyperlink to other sub-products. They must **never** reference internal dev docs or generated artifacts. Only `CLAUDE-MD-SOTA.md` is a sub-product.
 
 ## Cross-referencing
 
