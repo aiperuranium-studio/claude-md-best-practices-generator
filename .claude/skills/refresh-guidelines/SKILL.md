@@ -1,3 +1,10 @@
+---
+name: refresh-guidelines
+description: Enriches CLAUDE.md generation guidelines from curated Anthropic docs, community guides, and /insights session data. Produces docs/CLAUDE-MD-SOTA.md (web sources) and docs/CLAUDE-MD-SOTA.enriched.md (/insights merged). Invoke explicitly; has file-write and network side effects.
+disable-model-invocation: true
+allowed-tools: Bash, Read, WebSearch, WebFetch, Write
+---
+
 # /refresh-guidelines
 
 Populate or update the CLAUDE.md generation reference from dual sources: web-sourced best practices and `/insights` tips. Produces two files:
@@ -5,7 +12,7 @@ Populate or update the CLAUDE.md generation reference from dual sources: web-sou
 - **`docs/CLAUDE-MD-SOTA.md`** (seed, git-tracked) — Web-sourced content only (Tiers 1-3). Shipped with the repo.
 - **`docs/CLAUDE-MD-SOTA.enriched.md`** (gitignored) — Seed + `/insights` data merged. User-specific, produced locally.
 
-`/ignite` reads the enriched version if present, falling back to the seed.
+Use the enriched version when writing CLAUDE.md files; fall back to the seed when unavailable.
 
 ## When to Use
 
@@ -29,7 +36,7 @@ Follow these steps in order. Do NOT skip steps or auto-approve — human review 
 Run the freshness checker to identify stale or broken sources:
 
 ```bash
-python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py --check-freshness
+python3 "$CLAUDE_PLUGIN_ROOT/scripts/fetch-guidelines.py" --check-freshness --docs-dir docs
 ```
 
 This checks each source in `curated-sources.md` for:
@@ -66,10 +73,10 @@ If sources need attention:
 Run the fetch script to collect raw content from curated web sources:
 
 ```bash
-python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py
+python3 "$CLAUDE_PLUGIN_ROOT/scripts/fetch-guidelines.py" --docs-dir docs
 ```
 
-This reads `.claude/skills/refresh-guidelines/references/curated-sources.md` for URLs, fetches each source, and writes structured output to `docs/guidelines-raw.json`.
+This reads `$CLAUDE_PLUGIN_ROOT/references/curated-sources.md` for URLs, fetches each source, and writes structured output to `docs/guidelines-raw.json`.
 
 Report: number of sources fetched, any failures/warnings.
 
@@ -78,7 +85,7 @@ Report: number of sources fetched, any failures/warnings.
 Run the insights parser to extract structured data from the user's `/insights` report:
 
 ```bash
-python3 .claude/skills/refresh-guidelines/scripts/parse-insights.py
+python3 "$CLAUDE_PLUGIN_ROOT/scripts/parse-insights.py" --docs-dir docs
 ```
 
 This reads `~/.claude/usage-data/report.html` (and supporting `facets/*.json` + `session-meta/*.json`), extracts 7 actionable sections (CLAUDE.md recommendations, friction points, working workflows, feature recommendations, usage patterns, future workflows, usage narrative), and writes structured output to `docs/insights-parsed.json`.
@@ -180,7 +187,7 @@ On approval, write **two files**:
 
 Contains only web-sourced content (Tiers 1-3). No `/insights` material. The target structure (under 300 lines):
 
-- **Purpose & Scope**: Role of this document, seed/enriched model, how /ignite consumes it.
+- **Purpose & Scope**: Role of this document, seed/enriched model, how to use it when writing CLAUDE.md files.
 - **Part 1: Structural Standards**: Size constraints, recommended sections, file hierarchy strategy, formatting rules.
 - **Part 2: Content Guidelines**: What to include, what to exclude, anti-patterns.
 - **Part 3: Integration Guidelines**: Hooks vs CLAUDE.md, Skills vs CLAUDE.md, Rules directory.
@@ -205,10 +212,10 @@ Update the Source Attribution section in both files:
 
 ## References
 
-- `references/curated-sources.md` — Tiered web source registry with URLs and theme tags.
-- `references/enrichment-procedure.md` — Full classification and merge algorithm.
-- `scripts/fetch-guidelines.py --check-freshness` — Produces `docs/freshness-report.json` with per-source staleness and reachability status.
-- `scripts/parse-insights.py` — Extracts structured data from `/insights` report into `docs/insights-parsed.json`.
+- `$CLAUDE_PLUGIN_ROOT/references/curated-sources.md` — Tiered web source registry with URLs and theme tags.
+- `$CLAUDE_PLUGIN_ROOT/references/enrichment-procedure.md` — Full classification and merge algorithm.
+- `$CLAUDE_PLUGIN_ROOT/scripts/fetch-guidelines.py --check-freshness --docs-dir docs` — Produces `docs/freshness-report.json` with per-source staleness and reachability status.
+- `$CLAUDE_PLUGIN_ROOT/scripts/parse-insights.py --docs-dir docs` — Extracts structured data from `/insights` report into `docs/insights-parsed.json`.
 
 ## Constraints
 
@@ -219,4 +226,4 @@ Update the Source Attribution section in both files:
 - Conflicts are **never auto-resolved** — always presented for human decision.
 - The process must be **idempotent** — running /refresh-guidelines again deduplicates and merges, never duplicates.
 - `docs/insights-parsed.json` is **gitignored** — regenerated on each run from the user's local `/insights` report.
-- Both files are **application sub-products** — they must **never** contain hyperlinks or references to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`). Sub-products may only reference other sub-products.
+- Both files are **application sub-products** — they must **never** contain hyperlinks or references to internal dev docs. Sub-products may only reference other sub-products.

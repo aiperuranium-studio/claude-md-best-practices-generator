@@ -2,13 +2,6 @@
 .cursor
 
 
-# Downloaded remote sources (large, re-syncable)
-catalog/sources/*/
-!catalog/sources/local/
-
-# Auto-generated catalog index (re-buildable)
-catalog/manifest.json
-
 # Guidelines enrichment artifacts (re-fetchable)
 docs/guidelines-raw.json
 docs/freshness-report.json

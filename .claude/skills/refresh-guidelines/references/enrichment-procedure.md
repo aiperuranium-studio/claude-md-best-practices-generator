@@ -184,4 +184,4 @@ Before writing the final document, verify:
 - [ ] Under 300 lines total.
 - [ ] Conflict resolutions match human decisions.
 - [ ] Source Attribution lists every contributing source with tier and date.
-- [ ] No references to internal dev docs (`IGNITER-PLUS-CLAUDE-MD-SOTA-PLAN.md`, `IGNITER-PLUS-CLAUDE-MD-SOTA-DEV-AGENDA.md`, `docs/old/*`) — sub-products must be self-contained.
+- [ ] No references to internal dev docs — sub-products must be self-contained.

@@ -10,6 +10,7 @@ Python 3.10+, stdlib only.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -19,12 +20,16 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 
-# Resolve project root (4 levels up from this script)
+# Script-relative paths (stable whether run from project or plugin cache)
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parents[3]  # .claude/skills/refresh-guidelines/scripts/ -> root
 CURATED_SOURCES = SCRIPT_DIR.parent / "references" / "curated-sources.md"
-OUTPUT_FILE = PROJECT_ROOT / "docs" / "guidelines-raw.json"
-FRESHNESS_REPORT_FILE = PROJECT_ROOT / "docs" / "freshness-report.json"
+
+
+def _resolve_docs_dir(docs_dir_arg: str | None) -> Path:
+    """Return the docs output directory, defaulting to cwd/docs."""
+    if docs_dir_arg:
+        return Path(docs_dir_arg)
+    return Path.cwd() / "docs"
 
 # Freshness settings
 STALE_THRESHOLD_DAYS = 30
@@ -33,7 +38,7 @@ FRESHNESS_TIMEOUT_SECONDS = 15
 # Fetch settings
 TIMEOUT_SECONDS = 30
 MAX_CONTENT_LENGTH = 500_000  # 500KB per source
-USER_AGENT = "claude-code-project-igniter/1.0 (fetch-guidelines)"
+USER_AGENT = "claude-md-best-practices/3.0 (fetch-guidelines)"
 
 
 # ---------------------------------------------------------------------------
@@ -109,7 +114,9 @@ def parse_curated_sources(path: Path) -> list[dict]:
     # Match metadata fields
     url_re = re.compile(r"^\s*-\s*\*\*URL\*\*:\s*(.+)$", re.MULTILINE)
     themes_re = re.compile(r"^\s*-\s*\*\*Themes\*\*:\s*(.+)$", re.MULTILINE)
-    verified_re = re.compile(r"^\s*-\s*\*\*Last verified\*\*:\s*(\d{4}-\d{2}-\d{2})\s*$", re.MULTILINE)
+    verified_re = re.compile(
+        r"^\s*-\s*\*\*Last verified\*\*:\s*(\d{4}-\d{2}-\d{2})\s*$", re.MULTILINE
+    )
 
     # Split into sections by ### headings
     sections = re.split(r"(?=^### T\d+-\d+:)", content, flags=re.MULTILINE)
@@ -196,7 +203,11 @@ def fetch_url(url: str) -> str | None:
             text = raw.decode(encoding, errors="replace")
 
             # Strip HTML if content is HTML
-            if "html" in content_type.lower() or text.strip().startswith("<!") or text.strip().startswith("<html"):
+            if (
+                "html" in content_type.lower()
+                or text.strip().startswith("<!")
+                or text.strip().startswith("<html")
+            ):
                 text = strip_html(text)
 
             return text
@@ -298,7 +309,9 @@ def _truncate(text: str, max_chars: int) -> str:
 # Source freshness checking
 # ---------------------------------------------------------------------------
 
-def check_url_status(url: str, timeout: int = FRESHNESS_TIMEOUT_SECONDS) -> tuple[int | None, str | None]:
+def check_url_status(
+    url: str, timeout: int = FRESHNESS_TIMEOUT_SECONDS
+) -> tuple[int | None, str | None]:
     """Check URL reachability via HEAD (fallback to GET on 405).
 
     Returns (http_status, final_url). On network error returns (None, None).
@@ -377,7 +390,7 @@ def check_source_freshness(
     return results
 
 
-def check_freshness_main() -> int:
+def check_freshness_main(docs_dir: Path) -> int:
     """Entry point for --check-freshness mode."""
     print(f"fetch-guidelines.py --check-freshness — {datetime.now(timezone.utc).isoformat()}",
           file=sys.stderr)
@@ -417,6 +430,7 @@ def check_freshness_main() -> int:
               + (f" ({issue})" if issue else ""), file=sys.stderr)
 
     # Write report
+    freshness_report_file = docs_dir / "freshness-report.json"
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "stale_threshold_days": STALE_THRESHOLD_DAYS,
@@ -427,16 +441,16 @@ def check_freshness_main() -> int:
         "sources": results,
     }
 
-    FRESHNESS_REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    FRESHNESS_REPORT_FILE.write_text(
+    freshness_report_file.parent.mkdir(parents=True, exist_ok=True)
+    freshness_report_file.write_text(
         json.dumps(report, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
 
-    print(f"\n--- Freshness Summary ---", file=sys.stderr)
+    print("\n--- Freshness Summary ---", file=sys.stderr)
     print(f"Stale: {stale_count}, Broken: {broken_count}, "
           f"Needs attention: {attention_count}, Total: {len(results)}", file=sys.stderr)
-    print(f"Report: {FRESHNESS_REPORT_FILE}", file=sys.stderr)
+    print(f"Report: {freshness_report_file}", file=sys.stderr)
 
     return 0
 
@@ -445,9 +459,19 @@ def check_freshness_main() -> int:
 # Main
 # ---------------------------------------------------------------------------
 
-def main() -> int:
-    if "--check-freshness" in sys.argv:
-        return check_freshness_main()
+def main(docs_dir: Path | None = None, check_freshness: bool = False) -> int:
+    """Fetch content from curated web sources and write to docs_dir.
+
+    Args:
+        docs_dir: Output directory (default: cwd/docs).
+        check_freshness: Run freshness check instead of fetching content.
+
+    Returns 0 on success, 1 on fatal error.
+    """
+    resolved_docs_dir = docs_dir if docs_dir is not None else Path.cwd() / "docs"
+
+    if check_freshness:
+        return check_freshness_main(resolved_docs_dir)
 
     print(f"fetch-guidelines.py — {datetime.now(timezone.utc).isoformat()}", file=sys.stderr)
 
@@ -456,7 +480,8 @@ def main() -> int:
         print(f"ERROR: Curated sources not found: {CURATED_SOURCES}", file=sys.stderr)
         return 1
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    output_file = resolved_docs_dir / "guidelines-raw.json"
+    output_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Parse sources
     sources = parse_curated_sources(CURATED_SOURCES)
@@ -478,7 +503,7 @@ def main() -> int:
         text = fetch_url(source["url"])
         if text is None:
             fail_count += 1
-            print(f"  FAILED — skipping", file=sys.stderr)
+            print("  FAILED — skipping", file=sys.stderr)
             continue
 
         # Extract content blocks
@@ -505,14 +530,17 @@ def main() -> int:
         "entries": results,
     }
 
-    OUTPUT_FILE.write_text(
+    output_file.write_text(
         json.dumps(output, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
 
-    print(f"\n--- Summary ---", file=sys.stderr)
-    print(f"Sources: {success_count} fetched, {fail_count} failed, {len(sources)} total", file=sys.stderr)
-    print(f"Output: {OUTPUT_FILE}", file=sys.stderr)
+    print("\n--- Summary ---", file=sys.stderr)
+    print(
+        f"Sources: {success_count} fetched, {fail_count} failed, {len(sources)} total",
+        file=sys.stderr,
+    )
+    print(f"Output: {output_file}", file=sys.stderr)
 
     # Return 0 even with partial failures (fault-tolerant)
     if success_count == 0:
@@ -523,4 +551,21 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    _parser = argparse.ArgumentParser(
+        description="Fetch CLAUDE.md best practices from curated web sources."
+    )
+    _parser.add_argument(
+        "--check-freshness",
+        action="store_true",
+        help="Check source URL reachability and staleness instead of fetching content.",
+    )
+    _parser.add_argument(
+        "--docs-dir",
+        metavar="PATH",
+        help="Directory for output files (default: ./docs relative to cwd).",
+    )
+    _args = _parser.parse_args()
+    sys.exit(main(
+        docs_dir=_resolve_docs_dir(_args.docs_dir),
+        check_freshness=_args.check_freshness,
+    ))

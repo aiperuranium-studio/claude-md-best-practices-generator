@@ -18,7 +18,6 @@ Validates:
 
 import importlib.util
 import json
-import sys
 import tempfile
 import textwrap
 import unittest
@@ -119,11 +118,11 @@ class TestSkillFileExists(unittest.TestCase):
     def test_skill_md_not_empty(self):
         self.assertGreater(len(SKILL_MD.read_text().strip()), 0)
 
-    def test_skill_md_starts_with_heading(self):
+    def test_skill_md_starts_with_heading_or_frontmatter(self):
         first_line = SKILL_MD.read_text().splitlines()[0]
         self.assertTrue(
-            first_line.startswith("# "),
-            "SKILL.md should start with a markdown heading",
+            first_line.startswith("# ") or first_line == "---",
+            "SKILL.md should start with a markdown heading or YAML frontmatter (---)",
         )
 
     def test_skill_md_mentions_refresh_guidelines(self):
@@ -728,40 +727,30 @@ class TestCheckFreshnessMain(unittest.TestCase):
 
     def test_writes_report_file(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            report_path = Path(tmpdir) / "freshness-report.json"
-            original = self.fg.FRESHNESS_REPORT_FILE
-            self.fg.FRESHNESS_REPORT_FILE = report_path
-            try:
-                with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
-                    result = self.fg.check_freshness_main()
-                self.assertEqual(result, 0)
-                self.assertTrue(report_path.exists())
-                data = json.loads(report_path.read_text())
-                self.assertIn("sources", data)
-                self.assertIn("stale_threshold_days", data)
-                self.assertIn("total_sources", data)
-            finally:
-                self.fg.FRESHNESS_REPORT_FILE = original
+            docs_dir = Path(tmpdir)
+            with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+                result = self.fg.check_freshness_main(docs_dir=docs_dir)
+            report_path = docs_dir / "freshness-report.json"
+            self.assertEqual(result, 0)
+            self.assertTrue(report_path.exists())
+            data = json.loads(report_path.read_text())
+            self.assertIn("sources", data)
+            self.assertIn("stale_threshold_days", data)
+            self.assertIn("total_sources", data)
 
     def test_returns_1_when_curated_sources_missing(self):
-        with patch.object(
-            self.fg, "CURATED_SOURCES", Path("/nonexistent/path.md")
-        ):
-            result = self.fg.check_freshness_main()
-            self.assertEqual(result, 1)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with patch.object(self.fg, "CURATED_SOURCES", Path("/nonexistent/path.md")):
+                result = self.fg.check_freshness_main(docs_dir=Path(tmpdir))
+                self.assertEqual(result, 1)
 
     def test_report_counts_are_consistent(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            report_path = Path(tmpdir) / "freshness-report.json"
-            original = self.fg.FRESHNESS_REPORT_FILE
-            self.fg.FRESHNESS_REPORT_FILE = report_path
-            try:
-                with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
-                    self.fg.check_freshness_main()
-                data = json.loads(report_path.read_text())
-                self.assertEqual(data["total_sources"], len(data["sources"]))
-            finally:
-                self.fg.FRESHNESS_REPORT_FILE = original
+            docs_dir = Path(tmpdir)
+            with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
+                self.fg.check_freshness_main(docs_dir=docs_dir)
+            data = json.loads((docs_dir / "freshness-report.json").read_text())
+            self.assertEqual(data["total_sources"], len(data["sources"]))
 
 
 # ===================================================================
@@ -1212,14 +1201,11 @@ class TestMainFunction(unittest.TestCase):
             self.assertEqual(result, 1)
 
     def test_returns_1_when_all_fetches_fail(self):
-        with patch.object(self.fg, "fetch_url", return_value=None):
-            with patch.object(self.fg, "CURATED_SOURCES", CURATED_SOURCES_MD):
-                with patch.object(
-                    self.fg, "OUTPUT_FILE", Path("/tmp/test_output.json")
-                ):
-                    result = self.fg.main()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with patch.object(self.fg, "fetch_url", return_value=None):
+                with patch.object(self.fg, "CURATED_SOURCES", CURATED_SOURCES_MD):
+                    result = self.fg.main(docs_dir=Path(tmpdir))
                     self.assertEqual(result, 1)
-                    Path("/tmp/test_output.json").unlink(missing_ok=True)
 
 
 # ===================================================================
@@ -1741,18 +1727,14 @@ class TestParseInsightsMain(unittest.TestCase):
     def test_returns_0_with_missing_report(self):
         """Graceful degradation: missing report produces minimal output, returns 0."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Redirect output to temp location
-            original_output = self.pi.OUTPUT_FILE
-            self.pi.OUTPUT_FILE = Path(tmpdir) / "output.json"
-            try:
-                result = self.pi.main(report_dir=Path(tmpdir))
-                self.assertEqual(result, 0)
-                self.assertTrue(self.pi.OUTPUT_FILE.exists())
-                data = json.loads(self.pi.OUTPUT_FILE.read_text())
-                self.assertEqual(data["entries"], [])
-                self.assertEqual(data["sessions_analyzed"], 0)
-            finally:
-                self.pi.OUTPUT_FILE = original_output
+            docs_dir = Path(tmpdir) / "docs"
+            result = self.pi.main(report_dir=Path(tmpdir), docs_dir=docs_dir)
+            self.assertEqual(result, 0)
+            output_file = docs_dir / "insights-parsed.json"
+            self.assertTrue(output_file.exists())
+            data = json.loads(output_file.read_text())
+            self.assertEqual(data["entries"], [])
+            self.assertEqual(data["sessions_analyzed"], 0)
 
     def test_returns_0_with_valid_report(self):
         """Produces output from a minimal valid report."""
@@ -1767,16 +1749,154 @@ class TestParseInsightsMain(unittest.TestCase):
             </div>
             </html>
             """)
-            original_output = self.pi.OUTPUT_FILE
-            self.pi.OUTPUT_FILE = Path(tmpdir) / "output.json"
-            try:
-                result = self.pi.main(report_dir=Path(tmpdir))
-                self.assertEqual(result, 0)
-                self.assertTrue(self.pi.OUTPUT_FILE.exists())
-                data = json.loads(self.pi.OUTPUT_FILE.read_text())
-                self.assertGreater(len(data["entries"]), 0)
-            finally:
-                self.pi.OUTPUT_FILE = original_output
+            docs_dir = Path(tmpdir) / "docs"
+            result = self.pi.main(report_dir=Path(tmpdir), docs_dir=docs_dir)
+            self.assertEqual(result, 0)
+            output_file = docs_dir / "insights-parsed.json"
+            self.assertTrue(output_file.exists())
+            data = json.loads(output_file.read_text())
+            self.assertGreater(len(data["entries"]), 0)
+
+
+# ===================================================================
+# 18. Plugin packaging tests
+# ===================================================================
+
+PLUGIN_MANIFEST = PROJECT_ROOT / ".claude-plugin" / "plugin.json"
+PLUGIN_MARKETPLACE = PROJECT_ROOT / ".claude-plugin" / "marketplace.json"
+
+
+class TestDocsDir(unittest.TestCase):
+    """Tests for --docs-dir argument support in both scripts."""
+
+    def test_fetch_guidelines_main_accepts_docs_dir(self):
+        """main() accepts docs_dir param without raising an exception."""
+        fg = _load_fg()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs_dir = Path(tmpdir)
+            with patch.object(fg, "fetch_url", return_value=None):
+                with patch.object(fg, "CURATED_SOURCES", CURATED_SOURCES_MD):
+                    result = fg.main(docs_dir=docs_dir)
+            # Returns 1 because all fetches failed; docs_dir was accepted with no exception.
+            self.assertEqual(result, 1)
+
+    def test_fetch_guidelines_main_writes_to_docs_dir(self):
+        """main() with mocked success writes guidelines-raw.json to docs_dir."""
+        fg = _load_fg()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs_dir = Path(tmpdir)
+            mock_text = "# Best Practices\nUse CLAUDE.md for project instructions."
+            with patch.object(fg, "fetch_url", return_value=mock_text):
+                with patch.object(fg, "CURATED_SOURCES", CURATED_SOURCES_MD):
+                    result = fg.main(docs_dir=docs_dir)
+            self.assertEqual(result, 0)
+            output_file = docs_dir / "guidelines-raw.json"
+            self.assertTrue(output_file.exists(), "guidelines-raw.json should be in docs_dir")
+            data = json.loads(output_file.read_text())
+            self.assertIn("entries", data)
+
+    def test_fetch_guidelines_check_freshness_writes_to_docs_dir(self):
+        """check_freshness_main(docs_dir) writes freshness-report.json to docs_dir."""
+        fg = _load_fg()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs_dir = Path(tmpdir)
+            with patch.object(fg, "check_url_status", return_value=(200, "https://example.com")):
+                result = fg.check_freshness_main(docs_dir=docs_dir)
+            self.assertEqual(result, 0)
+            report_file = docs_dir / "freshness-report.json"
+            self.assertTrue(report_file.exists(), "freshness-report.json should be in docs_dir")
+
+    def test_parse_insights_main_accepts_docs_dir(self):
+        """parse-insights main() accepts docs_dir and writes to that directory."""
+        pi = _load_pi()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs_dir = Path(tmpdir) / "custom-docs"
+            result = pi.main(report_dir=Path(tmpdir), docs_dir=docs_dir)
+            self.assertEqual(result, 0)
+            output_file = docs_dir / "insights-parsed.json"
+            self.assertTrue(
+                output_file.exists(),
+                f"insights-parsed.json should be written to docs_dir: {docs_dir}",
+            )
+
+
+class TestPluginManifest(unittest.TestCase):
+    """Validate the Claude Code plugin manifest."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not PLUGIN_MANIFEST.exists():
+            raise unittest.SkipTest(
+                ".claude-plugin/plugin.json not present — run Phase 1 first"
+            )
+        with open(PLUGIN_MANIFEST) as f:
+            cls.manifest = json.load(f)
+
+    def test_manifest_is_valid_json(self):
+        self.assertIsInstance(self.manifest, dict)
+
+    def test_manifest_has_name(self):
+        self.assertIn("name", self.manifest)
+        self.assertIsInstance(self.manifest["name"], str)
+        self.assertGreater(len(self.manifest["name"]), 0)
+
+    def test_manifest_has_version(self):
+        self.assertIn("version", self.manifest)
+        self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
+
+    def test_manifest_has_description(self):
+        self.assertIn("description", self.manifest)
+        self.assertGreater(len(self.manifest["description"]), 0)
+
+    def test_manifest_has_skills_field(self):
+        self.assertIn("skills", self.manifest)
+
+    def test_manifest_name_contains_claude_md(self):
+        self.assertIn("claude-md", self.manifest["name"])
+
+
+class TestSkillMdFrontmatter(unittest.TestCase):
+    """Validate that SKILL.md has proper YAML frontmatter for plugin packaging."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.content = SKILL_MD.read_text()
+        cls.lines = cls.content.splitlines()
+
+    def test_starts_with_yaml_delimiter(self):
+        self.assertEqual(
+            self.lines[0], "---",
+            "SKILL.md must start with --- (YAML frontmatter block)",
+        )
+
+    def test_has_closing_yaml_delimiter(self):
+        # Second occurrence of --- closes the frontmatter
+        closing_indices = [i for i, line in enumerate(self.lines[1:], 1) if line == "---"]
+        self.assertGreater(
+            len(closing_indices), 0, "SKILL.md must have a closing --- for frontmatter"
+        )
+
+    def test_frontmatter_has_name(self):
+        self.assertIn("name:", self.content)
+
+    def test_frontmatter_has_description(self):
+        self.assertIn("description:", self.content)
+
+    def test_frontmatter_has_disable_model_invocation(self):
+        self.assertIn("disable-model-invocation:", self.content)
+
+    def test_disable_model_invocation_is_true(self):
+        for line in self.lines:
+            if "disable-model-invocation:" in line:
+                self.assertIn(
+                    "true", line.lower(),
+                    "disable-model-invocation must be set to true",
+                )
+                return
+        self.fail("disable-model-invocation key not found in SKILL.md")
+
+    def test_frontmatter_has_allowed_tools(self):
+        self.assertIn("allowed-tools:", self.content)
 
 
 if __name__ == "__main__":
