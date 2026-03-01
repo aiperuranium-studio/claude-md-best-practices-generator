@@ -1,4 +1,6 @@
 .idea
+.cursor
+
 
 # Downloaded remote sources (large, re-syncable)
 catalog/sources/*/
