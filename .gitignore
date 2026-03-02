@@ -10,15 +10,6 @@
 docs/*
 !docs/CLAUDE-MD-SOTA.md
 !docs/CLAUDE.md
-#docs/CODEMAPS/*
-#docs/CLAUDE-MD-SOTA.enriched.md
-#docs/freshness-report.json
-#docs/insights-parsed.json
-#docs/insights-raw.md
-#docs/guidelines-raw.json
-#docs/plugin-plan.md
-#docs/plugin-refactor-plan.md
-#docs/refactor-scaffold-plan.md
 
 # Python
 __pycache__/
