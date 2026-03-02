@@ -1,6 +1,6 @@
 # CLAUDE.md Best Practices Generator
 
-A tool for enriching CLAUDE.md generation guidelines from curated web sources and Claude Code `/insights` behavioral data. The sole skill is `/refresh-guidelines`, which produces `docs/CLAUDE-MD-SOTA.enriched.md` — the authoritative reference for writing high-quality CLAUDE.md files.
+A tool for generating, auditing, and maintaining CLAUDE.md files based on curated web sources and Claude Code `/insights` behavioral data. Three skills: `/refresh-guidelines` produces the authoritative reference, `/refactor-claude-md` audits and refactors existing CLAUDE.md files against it, and `/scaffold-claude-md` creates scoped CLAUDE.md files in subdirectories.
 
 ## Tech Stack
 
@@ -15,8 +15,10 @@ A tool for enriching CLAUDE.md generation guidelines from curated web sources an
 - `.venv/bin/pytest tests/ -v` — Run all tests (or `uv run pytest tests/ -v`).
 
 Skills (invoked within Claude Code):
-- `/refresh-guidelines` — Direct mode (`--add-dir`): enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
-- `/claude-md-best-practices:refresh-guidelines` — Plugin mode: same skill, namespaced after `claude plugin install claude-md-best-practices`.
+- `/refresh-guidelines` — Enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
+- `/refactor-claude-md` — Audits root CLAUDE.md against current CLAUDE-MD-SOTA guidelines, produces a compliant refactored version.
+- `/scaffold-claude-md` — Scans subdirectories, identifies which need CLAUDE.md files, generates scoped content.
+- Plugin mode: prefix with `claude-md-best-practices:` after `claude plugin install claude-md-best-practices`.
 
 ## Project Structure
 
@@ -26,6 +28,9 @@ Skills (invoked within Claude Code):
 | `docs/` | CLAUDE-MD-SOTA generation reference |
 | `docs/CODEMAPS/` | Auto-generated architecture docs — regenerate with `/everything-claude-code:update-codemaps` |
 | `.claude/skills/refresh-guidelines/` | `/refresh-guidelines` skill definition and scripts |
+| `.claude/skills/refactor-claude-md/` | `/refactor-claude-md` skill definition and compliance checklist procedure |
+| `.claude/skills/scaffold-claude-md/` | `/scaffold-claude-md` skill definition and directory assessment criteria |
+| `.claude/rules/` | Project-level rules (CLAUDE.md quality standards) |
 | `.claude-plugin/` | Claude Code plugin manifest (`plugin.json`) and marketplace registry (`marketplace.json`) |
 | `tests/` | pytest test files |
 
