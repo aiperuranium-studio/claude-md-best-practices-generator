@@ -6,6 +6,7 @@ A tool for generating, auditing, and maintaining CLAUDE.md files based on curate
 
 - **Python 3.10+**, standard library only (external deps documented explicitly when unavoidable).
 - **Markdown** for documentation and skill definitions.
+- Scripts use Python stdlib only — run with system `python3` or `.venv/bin/python3`.
 
 ## Common Commands
 
@@ -14,11 +15,11 @@ A tool for generating, auditing, and maintaining CLAUDE.md files based on curate
 - `python3 .claude/skills/refresh-guidelines/scripts/parse-insights.py` — Parse `/insights` report into `docs/insights-parsed.json`. Manual tips go in `docs/insights-raw.md`.
 - `.venv/bin/pytest tests/ -v` — Run all tests (or `uv run pytest tests/ -v`).
 
-Skills (invoked within Claude Code):
-- `/refresh-guidelines` — Enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
-- `/refactor-claude-md` — Audits root CLAUDE.md against current CLAUDE-MD-SOTA guidelines, produces a compliant refactored version.
-- `/scaffold-claude-md` — Scans subdirectories, identifies which need CLAUDE.md files, generates scoped content.
-- Plugin mode: prefix with `claude-md-best-practices:` after `claude plugin install claude-md-best-practices`.
+## Gotchas & Known Issues
+
+- `parse-insights.py` requires `~/.claude/usage-data/report.html` — if missing, the script degrades gracefully (insights step skipped).
+- All scripts must be run from the project root — paths are relative to root.
+- Pass `--docs-dir docs` to fetch/parse scripts; this is the standard argument pattern.
 
 ## Project Structure
 
@@ -30,7 +31,7 @@ Skills (invoked within Claude Code):
 | `.claude/skills/refresh-guidelines/` | `/refresh-guidelines` skill definition and scripts |
 | `.claude/skills/refactor-claude-md/` | `/refactor-claude-md` skill definition and compliance checklist procedure |
 | `.claude/skills/scaffold-claude-md/` | `/scaffold-claude-md` skill definition and directory assessment criteria |
-| `.claude/rules/` | Project-level rules (CLAUDE.md quality standards) |
+| `.claude/rules/` | Project-level rules (CLAUDE.md quality standards) — stable categorical rules; project-wide context stays in CLAUDE.md |
 | `.claude-plugin/` | Claude Code plugin manifest (`plugin.json`) and marketplace registry (`marketplace.json`) |
 | `tests/` | pytest test files |
 
@@ -46,10 +47,20 @@ Each subdirectory has its own scoped `CLAUDE.md` with directory-specific instruc
 - **IMPORTANT: Write-first, never chat-first** — When asked to write documentation or plans, write directly to a file. Do NOT present in chat first. Ask for a file path if none specified.
 - **IMPORTANT: No preemptive execution** — Do NOT implement or run code unless explicitly asked. Wait for user approval after presenting plans.
 - **IMPORTANT: No scope creep** — Do NOT extrapolate or expand scope beyond what was requested. Mention ideas briefly at the end only if relevant.
+- **Read before modifying** — Read existing skill SKILL.md files and scripts before proposing changes.
+- **File discipline** — Prefer editing existing files to creating new ones.
 - **Clarify before acting** — When unclear on a request (especially Italian or domain-specific terms), ask rather than guess.
 - **Proportional response** — For simple changes, act directly without entering plan mode. Reserve plan mode for genuinely complex, multi-approach decisions.
 - **Verification** — Run `.venv/bin/pytest tests/<specific_file.py> -v` after code changes; full suite (`.venv/bin/pytest tests/ -v`) as final gate only. Run `ruff check` on Python changes before reporting completion.
 - **One-section-at-a-time** — Complete one document/section fully before moving to the next. Do not scatter partial edits.
+- **Maintenance** — Update this CLAUDE.md when skills are added/renamed or recurring mistakes emerge. Use `CLAUDE.local.md` (gitignored) for personal overrides. After corrections, end with "Update CLAUDE.md so you don't repeat that mistake."
+
+## Installed Skills
+
+- `/refresh-guidelines` — Enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
+- `/refactor-claude-md` — Audits root CLAUDE.md against current CLAUDE-MD-SOTA guidelines, produces a compliant refactored version.
+- `/scaffold-claude-md` — Scans subdirectories, identifies which need CLAUDE.md files, generates scoped content.
+- Plugin mode: prefix with `claude-md-best-practices:` after `claude plugin install claude-md-best-practices`.
 
 ## Authoritative Documents
 
