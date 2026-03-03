@@ -1,7 +1,7 @@
 {
   "name": "claude-md-best-practices",
   "version": "3.0.0",
-  "description": "Enriches CLAUDE.md generation guidelines from curated web sources and /insights behavioral data. Provides /claude-md-best-practices:refresh-guidelines.",
+  "description": "CLAUDE.md generation guidelines, compliance auditing, and subdirectory scaffolding. Provides /refresh-guidelines, /refactor-claude-md, and /scaffold-claude-md.",
   "author": {
     "name": "Simone Scannapieco",
     "url": "https://github.com/aiperuranium-studio"
@@ -16,6 +16,8 @@
     "anthropic"
   ],
   "skills": [
-    "./.claude/skills/refresh-guidelines/"
+    "./.claude/skills/refresh-guidelines/",
+    "./.claude/skills/refactor-claude-md/",
+    "./.claude/skills/scaffold-claude-md/"
   ]
 }

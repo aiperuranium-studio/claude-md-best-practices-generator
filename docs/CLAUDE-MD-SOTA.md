@@ -67,7 +67,7 @@ Generated CLAUDE.md files should include these sections in order:
 - **Bullets over prose** — Scannable lists are followed more reliably than paragraphs.
 - **Specific over vague** — `pytest tests/ -v` beats "run the tests".
 - **Headings for scanning** — Claude parses structured documents more effectively.
-- **Keep concise** — Shorter files are more reliably followed. General consensus: <300 lines max; HumanLayer keeps theirs under 60 lines. Every line should earn its place.
+- **Keep concise** — Shorter files are more reliably followed. Ideal target: under 80 lines (beyond this, Claude starts deprioritizing parts); HumanLayer keeps theirs under 60 lines. Absolute max: 300 lines. Every line should earn its place.
 - **Repeat critical rules** — Emphasis (bold) or repetition at multiple points improves compliance with the most important instructions.
 - **Emphasis keywords** — Use `IMPORTANT` or `YOU MUST` to improve adherence on critical rules. Standard phrasing is easier for the model to deprioritize.
 
@@ -127,7 +127,7 @@ Structure content around three questions — **WHAT** (tech, stack, project stru
 - **No curation**: Auto-generating CLAUDE.md without human review leads to bloated, generic files.
 - **Non-universal instructions**: Claude Code wraps CLAUDE.md in a `<system-reminder>` stating "this context may or may not be relevant." If content isn't universally applicable to the current task, Claude may ignore it entirely. Keep all instructions focused and broadly relevant.
 - **Personality prompts**: "Be a senior engineer" or "Think step by step" wastes tokens. Claude Code already has strong system-level instructions — role-playing directives add noise.
-- **Blanket @-imports**: Writing `@docs/api-guide.md` embeds the entire file into context every session. Instead, *describe when* to read it: "For Stripe integration issues, see `docs/stripe-guide.md`." Let Claude decide when context is needed.
+- **Flat context loading** (Progressive Disclosure): Writing `@docs/api-guide.md` embeds the entire file into context every session. Instead, *describe when* to read it: "For Stripe integration issues, see `docs/stripe-guide.md`." Let Claude decide when context is needed. *(Cross-ref: 3.6)*
 
 *Sources: T2-001, T2-003, T3-002*
 
@@ -166,7 +166,7 @@ Document configured MCP servers and instruct Claude when/how to use them. MCP to
 
 ### 3.5 Headless & Batch Mode
 
-Claude Code can run non-interactively (`claude -p "task"`) for batch processing. Use `--allowedTools` to scope permissions per invocation. Relevant for projects with repetitive multi-file tasks (migrations, bulk formatting, parallel validation).
+Claude Code can run non-interactively (`claude -p "task"`) for batch processing. Use `--allowedTools` to scope permissions per invocation. Use `--output-format stream-json` for real-time streaming output when integrating with pipelines. Relevant for projects with repetitive multi-file tasks (migrations, bulk formatting, parallel validation).
 
 *Source: T1-002*
 
@@ -281,14 +281,14 @@ All content sourced from the following web references. Nothing invented or hardc
 
 | Source | Tier | URL | Contributed to | Date |
 |--------|------|-----|----------------|------|
-| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-02-27 |
-| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4, 5 | 2026-02-27 |
-| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-02-27 |
-| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-02-27 |
-| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-02-27 |
-| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-02-27 |
-| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-02-27 |
-| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-02-27 |
-| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-02-27 |
+| Claude Code Memory Management | T1 | https://code.claude.com/docs/en/memory | Parts 1, 3 | 2026-03-03 |
+| Claude Code Best Practices | T1 | https://code.claude.com/docs/en/best-practices | Parts 1, 2, 3, 4, 5 | 2026-03-03 |
+| Using CLAUDE.md Files (Blog) | T1 | https://claude.com/blog/using-claude-md-files | Parts 1, 5 | 2026-03-03 |
+| HumanLayer — Writing a Good CLAUDE.md | T2 | https://www.humanlayer.dev/blog/writing-a-good-claude-md | Parts 1, 2, 3 | 2026-03-03 |
+| Dometrain — Creating the Perfect CLAUDE.md | T2 | https://dometrain.com/blog/creating-the-perfect-claudemd-for-claude-code/ | Parts 1, 2, 3 | 2026-03-03 |
+| Tembo — How to Write a Great CLAUDE.md | T2 | https://www.tembo.io/blog/how-to-write-a-great-claude-md | Parts 2, 3 | 2026-03-03 |
+| Arize AI — CLAUDE.md Best Practices | T2 | https://arize.com/blog/claude-md-best-practices | Part 2 | 2026-03-03 |
+| ruvnet/claude-flow | T3 | https://github.com/ruvnet/claude-flow | Part 4 | 2026-03-03 |
+| abhishekray07/claude-md-templates | T3 | https://github.com/abhishekray07/claude-md-templates | Parts 1, 2, 5 | 2026-03-03 |
 
-**Seed version**: 2026-02-27 | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)
+**Seed version**: 2026-03-03 | **Method**: `/refresh-guidelines` (web sources only, /insights stripped to enriched version)

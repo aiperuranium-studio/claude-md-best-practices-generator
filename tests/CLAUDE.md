@@ -23,6 +23,7 @@ uv run pytest tests/ -v                                       # alternative via 
 ## Current Test Files
 
 - `test_sprint1_5_guidelines_enrichment.py` — skill files, script functions, reference parsing, output schemas, gitignore entries
+- `test_refactor_scaffold_skills.py` — /refactor-claude-md and /scaffold-claude-md skill structure, frontmatter, pointer-based design, plugin manifest, root CLAUDE.md documentation
 
 Update this list when new sprint test files are added.
 
