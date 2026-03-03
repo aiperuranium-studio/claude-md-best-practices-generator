@@ -33,7 +33,7 @@ alias claude-bp='claude --add-dir ~/claude-md-best-practices'
 ### Option C — Claude Code plugin (no clone required)
 
 ```bash
-claude plugin marketplace add aiperuranium-studio/claude-md-best-practices-generator
+claude plugin marketplace add https://github.com/aiperuranium-studio/claude-md-best-practices-generator
 claude plugin install claude-md-best-practices
 ```
 
@@ -51,14 +51,30 @@ git clone https://github.com/aiperuranium-studio/claude-md-best-practices-genera
 cd ~/my-project
 claude --add-dir ~/claude-md-best-practices
 
-# 3. Enrich CLAUDE.md guidelines
+# 3. Enrich CLAUDE.md guidelines (run first)
 /refresh-guidelines
+
+# 4. Audit and refactor your root CLAUDE.md
+/refactor-claude-md
+
+# 5. Scaffold scoped CLAUDE.md files across subdirectories
+/scaffold-claude-md
 ```
 
 `/refresh-guidelines` will:
 1. Fetch curated web sources (Anthropic docs, community guides, templates)
 2. Parse any exported `/insights` data from your Claude Code sessions
 3. Produce `docs/CLAUDE-MD-SOTA.enriched.md` — a merged reference for writing CLAUDE.md files
+
+`/refactor-claude-md` will:
+1. Audit your root `CLAUDE.md` against the current SOTA guidelines
+2. Present a compliance report (pass / partial / fail per category)
+3. Rewrite the file with your approval
+
+`/scaffold-claude-md` will:
+1. Scan your directory tree for directories that need scoped CLAUDE.md files
+2. Draft focused content for each recommended directory
+3. Write the files with your approval
 
 ---
 
@@ -67,6 +83,8 @@ claude --add-dir ~/claude-md-best-practices
 | Skill (direct mode) | Skill (plugin mode) | Description |
 |---------------------|---------------------|-------------|
 | `/refresh-guidelines` | `/claude-md-best-practices:refresh-guidelines` | Enriches `docs/CLAUDE-MD-SOTA.md` from curated web sources + `/insights` data. Produces `docs/CLAUDE-MD-SOTA.enriched.md`. |
+| `/refactor-claude-md` | `/claude-md-best-practices:refactor-claude-md` | Audits root `CLAUDE.md` against current SOTA guidelines. Presents a compliance scorecard and rewrites the file with approval. |
+| `/scaffold-claude-md` | `/claude-md-best-practices:scaffold-claude-md` | Scans the directory tree, identifies subdirectories that need scoped `CLAUDE.md` files, and generates focused content with approval. |
 
 ---
 
