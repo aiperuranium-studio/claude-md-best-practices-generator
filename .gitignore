@@ -1,8 +1,11 @@
 .idea
 .cursor
 
-.claude/settings.local.json
-.claude/settings.json
+.claude
+!.claude/rules/claude-md-standards.md
+!.claude/skills/refactor-claude-md
+!.claude/skills/refresh-guidelines
+!.claude/skills/scaffold-claude-md
 
 .reports
 
