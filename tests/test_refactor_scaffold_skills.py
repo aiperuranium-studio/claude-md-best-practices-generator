@@ -7,7 +7,7 @@ Validates:
   - Reference files exist and contain expected structure
   - Compliance checklist is a derivation procedure (no hardcoded §-references)
   - Directory assessment criteria cover RECOMMEND/SKIP/OPTIONAL
-  - .claude/rules/claude-md-standards.md exists with pointer-based design
+  - rules/claude-md-standards.md exists with pointer-based design
   - plugin.json includes all three skills
   - Root CLAUDE.md documents all three skills
 """
@@ -24,7 +24,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 # /refactor-claude-md skill paths
 REFACTOR_SKILL_DIR = (
-    PROJECT_ROOT / ".claude" / "skills" / "refactor-claude-md"
+    PROJECT_ROOT / "skills" / "refactor-claude-md"
 )
 REFACTOR_SKILL_MD = REFACTOR_SKILL_DIR / "SKILL.md"
 REFACTOR_CLAUDE_MD = REFACTOR_SKILL_DIR / "CLAUDE.md"
@@ -32,14 +32,14 @@ REFACTOR_CHECKLIST = REFACTOR_SKILL_DIR / "references" / "compliance-checklist.m
 
 # /scaffold-claude-md skill paths
 SCAFFOLD_SKILL_DIR = (
-    PROJECT_ROOT / ".claude" / "skills" / "scaffold-claude-md"
+    PROJECT_ROOT / "skills" / "scaffold-claude-md"
 )
 SCAFFOLD_SKILL_MD = SCAFFOLD_SKILL_DIR / "SKILL.md"
 SCAFFOLD_CLAUDE_MD = SCAFFOLD_SKILL_DIR / "CLAUDE.md"
 SCAFFOLD_ASSESSMENT = SCAFFOLD_SKILL_DIR / "references" / "directory-assessment.md"
 
 # Shared paths
-RULES_FILE = PROJECT_ROOT / ".claude" / "rules" / "claude-md-standards.md"
+RULES_FILE = PROJECT_ROOT / "rules" / "claude-md-standards.md"
 PLUGIN_MANIFEST = PROJECT_ROOT / ".claude-plugin" / "plugin.json"
 ROOT_CLAUDE_MD = PROJECT_ROOT / "CLAUDE.md"
 
@@ -354,7 +354,7 @@ class TestDirectoryAssessmentCriteria(unittest.TestCase):
 
 
 class TestRulesFileDesign(unittest.TestCase):
-    """Validate .claude/rules/claude-md-standards.md uses pointer-based approach."""
+    """Validate rules/claude-md-standards.md uses pointer-based approach."""
 
     def test_rules_file_exists(self):
         self.assertTrue(RULES_FILE.exists(), f"Missing: {RULES_FILE}")
@@ -462,13 +462,13 @@ class TestRootClaudeMdSkillDocumentation(unittest.TestCase):
         self.assertIn("/scaffold-claude-md", self.content)
 
     def test_project_structure_lists_refactor_skill_dir(self):
-        self.assertIn(".claude/skills/refactor-claude-md/", self.content)
+        self.assertIn("skills/refactor-claude-md/", self.content)
 
     def test_project_structure_lists_scaffold_skill_dir(self):
-        self.assertIn(".claude/skills/scaffold-claude-md/", self.content)
+        self.assertIn("skills/scaffold-claude-md/", self.content)
 
     def test_project_structure_lists_rules_dir(self):
-        self.assertIn(".claude/rules/", self.content)
+        self.assertIn("rules/", self.content)
 
 
 if __name__ == "__main__":

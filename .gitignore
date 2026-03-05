@@ -1,15 +1,14 @@
 .idea
 .cursor
 
-.claude/settings.local.json
-.claude/settings.json
+.claude
 
 .reports
 
-# Guidelines enrichment artifacts (re-fetchable)
-docs/*
-!docs/CLAUDE-MD-SOTA.md
+# Guidelines enrichment artifacts (re-fetchable, gitignored)
+docs
 !docs/CLAUDE.md
+!docs/CLAUDE-MD-SOTA.md
 
 # Python
 __pycache__/

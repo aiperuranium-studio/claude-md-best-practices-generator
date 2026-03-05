@@ -16,8 +16,8 @@
     "anthropic"
   ],
   "skills": [
-    "./.claude/skills/refresh-guidelines/",
-    "./.claude/skills/refactor-claude-md/",
-    "./.claude/skills/scaffold-claude-md/"
+    "./skills/refresh-guidelines/",
+    "./skills/refactor-claude-md/",
+    "./skills/scaffold-claude-md/"
   ]
 }

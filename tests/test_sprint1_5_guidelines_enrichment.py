@@ -32,7 +32,6 @@ from unittest.mock import MagicMock, patch
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SCRIPT_PATH = (
     PROJECT_ROOT
-    / ".claude"
     / "skills"
     / "refresh-guidelines"
     / "scripts"
@@ -40,7 +39,6 @@ SCRIPT_PATH = (
 )
 PARSE_INSIGHTS_PATH = (
     PROJECT_ROOT
-    / ".claude"
     / "skills"
     / "refresh-guidelines"
     / "scripts"
@@ -78,11 +76,10 @@ def _load_pi():
 # ---------------------------------------------------------------------------
 
 SKILL_MD = (
-    PROJECT_ROOT / ".claude" / "skills" / "refresh-guidelines" / "SKILL.md"
+    PROJECT_ROOT / "skills" / "refresh-guidelines" / "SKILL.md"
 )
 CURATED_SOURCES_MD = (
     PROJECT_ROOT
-    / ".claude"
     / "skills"
     / "refresh-guidelines"
     / "references"
@@ -90,7 +87,6 @@ CURATED_SOURCES_MD = (
 )
 ENRICHMENT_PROCEDURE_MD = (
     PROJECT_ROOT
-    / ".claude"
     / "skills"
     / "refresh-guidelines"
     / "references"
