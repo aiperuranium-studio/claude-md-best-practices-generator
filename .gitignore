@@ -2,17 +2,13 @@
 .cursor
 
 .claude
-!.claude/rules/claude-md-standards.md
-!.claude/skills/refactor-claude-md
-!.claude/skills/refresh-guidelines
-!.claude/skills/scaffold-claude-md
 
 .reports
 
-# Guidelines enrichment artifacts (re-fetchable)
-docs/*
-!docs/CLAUDE-MD-SOTA.md
+# Guidelines enrichment artifacts (re-fetchable, gitignored)
+docs
 !docs/CLAUDE.md
+!docs/CLAUDE-MD-SOTA.md
 
 # Python
 __pycache__/

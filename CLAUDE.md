@@ -10,9 +10,9 @@ A tool for generating, auditing, and maintaining CLAUDE.md files based on curate
 
 ## Common Commands
 
-- `python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py` — Fetch raw content from curated web sources into `docs/guidelines-raw.json`.
-- `python3 .claude/skills/refresh-guidelines/scripts/fetch-guidelines.py --check-freshness` — Check source URL reachability and staleness, write `docs/freshness-report.json`.
-- `python3 .claude/skills/refresh-guidelines/scripts/parse-insights.py` — Parse `/insights` report into `docs/insights-parsed.json`. Manual tips go in `docs/insights-raw.md`.
+- `python3 skills/refresh-guidelines/scripts/fetch-guidelines.py` — Fetch raw content from curated web sources into `docs/guidelines-raw.json`.
+- `python3 skills/refresh-guidelines/scripts/fetch-guidelines.py --check-freshness` — Check source URL reachability and staleness, write `docs/freshness-report.json`.
+- `python3 skills/refresh-guidelines/scripts/parse-insights.py` — Parse `/insights` report into `docs/insights-parsed.json`. Manual tips go in `docs/insights-raw.md`.
 - `.venv/bin/pytest tests/ -v` — Run all tests (or `uv run pytest tests/ -v`).
 
 ## Gotchas & Known Issues
@@ -28,10 +28,11 @@ A tool for generating, auditing, and maintaining CLAUDE.md files based on curate
 | `README.md` | Project overview, prerequisites, installation, quick-start |
 | `docs/` | CLAUDE-MD-SOTA generation reference |
 | `docs/CODEMAPS/` | Auto-generated architecture docs — regenerate with `/everything-claude-code:update-codemaps` |
-| `.claude/skills/refresh-guidelines/` | `/refresh-guidelines` skill definition and scripts |
-| `.claude/skills/refactor-claude-md/` | `/refactor-claude-md` skill definition and compliance checklist procedure |
-| `.claude/skills/scaffold-claude-md/` | `/scaffold-claude-md` skill definition and directory assessment criteria |
-| `.claude/rules/` | Project-level rules (CLAUDE.md quality standards) — stable categorical rules; project-wide context stays in CLAUDE.md |
+| `skills/refresh-guidelines/` | `/refresh-guidelines` skill definition and scripts |
+| `skills/refactor-claude-md/` | `/refactor-claude-md` skill definition and compliance checklist procedure |
+| `skills/scaffold-claude-md/` | `/scaffold-claude-md` skill definition and directory assessment criteria |
+| `rules/` | Project-developed rule — `claude-md-standards.md` (CLAUDE.md quality standards) |
+| `.claude/rules/` | ECC-installed rules (common, golang, python, typescript, swift) — not project-developed, gitignored |
 | `.claude-plugin/` | Claude Code plugin manifest (`plugin.json`) and marketplace registry (`marketplace.json`) |
 | `tests/` | pytest test files |
 

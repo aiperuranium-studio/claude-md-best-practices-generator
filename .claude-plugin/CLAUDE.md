@@ -20,7 +20,7 @@ Plugin manifest for the Claude Code marketplace. Contains the plugin entry point
 Critical rules:
 - All component fields (`skills`, `agents`, `commands`) must be **arrays**, never strings.
 - `agents`: explicit **file paths** only (e.g., `"./agents/planner.md"`), not directories.
-- `skills` and `commands`: **directory paths** (e.g., `"./.claude/skills/refresh-guidelines/"`).
+- `skills` and `commands`: **directory paths** (e.g., `"./skills/refresh-guidelines/"`).
 - All paths start with `./` and resolve from the **repo root**, not from `.claude-plugin/`.
 - `version` field is required.
 - **Do NOT add a `hooks` field** — `hooks/hooks.json` is auto-loaded by convention; declaring it causes a duplicate error (regression history in `PLUGIN_SCHEMA_NOTES.md`).
