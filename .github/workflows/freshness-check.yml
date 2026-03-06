@@ -1,0 +1,79 @@
+name: Freshness Check
+
+on:
+  schedule:
+    # Every Monday at 08:00 UTC
+    - cron: "0 8 * * 1"
+  workflow_dispatch:
+
+jobs:
+  check-freshness:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.10"
+
+      - name: Run freshness check
+        id: freshness
+        run: |
+          python3 skills/refresh-guidelines/scripts/fetch-guidelines.py \
+            --check-freshness --docs-dir docs
+          echo "report_path=docs/freshness-report.json" >> "$GITHUB_OUTPUT"
+
+      - name: Detect BROKEN or STALE sources
+        id: detect
+        run: |
+          python3 - <<'EOF'
+          import json, sys, os
+
+          report_path = "docs/freshness-report.json"
+          if not os.path.exists(report_path):
+              print("No freshness report found — skipping issue creation.")
+              sys.exit(0)
+
+          with open(report_path) as f:
+              report = json.load(f)
+
+          problems = [
+              s for s in report.get("sources", [])
+              if s.get("status") in ("BROKEN", "STALE")
+          ]
+
+          if not problems:
+              print("All sources are fresh.")
+              with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+                  out.write("has_problems=false\n")
+              sys.exit(0)
+
+          lines = ["| Source ID | Status | URL |", "|-----------|--------|-----|"]
+          for s in problems:
+              safe_url = s['url'].replace('|', '%7C').replace('\n', '').replace('\r', '')
+              lines.append(f"| {s['id']} | {s['status']} | {safe_url} |")
+
+          body = "## Stale or Broken Sources\n\n" + "\n".join(lines)
+          body += "\n\nRe-run `/refresh-guidelines --preview` to verify, then update `curated-sources.md`."
+
+          with open("issue_body.md", "w") as f:
+              f.write(body)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write("has_problems=true\n")
+              out.write(f"problem_count={len(problems)}\n")
+          EOF
+
+      - name: Open GitHub issue for problematic sources
+        if: steps.detect.outputs.has_problems == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Freshness check: ${{ steps.detect.outputs.problem_count }} source(s) BROKEN or STALE" \
+            --body-file issue_body.md \
+            --label "maintenance"
