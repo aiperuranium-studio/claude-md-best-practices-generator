@@ -341,23 +341,66 @@ class TestInsightsRawPlaceholder(unittest.TestCase):
 
 
 class TestGitignoreEntries(unittest.TestCase):
-    """Enrichment artifacts are gitignored."""
+    """Enrichment artifacts are gitignored.
+
+    The .gitignore uses a broad 'docs' entry (ignoring the whole directory)
+    with negation exceptions for tracked files (docs/CLAUDE.md,
+    docs/CLAUDE-MD-SOTA.md). We verify actual git behaviour via
+    'git check-ignore' rather than checking for literal file strings.
+    """
 
     @classmethod
     def setUpClass(cls):
         cls.content = GITIGNORE.read_text()
 
+    @staticmethod
+    def _is_gitignored(rel_path: str) -> bool:
+        import subprocess
+        r = subprocess.run(
+            ["git", "check-ignore", "-q", rel_path],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+        )
+        return r.returncode == 0
+
     def test_guidelines_raw_json_ignored(self):
-        self.assertIn("docs/guidelines-raw.json", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/guidelines-raw.json"),
+            "docs/guidelines-raw.json should be covered by .gitignore",
+        )
 
     def test_insights_raw_md_ignored(self):
-        self.assertIn("docs/insights-raw.md", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/insights-raw.md"),
+            "docs/insights-raw.md should be covered by .gitignore",
+        )
 
     def test_insights_parsed_json_ignored(self):
-        self.assertIn("docs/insights-parsed.json", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/insights-parsed.json"),
+            "docs/insights-parsed.json should be covered by .gitignore",
+        )
 
     def test_freshness_report_json_ignored(self):
-        self.assertIn("docs/freshness-report.json", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/freshness-report.json"),
+            "docs/freshness-report.json should be covered by .gitignore",
+        )
+
+    def test_docs_dir_broadly_ignored(self):
+        """docs/ directory is ignored at the directory level."""
+        self.assertRegex(
+            self.content,
+            r"(?m)^docs$",
+            ".gitignore should contain a bare 'docs' entry covering the whole directory",
+        )
+
+    def test_claude_md_sota_not_ignored(self):
+        """docs/CLAUDE-MD-SOTA.md is whitelisted (tracked)."""
+        self.assertFalse(
+            self._is_gitignored("docs/CLAUDE-MD-SOTA.md"),
+            "docs/CLAUDE-MD-SOTA.md should NOT be gitignored (it is tracked)",
+        )
 
 
 class TestClaudeMdProjectStructure(unittest.TestCase):
