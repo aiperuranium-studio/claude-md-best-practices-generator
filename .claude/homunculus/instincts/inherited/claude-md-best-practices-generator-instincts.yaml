@@ -1,0 +1,646 @@
+# Instincts generated from https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+# Generated: 2026-03-06T14:32:35.308Z
+# Version: 2.0
+
+---
+id: claude-md-best-practices-generator-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Commit Length
+
+## Action
+
+Write moderate-length commit messages (~50 characters)
+
+## Evidence
+
+- Average commit message length: 58 chars
+- Based on 98 commits
+
+---
+id: claude-md-best-practices-generator-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: claude-md-best-practices-generator-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Export Style
+
+## Action
+
+Prefer mixed exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: mixed
+
+---
+id: claude-md-best-practices-generator-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: claude-md-best-practices-generator-workflow-database-migration
+trigger: "when modifying the database schema or adding tables"
+confidence: 0.75
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Database Migration
+
+## Action
+
+Follow the database-migration workflow:
+1. Create migration file
+2. Update schema definitions
+3. Generate/update types
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~5x per month
+- Files: migrations/*
+
+---
+id: claude-md-best-practices-generator-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.8
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~6x per month
+- Files: **/*.test.*
+
+---
+id: claude-md-best-practices-generator-workflow-test-driven-development
+trigger: "when adding new functionality"
+confidence: 0.7
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Test Driven Development
+
+## Action
+
+Follow the test-driven-development workflow:
+1. Write failing test
+2. Implement code to pass test
+3. Refactor if needed
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~4x per month
+- Files: **/*.test.*, **/*.spec.*, src/**/*
+
+---
+id: claude-md-best-practices-generator-workflow-refactoring
+trigger: "when refactoring code"
+confidence: 0.7
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Refactoring
+
+## Action
+
+Follow the refactoring workflow:
+1. Ensure tests pass before refactor
+2. Refactor code structure
+3. Verify tests still pass
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~4x per month
+- Files: src/**/*
+
+---
+id: claude-md-best-practices-generator-workflow-version-release
+trigger: "when doing version release"
+confidence: 0.65
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Version Release
+
+## Action
+
+Follow the version-release workflow:
+1. Update version in pyproject.toml
+2. Update version in plugin.json
+3. Update version in marketplace.json
+4. Create/update CHANGELOG.md or release notes
+5. Update version references in code (USER_AGENT)
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~3x per month
+- Files: pyproject.toml, .claude-plugin/plugin.json, .claude-plugin/marketplace.json
+
+---
+id: claude-md-best-practices-generator-workflow-gitignore-maintenance
+trigger: "when doing gitignore maintenance"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Gitignore Maintenance
+
+## Action
+
+Follow the gitignore-maintenance workflow:
+1. Identify files/directories to ignore
+2. Update .gitignore patterns
+3. Test ignore behavior
+4. Refine patterns as needed
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~8x per month
+- Files: .gitignore
+
+---
+id: claude-md-best-practices-generator-workflow-skill-development
+trigger: "when doing skill development"
+confidence: 0.65
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Skill Development
+
+## Action
+
+Follow the skill-development workflow:
+1. Create SKILL.md with step-by-step instructions
+2. Add CLAUDE.md for skill documentation
+3. Create reference files in references/ subdirectory
+4. Add scripts if needed
+5. Write tests for skill behavior
+6. Update main CLAUDE.md and README.md
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~3x per month
+- Files: skills/*/SKILL.md, skills/*/CLAUDE.md, skills/*/references/*.md
+
+---
+id: claude-md-best-practices-generator-workflow-test-coverage-expansion
+trigger: "when doing test coverage expansion"
+confidence: 0.7
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Test Coverage Expansion
+
+## Action
+
+Follow the test-coverage-expansion workflow:
+1. Create test fixtures in tests/fixtures/
+2. Write behavioral tests in test_*.py files
+3. Add test documentation to tests/CLAUDE.md
+4. Ensure all tests pass
+5. Update test counts in commit messages
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~4x per month
+- Files: tests/test_*.py, tests/fixtures/*, tests/CLAUDE.md
+
+---
+id: claude-md-best-practices-generator-workflow-code-quality-fixes
+trigger: "when doing code quality fixes"
+confidence: 0.75
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Code Quality Fixes
+
+## Action
+
+Follow the code-quality-fixes workflow:
+1. Run linter to identify violations
+2. Fix line length (E501) and other violations
+3. Split long lines or add noqa suppressions
+4. Verify all tests still pass
+5. Ensure ruff clean status
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~5x per month
+- Files: tests/test_*.py, scripts/*.py, skills/*/scripts/*.py
+
+---
+id: claude-md-best-practices-generator-workflow-github-actions-setup
+trigger: "when doing github actions setup"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Workflow Github Actions Setup
+
+## Action
+
+Follow the github-actions-setup workflow:
+1. Create workflow YAML files
+2. Configure test and lint jobs
+3. Set up security hardening (pinned actions)
+4. Configure permissions and triggers
+5. Add specialized workflows (freshness checks, etc.)
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: .github/workflows/*.yml
+
+---
+id: claude-md-best-practices-generator-python-camelcase-files
+trigger: "When creating new Python files"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Python Camelcase Files
+
+## Action
+
+Use camelCase naming convention for file names
+
+## Evidence
+
+- Pattern observed in existing file naming structure
+- Consistent across skills/ and tests/ directories
+
+---
+id: claude-md-best-practices-generator-pascalcase-classes
+trigger: "When defining Python classes"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Pascalcase Classes
+
+## Action
+
+Use PascalCase naming convention for class names
+
+## Evidence
+
+- TestGitignoreEntries class in tests
+- TestInsightsRawPlaceholder class pattern
+
+---
+id: claude-md-best-practices-generator-screaming-snake-constants
+trigger: "When defining constants"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Screaming Snake Constants
+
+## Action
+
+Use SCREAMING_SNAKE_CASE naming convention
+
+## Evidence
+
+- USER_AGENT references in version release workflow
+- Pattern consistent with Python conventions
+
+---
+id: claude-md-best-practices-generator-separate-test-location
+trigger: "When writing tests"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Separate Test Location
+
+## Action
+
+Place tests in separate tests/ directory with test_ prefix
+
+## Evidence
+
+- tests/ folder structure
+- test_sprint1_5_guidelines_enrichment.py file
+- TestGitignoreEntries pattern
+
+---
+id: claude-md-best-practices-generator-test-fixtures
+trigger: "When creating test data"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Test Fixtures
+
+## Action
+
+Create fixtures in tests/fixtures/ subdirectory
+
+## Evidence
+
+- tests/fixtures/* pattern in test-coverage-expansion workflow
+- Behavioral testing approach
+
+---
+id: claude-md-best-practices-generator-test-documentation
+trigger: "When adding new tests"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Test Documentation
+
+## Action
+
+Document test behavior in tests/CLAUDE.md
+
+## Evidence
+
+- tests/CLAUDE.md referenced in test-coverage-expansion workflow
+- Consistent documentation pattern
+
+---
+id: claude-md-best-practices-generator-conventional-commits
+trigger: "When making commits"
+confidence: 0.95
+domain: git
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Conventional Commits
+
+## Action
+
+Use conventional commit format with prefixes: fix, feat, docs, test, chore
+
+## Evidence
+
+- fix: resolve all ruff E501 violations
+- feat: Sprint 5 — source expansion
+- docs: sync README
+- test: update TestGitignoreEntries
+- chore: release v3.3.0
+
+---
+id: claude-md-best-practices-generator-commit-length-58
+trigger: "When writing commit messages"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Commit Length 58
+
+## Action
+
+Keep commit messages around 58 characters average length
+
+## Evidence
+
+- Average commit length of 58 characters observed
+- Consistent pattern across example commits
+
+---
+id: claude-md-best-practices-generator-version-release-sync
+trigger: "When releasing a new version"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Version Release Sync
+
+## Action
+
+Update version consistently across pyproject.toml, plugin.json, marketplace.json, and code references
+
+## Evidence
+
+- Version release workflow frequency 3x/month
+- chore: release v3.3.0 commit
+- Consistent version file patterns
+
+---
+id: claude-md-best-practices-generator-gitignore-iterative
+trigger: "When files should be excluded from git"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Gitignore Iterative
+
+## Action
+
+Iteratively refine .gitignore patterns and test ignore behavior
+
+## Evidence
+
+- Gitignore maintenance workflow frequency 8x/month
+- modified .gitignore commits
+- High refinement frequency
+
+---
+id: claude-md-best-practices-generator-skill-structure
+trigger: "When creating a new skill"
+confidence: 0.88
+domain: workflow
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Skill Structure
+
+## Action
+
+Create SKILL.md, CLAUDE.md, references/ subdirectory, and corresponding tests
+
+## Evidence
+
+- Skill development workflow pattern
+- skills/*/SKILL.md structure
+- .claude/skills/refactor-claude-md/ example
+
+---
+id: claude-md-best-practices-generator-ruff-e501-fixes
+trigger: "When ruff reports E501 line length violations"
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Ruff E501 Fixes
+
+## Action
+
+Fix by splitting long lines or adding noqa suppressions
+
+## Evidence
+
+- fix: resolve all ruff E501 violations in test_sprint1_5_guidelines_enrichment.py
+- Code quality fixes workflow frequency 5x/month
+
+---
+id: claude-md-best-practices-generator-ci-security-hardening
+trigger: "When setting up GitHub Actions workflows"
+confidence: 0.8
+domain: workflow
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Ci Security Hardening
+
+## Action
+
+Use pinned action versions for security hardening
+
+## Evidence
+
+- GitHub Actions setup workflow
+- Security hardening mentioned in workflow steps
+- .github/workflows/ci.yml and freshness-check.yml
+
+---
+id: claude-md-best-practices-generator-changelog-release-notes
+trigger: "When releasing a version"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Changelog Release Notes
+
+## Action
+
+Create or update CHANGELOG.md and RELEASE-NOTES-v*.md files
+
+## Evidence
+
+- add RELEASE-NOTES.md file commit
+- RELEASE-NOTES-v3.1.md file
+- Version release workflow pattern
+
+---
+id: claude-md-best-practices-generator-plugin-json-structure
+trigger: "When working with Claude plugin files"
+confidence: 0.85
+domain: architecture
+source: repo-analysis
+source_repo: aiperuranium-studio/claude-md-best-practices-generator
+---
+
+# Claude Md Best Practices Generator Plugin Json Structure
+
+## Action
+
+Maintain .claude-plugin/plugin.json and marketplace.json with consistent metadata
+
+## Evidence
+
+- .claude-plugin/plugin.json in version release workflow
+- .claude-plugin/marketplace.json pattern
+- Plugin structure in automation commits
+
