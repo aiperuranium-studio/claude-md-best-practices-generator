@@ -83,6 +83,31 @@ Pass an optional path to target a scoped file: `/refactor-claude-md src/CLAUDE.m
 
 ---
 
+## Preview Modes
+
+All three skills support a preview or read-only mode so you can evaluate what they would do before any files are written.
+
+| Skill | Invocation | What it shows | Side effects |
+|-------|-----------|---------------|-------------|
+| `/refresh-guidelines` | `/refresh-guidelines --preview` | Source list (IDs, URLs, themes) + /insights report summary | None — no network requests, no files written |
+| `/refactor-claude-md` | `/refactor-claude-md --report-only` | Compliance scorecard (pass / partial / fail per category) | None — audit only, no rewrite |
+| `/scaffold-claude-md` | `/scaffold-claude-md --scan-only` | Directory assessment table (RECOMMEND / SKIP / OPTIONAL) | None — scan only, no drafts |
+
+### Examples
+
+```bash
+# See which sources would be fetched before running the full pipeline
+/refresh-guidelines --preview
+
+# Audit compliance of a scoped file without rewriting it
+/refactor-claude-md docs/CLAUDE.md --report-only
+
+# Check which directories would get CLAUDE.md files before reviewing drafts
+/scaffold-claude-md --scan-only
+```
+
+---
+
 ## Skills Reference
 
 | Skill (direct mode) | Skill (plugin mode) | Description |

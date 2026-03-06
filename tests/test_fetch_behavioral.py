@@ -501,5 +501,56 @@ class TestFreshnessCheckBehavioral(unittest.TestCase):
         self.assertEqual(report["total_sources"], 3)
 
 
+# ===========================================================================
+# 6. dry_run_main() behavioral tests
+# ===========================================================================
+
+
+class TestDryRunMode(unittest.TestCase):
+    """main(dry_run=True) makes no network calls and writes no files."""
+
+    def setUp(self):
+        self.fg = _load_fg()
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def test_returns_0(self):
+        with patch.object(self.fg, "parse_curated_sources", return_value=[SAMPLE_SOURCE]):
+            result = self.fg.main(docs_dir=self.tmpdir, dry_run=True)
+        self.assertEqual(result, 0)
+
+    def test_no_files_written(self):
+        with patch.object(self.fg, "parse_curated_sources", return_value=[SAMPLE_SOURCE]):
+            self.fg.main(docs_dir=self.tmpdir, dry_run=True)
+        self.assertFalse((self.tmpdir / "guidelines-raw.json").exists())
+
+    def test_no_http_requests_made(self):
+        with (
+            patch.object(self.fg, "parse_curated_sources", return_value=[SAMPLE_SOURCE]),
+            patch.object(self.fg, "fetch_url") as mock_fetch,
+        ):
+            self.fg.main(docs_dir=self.tmpdir, dry_run=True)
+        mock_fetch.assert_not_called()
+
+    def test_multiple_sources_none_fetched(self):
+        sources = [
+            {**SAMPLE_SOURCE, "id": "T1-001"},
+            {**SAMPLE_SOURCE, "id": "T1-002"},
+            {**SAMPLE_SOURCE, "id": "T1-003"},
+        ]
+        with (
+            patch.object(self.fg, "parse_curated_sources", return_value=sources),
+            patch.object(self.fg, "fetch_url") as mock_fetch,
+        ):
+            result = self.fg.main(docs_dir=self.tmpdir, dry_run=True)
+        self.assertEqual(result, 0)
+        mock_fetch.assert_not_called()
+
+    def test_empty_sources_returns_0(self):
+        with patch.object(self.fg, "parse_curated_sources", return_value=[]):
+            result = self.fg.main(docs_dir=self.tmpdir, dry_run=True)
+        self.assertEqual(result, 0)
+        self.assertFalse((self.tmpdir / "guidelines-raw.json").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
