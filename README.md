@@ -37,7 +37,7 @@ claude plugin marketplace add https://github.com/aiperuranium-studio/claude-md-b
 claude plugin install claude-md-best-practices
 ```
 
-The skill is namespaced as `/claude-md-best-practices:refresh-guidelines` in plugin mode.
+All three skills are namespaced with the `claude-md-best-practices:` prefix in plugin mode (e.g., `/claude-md-best-practices:refresh-guidelines`).
 
 ---
 
@@ -66,8 +66,9 @@ claude --add-dir ~/claude-md-best-practices
 
 `/refresh-guidelines` will:
 1. Fetch curated web sources (Anthropic docs, community guides, templates)
-2. Parse any exported `/insights` data from your Claude Code sessions
-3. Produce `docs/CLAUDE-MD-SOTA.enriched.md` — a merged reference for writing CLAUDE.md files
+2. Produce `docs/CLAUDE-MD-SOTA.md` — a web-only seed (git-tracked)
+3. Parse any exported `/insights` data from your Claude Code sessions
+4. Produce `docs/CLAUDE-MD-SOTA.enriched.md` — seed + `/insights` merged (gitignored, user-specific)
 
 `/refactor-claude-md` will:
 1. Audit any `CLAUDE.md` against the current SOTA guidelines — root or any scoped file
@@ -112,7 +113,7 @@ All three skills support a preview or read-only mode so you can evaluate what th
 
 | Skill (direct mode) | Skill (plugin mode) | Description |
 |---------------------|---------------------|-------------|
-| `/refresh-guidelines` | `/claude-md-best-practices:refresh-guidelines` | Enriches `docs/CLAUDE-MD-SOTA.md` from curated web sources + `/insights` data. Produces `docs/CLAUDE-MD-SOTA.enriched.md`. |
+| `/refresh-guidelines` | `/claude-md-best-practices:refresh-guidelines` | Fetches curated web sources and `/insights` data. Produces `docs/CLAUDE-MD-SOTA.md` (seed, web-only, git-tracked) and `docs/CLAUDE-MD-SOTA.enriched.md` (seed + `/insights` merged, gitignored). |
 | `/refactor-claude-md` | `/claude-md-best-practices:refactor-claude-md` | Audits any `CLAUDE.md` (root or scoped) against current SOTA guidelines. Accepts an optional target path. Presents a compliance scorecard and rewrites the file with approval. |
 | `/scaffold-claude-md` | `/claude-md-best-practices:scaffold-claude-md` | Scans the directory tree, identifies subdirectories that need scoped `CLAUDE.md` files, and generates focused content with approval. |
 
@@ -127,3 +128,4 @@ All three skills support a preview or read-only mode so you can evaluate what th
 | `docs/guidelines-raw.json` | Raw fetched source content | Gitignored |
 | `docs/insights-parsed.json` | Parsed `/insights` report | Gitignored |
 | `docs/freshness-report.json` | URL reachability + staleness report | Gitignored |
+| `docs/insights-raw.md` | User-editable manual tips that supplement `/insights` parsed data | Gitignored |
