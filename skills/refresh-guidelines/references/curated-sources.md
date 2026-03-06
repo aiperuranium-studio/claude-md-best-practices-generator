@@ -62,6 +62,12 @@ Extracted automatically from the user's Claude Code usage report by `parse-insig
 - **Description**: Customizing Claude Code for your codebase — setup, best practices, advanced techniques.
 - **Last verified**: 2026-02-12
 
+### T1-004: Claude Code GitLab CI/CD Integration
+- **URL**: https://code.claude.com/docs/en/gitlab-ci-cd
+- **Themes**: integration, behavioral, maintenance
+- **Description**: Official Anthropic documentation for integrating Claude Code into GitLab CI/CD pipelines — headless mode, MR automation, CLAUDE.md in pipeline context.
+- **Last verified**: 2026-03-06
+
 ---
 
 ## Tier 2: Established Community Guides
@@ -95,6 +101,24 @@ Extracted automatically from the user's Claude Code usage report by `parse-insig
 - **Themes**: content, anti-patterns, maintenance
 - **Description**: Best practices and anti-patterns from AI engineering teams.
 - **Last verified**: 2026-02-12
+
+### T2-006: Huikang — Writing CLAUDE.md for Mature Codebases
+- **URL**: https://blog.huikang.dev/2025/05/31/writing-claude-md.html
+- **Themes**: structural, content, behavioral, maintenance
+- **Description**: Practical guide for writing CLAUDE.md in mature and monorepo codebases — token budgeting, scoped files, legacy patterns, and team ownership conventions.
+- **Last verified**: 2026-03-06
+
+### T2-007: Shrivu Shankar — How I Use Every Claude Code Feature
+- **URL**: https://blog.sshh.io/p/how-i-use-every-claude-code-feature
+- **Themes**: behavioral, integration, maintenance
+- **Description**: Comprehensive walkthrough of Claude Code features — CLAUDE.md as team constitution, /clear cadence, custom workflows, multi-agent patterns.
+- **Last verified**: 2026-03-06
+
+### T2-008: Paige Niedringhaus — Getting the Most out of Claude Code
+- **URL**: https://www.paigeniedringhaus.com/blog/getting-the-most-out-of-claude-code/
+- **Themes**: structural, content, behavioral, integration
+- **Description**: Hands-on guide covering CLAUDE.md setup, CI/CD integration patterns, context management, and prompting techniques for production codebases.
+- **Last verified**: 2026-03-06
 
 ---
 

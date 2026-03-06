@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+claude_md_best_practices.egg-info/PKG-INFO
+claude_md_best_practices.egg-info/SOURCES.txt
+claude_md_best_practices.egg-info/dependency_links.txt
+claude_md_best_practices.egg-info/requires.txt
+claude_md_best_practices.egg-info/top_level.txt
+tests/test_fetch_behavioral.py
+tests/test_insights_behavioral.py
+tests/test_metadata_consistency.py
+tests/test_refactor_scaffold_skills.py
+tests/test_sprint1_5_guidelines_enrichment.py

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import pathlib
 import re
 import sys
 import urllib.error
@@ -19,6 +20,24 @@ import urllib.request
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
+
+
+def _read_version() -> str:
+    toml_path = pathlib.Path(__file__).resolve().parents[3] / "pyproject.toml"
+    try:
+        import tomllib  # Python 3.11+
+        with open(toml_path, "rb") as f:
+            return tomllib.load(f)["project"]["version"]
+    except (ImportError, Exception):
+        try:
+            text = toml_path.read_text()
+            m = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+            return m.group(1) if m else "unknown"
+        except Exception:
+            return "unknown"
+
+
+_VERSION = _read_version()
 
 # Script-relative paths (stable whether run from project or plugin cache)
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -38,7 +57,7 @@ FRESHNESS_TIMEOUT_SECONDS = 15
 # Fetch settings
 TIMEOUT_SECONDS = 30
 MAX_CONTENT_LENGTH = 500_000  # 500KB per source
-USER_AGENT = "claude-md-best-practices/3.0 (fetch-guidelines)"
+USER_AGENT = f"claude-md-best-practices/{_VERSION} (fetch-guidelines)"
 
 
 # ---------------------------------------------------------------------------
@@ -459,16 +478,46 @@ def check_freshness_main(docs_dir: Path) -> int:
 # Main
 # ---------------------------------------------------------------------------
 
-def main(docs_dir: Path | None = None, check_freshness: bool = False) -> int:
+def dry_run_main(docs_dir: Path) -> int:
+    """Entry point for --dry-run mode. Prints source list without fetching or writing."""
+    print(f"fetch-guidelines.py --dry-run — {datetime.now(timezone.utc).isoformat()}",
+          file=sys.stderr)
+
+    if not CURATED_SOURCES.exists():
+        print(f"ERROR: Curated sources not found: {CURATED_SOURCES}", file=sys.stderr)
+        return 1
+
+    sources = parse_curated_sources(CURATED_SOURCES)
+    output_file = docs_dir / "guidelines-raw.json"
+
+    print(f"\nDry-run preview — {len(sources)} sources would be fetched:\n", file=sys.stderr)
+    for source in sources:
+        themes_str = ", ".join(source["themes"]) if source["themes"] else "(no themes)"
+        print(f"  [{source['id']}] {source['source_name']}", file=sys.stderr)
+        print(f"    URL: {source['url']}", file=sys.stderr)
+        print(f"    Themes: {themes_str}", file=sys.stderr)
+
+    print(f"\nWould fetch {len(sources)} sources, would write to {output_file}.",
+          file=sys.stderr)
+    print("No files written (dry-run mode).", file=sys.stderr)
+    return 0
+
+
+def main(docs_dir: Path | None = None, check_freshness: bool = False,
+         dry_run: bool = False) -> int:
     """Fetch content from curated web sources and write to docs_dir.
 
     Args:
         docs_dir: Output directory (default: cwd/docs).
         check_freshness: Run freshness check instead of fetching content.
+        dry_run: Print source list without fetching or writing any files.
 
     Returns 0 on success, 1 on fatal error.
     """
     resolved_docs_dir = docs_dir if docs_dir is not None else Path.cwd() / "docs"
+
+    if dry_run:
+        return dry_run_main(resolved_docs_dir)
 
     if check_freshness:
         return check_freshness_main(resolved_docs_dir)
@@ -560,6 +609,11 @@ if __name__ == "__main__":
         help="Check source URL reachability and staleness instead of fetching content.",
     )
     _parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print source list without fetching or writing any files.",
+    )
+    _parser.add_argument(
         "--docs-dir",
         metavar="PATH",
         help="Directory for output files (default: ./docs relative to cwd).",
@@ -568,4 +622,5 @@ if __name__ == "__main__":
     sys.exit(main(
         docs_dir=_resolve_docs_dir(_args.docs_dir),
         check_freshness=_args.check_freshness,
+        dry_run=_args.dry_run,
     ))

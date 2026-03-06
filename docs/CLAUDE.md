@@ -6,6 +6,8 @@ Every file in this directory belongs to exactly one category:
 
 - **Sub-products** — Application outputs, tracked in git:
   `CLAUDE-MD-SOTA.md`
+- **Dev docs** — Developer guides and runbooks, tracked in git:
+  `CONTRIBUTING.md`, `RUNBOOK.md`, `improvement-plan-v3.3.md`
 - **Generated artifacts** — Produced locally by running tools, gitignored:
   `CLAUDE-MD-SOTA.enriched.md`, `guidelines-raw.json`, `insights-parsed.json`, `insights-raw.md`, `freshness-report.json`
 

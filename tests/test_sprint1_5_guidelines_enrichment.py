@@ -300,7 +300,9 @@ class TestClaudeMdSotaPopulated(unittest.TestCase):
         content = CLAUDE_MD_SOTA.read_text()
         attr_start = content.index("## Source Attribution")
         attr_section = content[attr_start:]
-        self.assertRegex(attr_section, r"\d{4}-\d{2}-\d{2}", "Source Attribution should contain dates")
+        self.assertRegex(
+            attr_section, r"\d{4}-\d{2}-\d{2}", "Source Attribution should contain dates"
+        )
 
     def test_has_tier1_sources_in_attribution(self):
         content = CLAUDE_MD_SOTA.read_text()
@@ -318,8 +320,11 @@ class TestClaudeMdSotaPopulated(unittest.TestCase):
         )
 
 
+@unittest.skipUnless(
+    INSIGHTS_RAW.exists(), "insights-raw.md is a local artifact (gitignored); skipped in CI"
+)
 class TestInsightsRawPlaceholder(unittest.TestCase):
-    """insights-raw.md placeholder exists."""
+    """insights-raw.md placeholder exists (local-only, skipped when absent)."""
 
     def test_file_exists(self):
         self.assertTrue(INSIGHTS_RAW.exists(), f"Missing: {INSIGHTS_RAW}")
@@ -341,23 +346,66 @@ class TestInsightsRawPlaceholder(unittest.TestCase):
 
 
 class TestGitignoreEntries(unittest.TestCase):
-    """Enrichment artifacts are gitignored."""
+    """Enrichment artifacts are gitignored.
+
+    The .gitignore uses a broad 'docs' entry (ignoring the whole directory)
+    with negation exceptions for tracked files (docs/CLAUDE.md,
+    docs/CLAUDE-MD-SOTA.md). We verify actual git behaviour via
+    'git check-ignore' rather than checking for literal file strings.
+    """
 
     @classmethod
     def setUpClass(cls):
         cls.content = GITIGNORE.read_text()
 
+    @staticmethod
+    def _is_gitignored(rel_path: str) -> bool:
+        import subprocess
+        r = subprocess.run(
+            ["git", "check-ignore", "-q", rel_path],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+        )
+        return r.returncode == 0
+
     def test_guidelines_raw_json_ignored(self):
-        self.assertIn("docs/guidelines-raw.json", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/guidelines-raw.json"),
+            "docs/guidelines-raw.json should be covered by .gitignore",
+        )
 
     def test_insights_raw_md_ignored(self):
-        self.assertIn("docs/insights-raw.md", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/insights-raw.md"),
+            "docs/insights-raw.md should be covered by .gitignore",
+        )
 
     def test_insights_parsed_json_ignored(self):
-        self.assertIn("docs/insights-parsed.json", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/insights-parsed.json"),
+            "docs/insights-parsed.json should be covered by .gitignore",
+        )
 
     def test_freshness_report_json_ignored(self):
-        self.assertIn("docs/freshness-report.json", self.content)
+        self.assertTrue(
+            self._is_gitignored("docs/freshness-report.json"),
+            "docs/freshness-report.json should be covered by .gitignore",
+        )
+
+    def test_docs_dir_broadly_ignored(self):
+        """docs/ directory is ignored at the directory level."""
+        self.assertRegex(
+            self.content,
+            r"(?m)^docs$",
+            ".gitignore should contain a bare 'docs' entry covering the whole directory",
+        )
+
+    def test_claude_md_sota_not_ignored(self):
+        """docs/CLAUDE-MD-SOTA.md is whitelisted (tracked)."""
+        self.assertFalse(
+            self._is_gitignored("docs/CLAUDE-MD-SOTA.md"),
+            "docs/CLAUDE-MD-SOTA.md should NOT be gitignored (it is tracked)",
+        )
 
 
 class TestClaudeMdProjectStructure(unittest.TestCase):
@@ -655,7 +703,9 @@ class TestCheckSourceFreshness(unittest.TestCase):
     def test_fresh_source_not_stale(self):
         sources = [self._make_source("2026-02-10")]
         with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertFalse(results[0]["is_stale"])
         self.assertTrue(results[0]["is_reachable"])
         self.assertFalse(results[0]["needs_attention"])
@@ -663,7 +713,9 @@ class TestCheckSourceFreshness(unittest.TestCase):
     def test_stale_source_detected(self):
         sources = [self._make_source("2025-12-01")]
         with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertTrue(results[0]["is_stale"])
         self.assertTrue(results[0]["needs_attention"])
         self.assertGreater(results[0]["days_since_verified"], 30)
@@ -671,14 +723,18 @@ class TestCheckSourceFreshness(unittest.TestCase):
     def test_missing_date_is_stale(self):
         sources = [self._make_source(None)]
         with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertTrue(results[0]["is_stale"])
         self.assertEqual(results[0]["days_since_verified"], -1)
 
     def test_broken_url_detected(self):
         sources = [self._make_source("2026-02-10")]
         with patch.object(self.fg, "check_url_status", return_value=(404, None)):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertFalse(results[0]["is_reachable"])
         self.assertTrue(results[0]["needs_attention"])
         self.assertEqual(results[0]["http_status"], 404)
@@ -686,14 +742,18 @@ class TestCheckSourceFreshness(unittest.TestCase):
     def test_network_error_detected(self):
         sources = [self._make_source("2026-02-10")]
         with patch.object(self.fg, "check_url_status", return_value=(None, None)):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertFalse(results[0]["is_reachable"])
         self.assertIsNone(results[0]["http_status"])
 
     def test_redirect_captured(self):
         sources = [self._make_source("2026-02-10")]
         with patch.object(self.fg, "check_url_status", return_value=(200, "https://new.com/page")):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertEqual(results[0]["final_url"], "https://new.com/page")
         self.assertTrue(results[0]["is_reachable"])
 
@@ -704,7 +764,9 @@ class TestCheckSourceFreshness(unittest.TestCase):
         ]
         sources[1]["id"] = "T2-001"
         with patch.object(self.fg, "check_url_status", return_value=(200, "https://example.com")):
-            results = self.fg.check_source_freshness(sources, stale_threshold_days=30, today=self.today)
+            results = self.fg.check_source_freshness(
+                sources, stale_threshold_days=30, today=self.today
+            )
         self.assertEqual(len(results), 2)
         self.assertFalse(results[0]["is_stale"])
         self.assertTrue(results[1]["is_stale"])
@@ -951,7 +1013,7 @@ class TestExtractContentBlocks(unittest.TestCase):
         self.assertEqual(blocks[0]["theme"], "content")
 
     def test_theme_classification_structural(self):
-        text = "# File Structure\nOrganize your file into sections with proper hierarchy and layout."
+        text = "# File Structure\nOrganize your file into sections with proper hierarchy and layout."  # noqa: E501
         blocks = self.extract(text, ["structural", "content"])
         themes = [b["theme"] for b in blocks]
         self.assertIn("structural", themes)
@@ -975,7 +1037,7 @@ class TestExtractContentBlocks(unittest.TestCase):
         self.assertIn("anti-patterns", themes)
 
     def test_theme_classification_maintenance(self):
-        text = "# Keeping Current\nUpdate and maintain regularly, review for stale outdated content."
+        text = "# Keeping Current\nUpdate and maintain regularly, review for stale outdated content."  # noqa: E501
         blocks = self.extract(text, ["maintenance", "content"])
         themes = [b["theme"] for b in blocks]
         self.assertIn("maintenance", themes)
@@ -1429,7 +1491,10 @@ class TestInsightsHTMLParserSynthetic(unittest.TestCase):
         self.assertEqual(len(p.sections["wins"]), 2)
 
     def test_subtitle_extraction(self):
-        html = '<p class="subtitle">134 messages across 19 sessions (24 total) | 2026-01-16 to 2026-02-10</p>'
+        html = (
+            '<p class="subtitle">134 messages across 19 sessions (24 total)'
+            " | 2026-01-16 to 2026-02-10</p>"
+        )
         p = self._parse(html)
         self.assertIn("19 sessions", p.subtitle)
 
@@ -1571,14 +1636,14 @@ class TestBuildEntries(unittest.TestCase):
 
     def test_empty_sections_produce_no_entries(self):
         entries = self.pi._build_entries(
-            {"wins": [], "friction": [], "features": [], "patterns": [], "horizon": [], "usage": []},
+            {"wins": [], "friction": [], "features": [], "patterns": [], "horizon": [], "usage": []},  # noqa: E501
             [],
         )
         self.assertEqual(entries, [])
 
     def test_claude_md_recs_produce_entry(self):
         entries = self.pi._build_entries(
-            {"wins": [], "friction": [], "features": [], "patterns": [], "horizon": [], "usage": []},
+            {"wins": [], "friction": [], "features": [], "patterns": [], "horizon": [], "usage": []},  # noqa: E501
             [{"text": "Always validate twice.", "evidence": "Missed items."}],
         )
         self.assertEqual(len(entries), 1)
@@ -1701,7 +1766,10 @@ class TestInsightsParsedJsonSchema(unittest.TestCase):
 
     def test_session_stats_has_required_fields(self):
         stats = self.data["session_stats"]
-        for field in ("total_sessions", "total_messages", "top_tools", "primary_languages", "outcome_distribution"):
+        for field in (
+            "total_sessions", "total_messages", "top_tools",
+            "primary_languages", "outcome_distribution",
+        ):
             self.assertIn(field, stats, f"session_stats missing: {field}")
 
     def test_no_duplicate_source_ids(self):
@@ -1759,7 +1827,6 @@ class TestParseInsightsMain(unittest.TestCase):
 # ===================================================================
 
 PLUGIN_MANIFEST = PROJECT_ROOT / ".claude-plugin" / "plugin.json"
-PLUGIN_MARKETPLACE = PROJECT_ROOT / ".claude-plugin" / "marketplace.json"
 
 
 class TestDocsDir(unittest.TestCase):

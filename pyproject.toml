@@ -1,15 +1,18 @@
 [project]
 name = "claude-md-best-practices"
-version = "3.2.0"
+version = "3.3.0"
 description = "CLAUDE.md best practices generator — enriches guidelines from curated web sources and /insights behavioral data"
 requires-python = ">=3.10"
 dependencies = []
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "pytest>=8.0",
     "ruff>=0.9",
 ]
+
+[tool.setuptools]
+packages = []
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

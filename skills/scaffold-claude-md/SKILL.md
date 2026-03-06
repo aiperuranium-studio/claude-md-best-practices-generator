@@ -25,6 +25,8 @@ Scan a project's directory tree, identify directories that would benefit from a 
 
 Follow these steps in order. Do NOT skip steps or auto-approve — human review is required.
 
+> **Scan-only mode**: If invoked with `--scan-only` (e.g., `/scaffold-claude-md --scan-only`), execute Steps 0–2 only. Present the directory assessment table and stop. Skip Steps 3–6 (draft and write). This is useful when you want to see which directories would receive CLAUDE.md files before reviewing full content drafts.
+
 ### Step 0: Load guidelines
 
 Determine which guidelines file to use:

@@ -471,5 +471,88 @@ class TestRootClaudeMdSkillDocumentation(unittest.TestCase):
         self.assertIn("rules/", self.content)
 
 
+# ===================================================================
+# 8. /refactor-claude-md — Scoped file support
+# ===================================================================
+
+
+class TestRefactorSkillScopedSupport(unittest.TestCase):
+    """Validate /refactor-claude-md SKILL.md supports scoped file targeting."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.skill_content = REFACTOR_SKILL_MD.read_text()
+        cls.checklist_content = REFACTOR_CHECKLIST.read_text()
+
+    def test_skill_mentions_target_parameter(self):
+        # SKILL.md must describe a target path parameter
+        self.assertTrue(
+            "target" in self.skill_content.lower() or "path" in self.skill_content.lower(),
+            "SKILL.md must mention a target path parameter for scoped file support",
+        )
+
+    def test_skill_has_step_0_5_target_determination(self):
+        # Step 0.5 must exist to determine the target file
+        self.assertIn(
+            "0.5",
+            self.skill_content,
+            "SKILL.md must include Step 0.5 for target file determination",
+        )
+
+    def test_skill_not_exclusively_root(self):
+        # SKILL.md must not refer to "root CLAUDE.md" as the only possible target
+        # It may mention root as the default, but must also mention scoped/target
+        self.assertIn(
+            "scoped",
+            self.skill_content.lower(),
+            "SKILL.md must mention scoped files as a valid target",
+        )
+
+    def test_skill_mentions_parent_duplication_check(self):
+        # Step 2 must instruct reading the parent CLAUDE.md for scoped targets
+        self.assertIn(
+            "parent",
+            self.skill_content.lower(),
+            "SKILL.md must mention reading the parent CLAUDE.md to detect duplication",
+        )
+
+    def test_checklist_has_scoped_section(self):
+        self.assertIn(
+            "Scoped",
+            self.checklist_content,
+            "compliance-checklist.md must contain a Scoped File Adjustments section",
+        )
+
+    def test_checklist_scoped_section_has_purpose_requirement(self):
+        self.assertIn(
+            "Purpose",
+            self.checklist_content,
+            "Scoped section must require a Purpose section in scoped files",
+        )
+
+    def test_checklist_scoped_section_has_key_files_requirement(self):
+        self.assertIn(
+            "Key Files",
+            self.checklist_content,
+            "Scoped section must require a Key Files section in scoped files",
+        )
+
+    def test_checklist_scoped_section_has_no_duplication_requirement(self):
+        # Must flag duplication of parent content
+        self.assertIn(
+            "duplic",
+            self.checklist_content.lower(),
+            "Scoped section must flag duplication of parent CLAUDE.md content",
+        )
+
+    def test_checklist_scoped_section_references_sota_hierarchy(self):
+        # Scoped section must defer to SOTA for hierarchy rules
+        self.assertIn(
+            "Part 1",
+            self.checklist_content,
+            "Scoped section must reference SOTA Part 1 hierarchy rules",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

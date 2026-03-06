@@ -59,7 +59,7 @@ Each subdirectory has its own scoped `CLAUDE.md` with directory-specific instruc
 ## Installed Skills
 
 - `/refresh-guidelines` — Enriches CLAUDE-MD-SOTA writing guidelines from web sources + `/insights` data.
-- `/refactor-claude-md` — Audits root CLAUDE.md against current CLAUDE-MD-SOTA guidelines, produces a compliant refactored version.
+- `/refactor-claude-md` — Audits any CLAUDE.md (root or scoped) against current CLAUDE-MD-SOTA guidelines, produces a compliant refactored version. Accepts an optional target path: `/refactor-claude-md docs/CLAUDE.md`.
 - `/scaffold-claude-md` — Scans subdirectories, identifies which need CLAUDE.md files, generates scoped content.
 - Plugin mode: prefix with `claude-md-best-practices:` after `claude plugin install claude-md-best-practices`.
 

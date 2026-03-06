@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Audits a project's root CLAUDE.md against CLAUDE-MD-SOTA guidelines and produces a compliant refactored version. No Python scripts — entirely Claude-guided with human approval gates.
+Audits any CLAUDE.md (root or scoped) against CLAUDE-MD-SOTA guidelines and produces a compliant refactored version. Accepts an optional target path — defaults to the project root CLAUDE.md. No Python scripts — entirely Claude-guided with human approval gates.
 
 ## Key Files
 
@@ -21,7 +21,8 @@ The user can override source selection in conversation (e.g., "use seed only").
 
 ## Output
 
-- Refactored `CLAUDE.md` at the project root (overwrite in place).
+- Refactored CLAUDE.md written to the target path (root or scoped, overwrite in place).
+- For scoped files, the parent CLAUDE.md is also read (to detect duplication) but not modified.
 - No intermediate generated artifacts — the audit report is presented in conversation.
 
 ## Constraints

@@ -31,6 +31,45 @@ Use the enriched version when writing CLAUDE.md files; fall back to the seed whe
 
 Follow these steps in order. Do NOT skip steps or auto-approve — human review is required.
 
+### Step -1 (optional): Preview mode
+
+If the user invoked the skill with `--preview` (e.g., `/refresh-guidelines --preview`):
+
+1. Run the fetch script in dry-run mode:
+
+```bash
+python3 "$CLAUDE_PLUGIN_ROOT/scripts/fetch-guidelines.py" --dry-run --docs-dir docs
+```
+
+This prints the full list of sources that would be fetched (IDs, URLs, themes) without making any network requests or writing any files.
+
+2. Run the insights parser in dry-run mode:
+
+```bash
+python3 "$CLAUDE_PLUGIN_ROOT/scripts/parse-insights.py" --dry-run --docs-dir docs
+```
+
+This summarises the `/insights` report (age, section count) without writing `docs/insights-parsed.json`.
+
+3. Present the summaries in conversation:
+
+```
+## /refresh-guidelines Preview
+
+### Sources to fetch (N total)
+| ID | Source | Tier | Themes |
+|----|--------|------|--------|
+| T1-001 | Claude Code Memory Management | 1 | structural, content |
+| ...
+
+### /insights report
+Report age: {N} days | Sections available: {N}
+
+No files would be written. Invoke `/refresh-guidelines` (without --preview) to proceed.
+```
+
+4. **Stop. No files are written.** Inform the user they can re-invoke without `--preview` to proceed with the full pipeline.
+
 ### Step 0: Source freshness check
 
 Run the freshness checker to identify stale or broken sources:
