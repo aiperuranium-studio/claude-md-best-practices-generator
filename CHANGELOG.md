@@ -8,6 +8,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — `Added`, `C
 
 ## [Unreleased]
 
+---
+
+## [3.3.0] — 2026-03-06
+
 ### Added
 - **Sprint 1**: `tests/test_metadata_consistency.py` — 13 assertions verifying `plugin.json`, `marketplace.json`, and `pyproject.toml` version parity; `USER_AGENT` version sync; marketplace description covers all skills.
 - **Sprint 1**: `setup.sh` — one-command dev environment setup (Python 3.10+ check, `.venv` creation, `uv`/`pip` install, smoke test).

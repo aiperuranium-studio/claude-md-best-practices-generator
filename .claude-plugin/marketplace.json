@@ -14,7 +14,7 @@
       "name": "claude-md-best-practices",
       "source": "./",
       "description": "Enriches CLAUDE.md guidelines from web sources and /insights data. Provides /refresh-guidelines, /refactor-claude-md, and /scaffold-claude-md.",
-      "version": "3.2.0",
+      "version": "3.3.0",
       "author": {
         "name": "Simone Scannapieco",
         "email": "simone.scannapieco@aiperuranium.it"
