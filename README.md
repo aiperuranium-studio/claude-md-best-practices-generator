@@ -57,6 +57,9 @@ claude --add-dir ~/claude-md-best-practices
 # 4. Audit and refactor your root CLAUDE.md
 /refactor-claude-md
 
+# 4b. Audit a scoped CLAUDE.md in a subdirectory (optional target path)
+/refactor-claude-md docs/CLAUDE.md
+
 # 5. Scaffold scoped CLAUDE.md files across subdirectories
 /scaffold-claude-md
 ```
@@ -67,9 +70,11 @@ claude --add-dir ~/claude-md-best-practices
 3. Produce `docs/CLAUDE-MD-SOTA.enriched.md` — a merged reference for writing CLAUDE.md files
 
 `/refactor-claude-md` will:
-1. Audit your root `CLAUDE.md` against the current SOTA guidelines
+1. Audit any `CLAUDE.md` against the current SOTA guidelines — root or any scoped file
 2. Present a compliance report (pass / partial / fail per category)
 3. Rewrite the file with your approval
+
+Pass an optional path to target a scoped file: `/refactor-claude-md src/CLAUDE.md`
 
 `/scaffold-claude-md` will:
 1. Scan your directory tree for directories that need scoped CLAUDE.md files

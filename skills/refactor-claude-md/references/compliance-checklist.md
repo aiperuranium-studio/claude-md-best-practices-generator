@@ -76,3 +76,37 @@ Rules extracted: [count]
 ```
 
 This format ties every audit item back to the current SOTA text, ensuring traceability even after SOTA restructuring.
+
+---
+
+## Scoped File Adjustments
+
+When the audit target is a **scoped CLAUDE.md** (any CLAUDE.md in a subdirectory, not the project root), apply the following adjustments before evaluating the dynamic checklist:
+
+### Rules that are N/A for scoped files
+
+The following root-file requirements do not apply to scoped files — mark them **N/A** automatically:
+
+- **Project Overview section** — not required; the root CLAUDE.md owns project-level context.
+- **Full Tech Stack listing** — scoped files describe only the stack relevant to their directory.
+- **Installed Skills / Plugin section** — belongs in the root CLAUDE.md only.
+- **Root-level Quick Start commands** — scoped files may document directory-specific commands only.
+
+### Additional requirements for scoped files
+
+Mark the following **FAIL** if absent or violated in a scoped file:
+
+| Requirement | Description |
+|-------------|-------------|
+| **Purpose section** | Must include a short statement of what this directory contains and why it exists. |
+| **Key Files section** | Must list the most important files with their roles (table or bullet list). |
+| **No parent duplication** | Must not repeat content already present in any ancestor CLAUDE.md. If duplication is found, flag it and propose removal. |
+| **Scope discipline** | Content must be scoped to this directory. Cross-cutting concerns belong in the root CLAUDE.md. |
+
+### Size budget
+
+Scoped files have a **smaller size budget** than the root CLAUDE.md. Extract the scoped-file budget from the current SOTA if specified; if not specified, use 60 lines as a conservative default. Flag files that exceed this budget.
+
+### Reference
+
+These adjustments extend — not replace — the SOTA-derived audit criteria. SOTA Part 1 hierarchy rules (placement, @-import strategy, inheritance) take precedence over these defaults.
