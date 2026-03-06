@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: claude-md-best-practices
+Version: 3.2.0
+Summary: CLAUDE.md best practices generator — enriches guidelines from curated web sources and /insights behavioral data
+Requires-Python: >=3.10
