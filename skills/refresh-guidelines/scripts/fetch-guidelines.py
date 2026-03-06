@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import pathlib
 import re
 import sys
 import urllib.error
@@ -19,6 +20,24 @@ import urllib.request
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
+
+
+def _read_version() -> str:
+    toml_path = pathlib.Path(__file__).resolve().parents[3] / "pyproject.toml"
+    try:
+        import tomllib  # Python 3.11+
+        with open(toml_path, "rb") as f:
+            return tomllib.load(f)["project"]["version"]
+    except (ImportError, Exception):
+        try:
+            text = toml_path.read_text()
+            m = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+            return m.group(1) if m else "unknown"
+        except Exception:
+            return "unknown"
+
+
+_VERSION = _read_version()
 
 # Script-relative paths (stable whether run from project or plugin cache)
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -38,7 +57,7 @@ FRESHNESS_TIMEOUT_SECONDS = 15
 # Fetch settings
 TIMEOUT_SECONDS = 30
 MAX_CONTENT_LENGTH = 500_000  # 500KB per source
-USER_AGENT = "claude-md-best-practices/3.0 (fetch-guidelines)"
+USER_AGENT = f"claude-md-best-practices/{_VERSION} (fetch-guidelines)"
 
 
 # ---------------------------------------------------------------------------
