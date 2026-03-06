@@ -88,7 +88,7 @@ Pass an optional path to target a scoped file: `/refactor-claude-md src/CLAUDE.m
 | Skill (direct mode) | Skill (plugin mode) | Description |
 |---------------------|---------------------|-------------|
 | `/refresh-guidelines` | `/claude-md-best-practices:refresh-guidelines` | Enriches `docs/CLAUDE-MD-SOTA.md` from curated web sources + `/insights` data. Produces `docs/CLAUDE-MD-SOTA.enriched.md`. |
-| `/refactor-claude-md` | `/claude-md-best-practices:refactor-claude-md` | Audits root `CLAUDE.md` against current SOTA guidelines. Presents a compliance scorecard and rewrites the file with approval. |
+| `/refactor-claude-md` | `/claude-md-best-practices:refactor-claude-md` | Audits any `CLAUDE.md` (root or scoped) against current SOTA guidelines. Accepts an optional target path. Presents a compliance scorecard and rewrites the file with approval. |
 | `/scaffold-claude-md` | `/claude-md-best-practices:scaffold-claude-md` | Scans the directory tree, identifies subdirectories that need scoped `CLAUDE.md` files, and generates focused content with approval. |
 
 ---
