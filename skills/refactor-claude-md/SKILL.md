@@ -26,6 +26,8 @@ Audit any `CLAUDE.md` file against the CLAUDE-MD-SOTA guidelines and produce a r
 
 Follow these steps in order. Do NOT skip steps or auto-approve — human review is required.
 
+> **Report-only mode**: If invoked with `--report-only` (e.g., `/refactor-claude-md --report-only` or `/refactor-claude-md docs/CLAUDE.md --report-only`), execute Steps 0–4 only. Present the audit scorecard and stop. Skip Steps 5–7 (approval and file write). This is useful when you want to assess compliance without committing to a rewrite.
+
 ### Step 0: Source selection
 
 Determine which guidelines file to use:
