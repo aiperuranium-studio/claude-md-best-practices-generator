@@ -21,7 +21,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PYPROJECT_TOML = PROJECT_ROOT / "pyproject.toml"
 PLUGIN_JSON = PROJECT_ROOT / ".claude-plugin" / "plugin.json"
 MARKETPLACE_JSON = PROJECT_ROOT / ".claude-plugin" / "marketplace.json"
-FETCH_GUIDELINES = PROJECT_ROOT / "skills" / "refresh-guidelines" / "scripts" / "fetch-guidelines.py"
+FETCH_GUIDELINES = (
+    PROJECT_ROOT / "skills" / "refresh-guidelines" / "scripts" / "fetch-guidelines.py"
+)
 
 
 def _extract_pyproject_version(text: str) -> str:
@@ -158,7 +160,9 @@ class TestMarketplaceSkillCoverage(unittest.TestCase):
 
     def test_all_plugin_skills_covered(self):
         skill_names = self._skill_names()
-        self.assertGreater(len(skill_names), 0, "Could not extract any skill names from plugin.json")
+        self.assertGreater(
+            len(skill_names), 0, "Could not extract any skill names from plugin.json"
+        )
         for skill_name in skill_names:
             self.assertIn(
                 skill_name,
