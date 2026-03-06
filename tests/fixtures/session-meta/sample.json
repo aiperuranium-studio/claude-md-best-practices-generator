@@ -1,0 +1,16 @@
+{
+  "user_message_count": 15,
+  "assistant_message_count": 20,
+  "tool_counts": {
+    "Read": 12,
+    "Edit": 8,
+    "Bash": 5,
+    "Write": 3,
+    "Grep": 2
+  },
+  "languages": {
+    "python": 6,
+    "markdown": 3
+  },
+  "start_time": "2026-01-16T10:00:00Z"
+}
